@@ -109,11 +109,17 @@ def manager_dashboard(request: Request):
     if current_user["role"] != ROLE_MANAGER:
         return RedirectResponse("/employee", status_code=303)
 
+    with get_connection() as conn:
+        pending_count = conn.execute(
+            "SELECT COUNT(*) FROM documents WHERE status = 'PENDING'"
+        ).fetchone()[0]
+
     return templates.TemplateResponse(
         request=request,
         name="manager_dashboard.html",
         context={
-            "user": current_user
+            "user": current_user,
+            "pending_count": pending_count,
         }
     )
 

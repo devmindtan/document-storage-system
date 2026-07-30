@@ -35,24 +35,32 @@
         <div class="menu-grid">
 
     <a class="menu-card menu-link" href="/manager/pending">
+        {% if pending_count and pending_count > 0 %}
+            <span class="menu-card-count">{{ pending_count }}</span>
+        {% endif %}
+        <div class="menu-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
         <h3 data-i18n="pendingDocumentsTitle">Hồ sơ chờ duyệt</h3>
         <p data-i18n="pendingDocumentsDesc">Xem, duyệt hoặc từ chối các hồ sơ đang chờ xử lý.</p>
     </a>
 <a class="menu-card menu-link" href="/manager/my-documents">
+        <div class="menu-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg></div>
         <h3 data-i18n="myDocumentsTitle">Hồ sơ của tôi</h3>
         <p data-i18n="managerMyDocumentsDesc">Xem các tài liệu quản lý đã upload.</p>
     </a>
 
     <a class="menu-card menu-link" href="/manager/upload">
+        <div class="menu-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M12 4l-4 4M12 4l4 4"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg></div>
         <h3 data-i18n="uploadDocumentTitle">Upload hồ sơ</h3>
         <p data-i18n="managerUploadDocumentDesc">Quản lý upload hồ sơ trực tiếp vào kho đã duyệt.</p>
     </a>
 
     <a class="menu-card menu-link" href="/documents/approved">
+        <div class="menu-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12M12 16l-4-4M12 16l4-4"/><path d="M4 18v2a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-2"/></svg></div>
         <h3 data-i18n="downloadDocumentsTitle">Download tài liệu</h3>
         <p data-i18n="downloadDocumentsDesc">Tìm kiếm và tải hồ sơ đã được duyệt.</p>
     </a>
           <a class="menu-card menu-link" href="/statistics">
+        <div class="menu-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M12 20V4M20 20v-7"/></svg></div>
         <h3 data-i18n="uploadStatisticsTitle">Thống kê upload</h3>
         <p data-i18n="uploadStatisticsDesc">Xem biểu đồ upload theo tháng và thống kê người upload.</p>
     </a>
