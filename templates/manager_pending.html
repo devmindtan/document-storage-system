@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Hồ sơ chờ duyệt</title>
+    <link rel="stylesheet" href="/static/style.css?v=5001">
+
+    <style>
+        .pending-new-badge {
+            display: inline-block;
+            margin-top: 6px;
+            padding: 4px 8px;
+            border-radius: 999px;
+            background: #fff3cd;
+            color: #7a5200;
+            font-size: 12px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+
+<body class="app-page manager-pending-page">
+<div class="logo-header">
+    <div class="header-logo-group">
+        <a class="corner-logo-link" href="/">
+            <img
+                class="corner-logo akzo-logo"
+                src="/static/images/AkzoNobel_RGB.png?v=31"
+                alt="AkzoNobel"
+            >
+        </a>
+
+        <span class="logo-separator"></span>
+
+        <a class="engineering-logo-link" href="/">
+            <img
+                class="engineering-logo"
+                src="/static/images/amata_engineering_logo.png?v=1"
+                alt="Amata Engineering"
+            >
+        </a>
+    </div>
+
+    <button class="language-toggle" id="languageToggle" type="button">
+        EN
+    </button>
+</div>
+
+<div class="dashboard-box">
+    <div class="top-bar">
+        <div>
+            <h1 data-i18n-key="pageHeading">HỒ SƠ CHỜ QUẢN LÝ DUYỆT</h1>
+
+            <p>
+                <span data-i18n-key="managerLabel">Quản lý:</span>
+                <strong>{{ user["full_name"] }}</strong>
+            </p>
+        </div>
+
+        <a class="logout-button" href="/manager" data-i18n-key="backButton">
+            Quay lại
+        </a>
+    </div>
+
+    <hr>
+
+    {% if message %}
+        <p class="success-message">
+            {{ message }}
+        </p>
+    {% endif %}
+
+    {% if error %}
+        <p class="error-message">
+            {{ error }}
+        </p>
+    {% endif %}
+
+    {% if documents %}
+        <table class="document-table">
+            <thead>
+                <tr>
+                    <th data-i18n-key="tableId">ID</th>
+                    <th data-i18n-key="fileName">Tên file</th>
+                    <th data-i18n-key="project">Project</th>
+                    <th data-i18n-key="type">Loại</th>
+                    <th data-i18n-key="submittedBy">Người gửi</th>
+                    <th data-i18n-key="submittedAt">Ngày gửi</th>
+                    <th data-i18n-key="fileSize">Dung lượng</th>
+                    <th class="pending-action-column" data-i18n-key="action">Thao tác</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for document in documents %}
+                    <tr>
+                        <td>{{ document['document_code'] or document['id'] }}</td>
+
+                        <td>{{ document["original_name"] }}</td>
+
+                        <td>
+                            {{ document['project'] or 'Project 1' }}
+
+                            {% if document['requested_new_project'] %}
+                                <br>
+                                <span class="pending-new-badge" data-i18n-key="newProjectBadge">
+                                    Project mới
+                                </span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {{ document["category"] }}
+
+                            {% if document['requested_new_category'] %}
+                                <br>
+                                <span class="pending-new-badge">
+                                    <span data-i18n-key="newCategoryBadge">File con mới</span>
+                                    {% if document['requested_category_code'] %}
+                                        - {{ document['requested_category_code'] }}
+                                    {% endif %}
+                                </span>
+                            {% endif %}
+                        </td>
+
+                        <td>{{ document["submitted_by"] }}</td>
+
+                        <td>{{ document["submitted_at"] }}</td>
+
+                        <td>
+                            {{ "%.2f"|format(document["file_size"] / 1024) }} KB
+                        </td>
+
+                        <td class="review-cell pending-action-column">
+                            <div class="review-actions">
+                                <form
+                                    action="/manager/documents/{{ document['id'] }}/approve"
+                                    method="post"
+                                >
+                                    <button
+                                        class="approve-button action-small-button"
+                                        type="submit"
+                                        data-i18n-key="approveButton"
+                                    >
+                                        Duyệt
+                                    </button>
+                                </form>
+
+                                <button
+                                    class="reject-button action-small-button js-reject-toggle"
+                                    type="button"
+                                    data-target="reject-box-{{ document['id'] }}"
+                                    data-i18n-key="rejectButton"
+                                >
+                                    Từ chối
+                                </button>
+                            </div>
+
+                            <form
+                                id="reject-box-{{ document['id'] }}"
+                                class="reject-reason-box"
+                                action="/manager/documents/{{ document['id'] }}/reject"
+                                method="post"
+                            >
+                                <input
+                                    type="text"
+                                    name="rejection_reason"
+                                    placeholder="Lý do từ chối"
+                                    data-i18n-placeholder-key="rejectReasonPlaceholder"
+                                >
+
+                                <button
+                                    class="reject-button reject-confirm-button"
+                                    type="submit"
+                                    data-i18n-key="confirmRejectButton"
+                                >
+                                    Xác nhận từ chối
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    {% else %}
+        <p class="empty-message" data-i18n-key="emptyMessage">
+            Hiện chưa có hồ sơ nào đang chờ duyệt.
+        </p>
+    {% endif %}
+</div>
+
+<script>
+(function () {
+    const PAGE_TEXT = {
+        vi: {
+            pageTitle: "Hồ sơ chờ duyệt",
+            pageHeading: "HỒ SƠ CHỜ QUẢN LÝ DUYỆT",
+            managerLabel: "Quản lý:",
+            backButton: "Quay lại",
+            tableId: "ID",
+            fileName: "Tên file",
+            project: "Project",
+            type: "Loại",
+            submittedBy: "Người gửi",
+            submittedAt: "Ngày gửi",
+            fileSize: "Dung lượng",
+            action: "Thao tác",
+            newProjectBadge: "Project mới",
+            newCategoryBadge: "File con mới",
+            approveButton: "Duyệt",
+            rejectButton: "Từ chối",
+            rejectReasonPlaceholder: "Lý do từ chối",
+            confirmRejectButton: "Xác nhận từ chối",
+            emptyMessage: "Hiện chưa có hồ sơ nào đang chờ duyệt."
+        },
+
+        en: {
+            pageTitle: "Pending document",
+            pageHeading: "PENDING DOCUMENT",
+            managerLabel: "Manager:",
+            backButton: "Back",
+            tableId: "ID",
+            fileName: "File name",
+            project: "Project",
+            type: "Type",
+            submittedBy: "Submitted by",
+            submittedAt: "Submitted at",
+            fileSize: "File size",
+            action: "Action",
+            newProjectBadge: "New project",
+            newCategoryBadge: "New document type",
+            approveButton: "Approve",
+            rejectButton: "Reject",
+            rejectReasonPlaceholder: "Rejection reason",
+            confirmRejectButton: "Confirm rejection",
+            emptyMessage: "There are no pending documents."
+        }
+    };
+
+    function getPageLanguage() {
+        const savedLanguage = localStorage.getItem("appLanguage");
+
+        if (savedLanguage === "en" || savedLanguage === "vi") {
+            return savedLanguage;
+        }
+
+        return "vi";
+    }
+
+    function setPageLanguage(language) {
+        localStorage.setItem("appLanguage", language);
+    }
+
+    function applyManagerPendingLanguage(language) {
+        const languageButton = document.getElementById("languageToggle");
+        const text = PAGE_TEXT[language] || PAGE_TEXT.vi;
+
+        document.documentElement.lang = language;
+        document.title = text.pageTitle;
+
+        if (languageButton) {
+            languageButton.textContent = language === "vi" ? "EN" : "VI";
+        }
+
+        document.querySelectorAll("[data-i18n-key]").forEach(function (element) {
+            const key = element.getAttribute("data-i18n-key");
+
+            if (text[key]) {
+                element.textContent = text[key];
+            }
+        });
+
+        document.querySelectorAll("[data-i18n-placeholder-key]").forEach(function (element) {
+            const key = element.getAttribute("data-i18n-placeholder-key");
+
+            if (text[key]) {
+                element.setAttribute("placeholder", text[key]);
+            }
+        });
+
+        setPageLanguage(language);
+    }
+
+    function bindRejectButtons() {
+        const rejectButtons = document.querySelectorAll(".js-reject-toggle");
+
+        rejectButtons.forEach(function (button) {
+            if (button.dataset.rejectBound === "1") {
+                return;
+            }
+
+            button.dataset.rejectBound = "1";
+
+            button.addEventListener("click", function () {
+                const targetId = button.getAttribute("data-target");
+                const rejectBox = document.getElementById(targetId);
+
+                if (!rejectBox) {
+                    return;
+                }
+
+                rejectBox.classList.toggle("is-visible");
+
+                const reasonInput = rejectBox.querySelector(
+                    "input[name='rejection_reason']"
+                );
+
+                if (
+                    reasonInput &&
+                    rejectBox.classList.contains("is-visible")
+                ) {
+                    reasonInput.focus();
+                }
+            });
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        bindRejectButtons();
+        applyManagerPendingLanguage(getPageLanguage());
+
+        const languageButton = document.getElementById("languageToggle");
+
+        if (languageButton) {
+            languageButton.onclick = function () {
+                const currentLanguage = getPageLanguage();
+                const nextLanguage = currentLanguage === "vi" ? "en" : "vi";
+
+                applyManagerPendingLanguage(nextLanguage);
+            };
+        }
+    });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Thống kê upload tài liệu</title>
+    <link rel="stylesheet" href="/static/style.css?v=10000">
+</head>
+<body class="app-page statistics-page">
+
+<div class="logo-header">
+    <div class="header-logo-group">
+        <a class="corner-logo-link" href="/">
+            <img class="corner-logo akzo-logo" src="/static/images/AkzoNobel_RGB.png?v=31" alt="AkzoNobel">
+        </a>
+
+        <span class="logo-separator"></span>
+
+        <a class="engineering-logo-link" href="/">
+            <img class="engineering-logo" src="/static/images/amata_engineering_logo.png?v=1" alt="Amata Engineering">
+        </a>
+    </div>
+
+    <button class="language-toggle" id="languageToggle" type="button">EN</button>
+</div>
+
+<div class="dashboard-box statistics-box">
+    <div class="statistics-header">
+        <div>
+            <h1>Thống kê upload tài liệu</h1>
+           <p>Người dùng: <strong>{{ user["full_name"] }}</strong></p>
+        </div>
+
+        <div class="statistics-header-actions">
+    <a class="statistics-back-button" href="{{ dashboard_url }}">Back</a>
+</div>
+    </div>
+
+    <hr>
+
+    <div class="statistics-summary">
+        <div class="statistics-summary-card">
+            <div class="summary-number">{{ total_uploaded_documents }}</div>
+            <div class="summary-label">Tổng số tài liệu đã upload</div>
+        </div>
+    </div>
+
+    <div class="chart-grid">
+        <div class="chart-card">
+            <h2>Tài liệu upload theo tháng - Biểu đồ cột</h2>
+            <canvas id="barChartCanvas"></canvas>
+        </div>
+
+        <div class="chart-card">
+            <h2>Tài liệu upload theo tháng - Biểu đồ đường</h2>
+            <canvas id="lineChartCanvas"></canvas>
+        </div>
+    </div>
+
+    <div class="table-card">
+       <h2>Thống kê tài liệu theo user</h2>
+
+        <table class="document-table statistics-table">
+            <thead>
+                <tr>
+                    <th>STT</th>
+<th>Họ tên</th>
+<th>Tên đăng nhập</th>
+<th>Tổng đã upload</th>
+<th>Đã duyệt</th>
+<th>Chờ duyệt</th>
+<th>Từ chối</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if user_rows %}
+                    {% for row in user_rows %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ row["full_name"] }}</td>
+                        <td>{{ row["username"] }}</td>
+                        <td>{{ row["total_documents"] }}</td>
+                        <td>{{ row["approved_documents"] }}</td>
+                        <td>{{ row["pending_documents"] }}</td>
+                        <td>{{ row["rejected_documents"] }}</td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="7">Chưa có tài liệu nào được upload.</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+const monthlyLabelsText = '{{ monthly_labels_json | safe }}';
+const monthlyValuesText = '{{ monthly_values_json | safe }}';
+
+const monthlyLabels = JSON.parse(monthlyLabelsText);
+const monthlyValues = JSON.parse(monthlyValuesText);
+
+function setupCanvas(canvas) {
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+
+    canvas.width = rect.width * dpr;
+    canvas.height = 320 * dpr;
+
+    const ctx = canvas.getContext("2d");
+    ctx.scale(dpr, dpr);
+
+    return {
+        ctx: ctx,
+        width: rect.width,
+        height: 320
+    };
+}
+
+function drawAxes(ctx, width, height, padding) {
+    ctx.beginPath();
+    ctx.moveTo(padding.left, padding.top);
+    ctx.lineTo(padding.left, height - padding.bottom);
+    ctx.lineTo(width - padding.right, height - padding.bottom);
+    ctx.strokeStyle = "#243b53";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+}
+
+function drawYLabels(ctx, maxValue, width, height, padding) {
+    ctx.font = "12px Arial";
+    ctx.fillStyle = "#334e68";
+    ctx.textAlign = "right";
+
+    for (let i = 0; i <= 5; i++) {
+        const value = Math.round((maxValue / 5) * i);
+        const y = height - padding.bottom - ((height - padding.top - padding.bottom) * i / 5);
+
+        ctx.fillText(value, padding.left - 10, y + 4);
+
+        ctx.beginPath();
+        ctx.moveTo(padding.left, y);
+        ctx.lineTo(width - padding.right, y);
+        ctx.strokeStyle = "#e5edf5";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+    }
+}
+
+function drawXLabels(ctx, labels, width, height, padding, alignToPoints = false) {
+    const chartWidth = width - padding.left - padding.right;
+
+    const step = alignToPoints
+        ? chartWidth / Math.max(1, labels.length - 1)
+        : chartWidth / labels.length;
+
+    ctx.font = "bold 16px Arial";
+    ctx.fillStyle = "#334e68";
+    ctx.textAlign = "right";
+    ctx.textBaseline = "middle";
+
+    labels.forEach((label, index) => {
+        const x = alignToPoints
+            ? padding.left + step * index
+            : padding.left + step * index + step / 2;
+
+        const y = height - padding.bottom + 42;
+
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(-Math.PI / 4);
+        ctx.fillText(label, 0, 0);
+        ctx.restore();
+    });
+}
+
+function drawBarChart() {
+    const canvas = document.getElementById("barChartCanvas");
+    const setup = setupCanvas(canvas);
+    const ctx = setup.ctx;
+    const width = setup.width;
+    const height = setup.height;
+
+    const padding = {
+        top: 30,
+        right: 25,
+        bottom: 85,
+        left: 55
+    };
+
+    const maxValue = Math.max(1, ...monthlyValues);
+    const chartWidth = width - padding.left - padding.right;
+    const chartHeight = height - padding.top - padding.bottom;
+    const step = chartWidth / monthlyValues.length;
+    const barWidth = step * 0.55;
+
+    ctx.clearRect(0, 0, width, height);
+
+    drawYLabels(ctx, maxValue, width, height, padding);
+    drawAxes(ctx, width, height, padding);
+    drawXLabels(ctx, monthlyLabels, width, height, padding, false);
+
+    monthlyValues.forEach((value, index) => {
+        const barHeight = (value / maxValue) * chartHeight;
+        const x = padding.left + step * index + (step - barWidth) / 2;
+        const y = height - padding.bottom - barHeight;
+
+        ctx.fillStyle = "#174a7c";
+        ctx.fillRect(x, y, barWidth, barHeight);
+
+        ctx.fillStyle = "#102a43";
+        ctx.font = "12px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText(value, x + barWidth / 2, y - 6);
+    });
+}
+
+function drawLineChart() {
+    const canvas = document.getElementById("lineChartCanvas");
+    const setup = setupCanvas(canvas);
+    const ctx = setup.ctx;
+    const width = setup.width;
+    const height = setup.height;
+
+    const padding = {
+        top: 30,
+        right: 25,
+        bottom: 85,
+        left: 55
+    };
+
+    const maxValue = Math.max(1, ...monthlyValues);
+    const chartWidth = width - padding.left - padding.right;
+    const chartHeight = height - padding.top - padding.bottom;
+    const step = chartWidth / Math.max(1, monthlyValues.length - 1);
+
+    ctx.clearRect(0, 0, width, height);
+
+    drawYLabels(ctx, maxValue, width, height, padding);
+    drawAxes(ctx, width, height, padding);
+    drawXLabels(ctx, monthlyLabels, width, height, padding, true);
+
+    const points = monthlyValues.map((value, index) => {
+        const x = padding.left + step * index;
+        const y = height - padding.bottom - (value / maxValue) * chartHeight;
+        return {x, y, value};
+    });
+
+    ctx.beginPath();
+
+    points.forEach((point, index) => {
+        if (index === 0) {
+            ctx.moveTo(point.x, point.y);
+        } else {
+            ctx.lineTo(point.x, point.y);
+        }
+    });
+
+    ctx.strokeStyle = "#174a7c";
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    points.forEach((point) => {
+        ctx.beginPath();
+        ctx.arc(point.x, point.y, 5, 0, Math.PI * 2);
+        ctx.fillStyle = "#174a7c";
+        ctx.fill();
+
+        ctx.fillStyle = "#102a43";
+        ctx.font = "12px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText(point.value, point.x, point.y - 10);
+    });
+}
+
+function drawAllCharts() {
+    drawBarChart();
+    drawLineChart();
+}
+
+window.addEventListener("load", drawAllCharts);
+window.addEventListener("resize", drawAllCharts);
+</script>
+
+<script>
+(function () {
+    const VI_TO_EN = {
+        "Thống kê upload tài liệu": "Upload Statistics",
+        "Thống kê upload": "Upload Statistics",
+        "Người dùng:": "User:",
+        "Quay lại": "Back",
+
+        "Tổng số tài liệu đã upload": "Total uploaded documents",
+
+        "Tài liệu upload theo tháng - Biểu đồ cột": "Monthly Uploaded Documents - Bar Chart",
+        "Tài liệu upload theo tháng - Biểu đồ đường": "Monthly Uploaded Documents - Line Chart",
+        "Thống kê tài liệu theo user": "Uploaded Documents by User",
+
+        "STT": "No.",
+        "Họ tên": "Full name",
+        "Tên đăng nhập": "Username",
+        "Tổng đã upload": "Total uploaded",
+        "Đã duyệt": "Approved",
+        "Chờ duyệt": "Pending",
+        "Từ chối": "Rejected"
+    };
+
+    const EN_TO_VI = {
+        "Upload Statistics": "Thống kê upload tài liệu",
+        "User:": "Người dùng:",
+        "Back": "Quay lại",
+
+        "Total uploaded documents": "Tổng số tài liệu đã upload",
+
+        "Monthly Uploaded Documents - Bar Chart": "Tài liệu upload theo tháng - Biểu đồ cột",
+        "Monthly Uploaded Documents - Line Chart": "Tài liệu upload theo tháng - Biểu đồ đường",
+        "Uploaded Documents by User": "Thống kê tài liệu theo user",
+
+        "No.": "STT",
+        "Full name": "Họ tên",
+        "Username": "Tên đăng nhập",
+        "Total uploaded": "Tổng đã upload",
+        "Approved": "Đã duyệt",
+        "Pending": "Chờ duyệt",
+        "Rejected": "Từ chối"
+    };
+
+    function getLanguage() {
+        return localStorage.getItem("appLanguage") || "vi";
+    }
+
+    function setLanguage(language) {
+        localStorage.setItem("appLanguage", language);
+    }
+
+    function normalizeText(value) {
+        return String(value || "").replace(/\s+/g, " ").trim();
+    }
+
+    function translateTextNodes(language) {
+        const map = language === "en" ? VI_TO_EN : EN_TO_VI;
+
+        const walker = document.createTreeWalker(
+            document.body,
+            NodeFilter.SHOW_TEXT,
+            {
+                acceptNode: function (node) {
+                    const parent = node.parentElement;
+
+                    if (!parent) {
+                        return NodeFilter.FILTER_REJECT;
+                    }
+
+                    const tagName = parent.tagName.toLowerCase();
+
+                    if (
+                        tagName === "script" ||
+                        tagName === "style" ||
+                        tagName === "textarea" ||
+                        tagName === "canvas"
+                    ) {
+                        return NodeFilter.FILTER_REJECT;
+                    }
+
+                    if (!normalizeText(node.nodeValue)) {
+                        return NodeFilter.FILTER_REJECT;
+                    }
+
+                    return NodeFilter.FILTER_ACCEPT;
+                }
+            }
+        );
+
+        const nodes = [];
+
+        while (walker.nextNode()) {
+            nodes.push(walker.currentNode);
+        }
+
+        nodes.forEach(function (node) {
+            const originalText = node.nodeValue;
+            let text = normalizeText(originalText);
+
+            if (map[text]) {
+                text = map[text];
+            }
+
+            const leading = originalText.match(/^\s*/)[0];
+            const trailing = originalText.match(/\s*$/)[0];
+
+            node.nodeValue = leading + text + trailing;
+        });
+    }
+
+    function fixMixedText(language) {
+        document.querySelectorAll("h1, h2, h3, p, span, th, td, a, button").forEach(function (element) {
+            if (element.children.length > 0) {
+                return;
+            }
+
+            const text = normalizeText(element.textContent);
+
+            if (language === "en" && text === "Upload Statistics tài liệu") {
+                element.textContent = "Upload Statistics";
+            }
+
+            if (language === "vi" && text === "Upload Statistics tài liệu") {
+                element.textContent = "Thống kê upload tài liệu";
+            }
+        });
+    }
+
+    function applyStatisticsLanguage(language) {
+        const button = document.getElementById("languageToggle");
+
+        document.documentElement.lang = language;
+
+        if (button) {
+            button.textContent = language === "vi" ? "EN" : "VI";
+        }
+
+        translateTextNodes(language);
+        fixMixedText(language);
+        setLanguage(language);
+    }
+
+    function bindStatisticsLanguageButton() {
+        const button = document.getElementById("languageToggle");
+
+        if (!button) {
+            return;
+        }
+
+        button.onclick = function () {
+            const currentLanguage = getLanguage();
+            const nextLanguage = currentLanguage === "vi" ? "en" : "vi";
+
+            applyStatisticsLanguage(nextLanguage);
+        };
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        applyStatisticsLanguage(getLanguage());
+        bindStatisticsLanguageButton();
+    });
+
+    window.addEventListener("load", function () {
+        applyStatisticsLanguage(getLanguage());
+        bindStatisticsLanguageButton();
+    });
+})();
+</script>
+
+</body>
+</html>

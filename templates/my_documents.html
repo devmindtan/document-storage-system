@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Hồ sơ của tôi</title>
+     <link rel="stylesheet" href="/static/style.css?v=1001">
+</head>
+
+<body class="app-page" data-page-title-key="pageTitleMyDocuments">
+<div class="logo-header">
+    <div class="header-logo-group">
+        <a class="corner-logo-link" href="/">
+            <img
+                class="corner-logo akzo-logo"
+                src="/static/images/AkzoNobel_RGB.png?v=31"
+                alt="AkzoNobel"
+            >
+        </a>
+
+        <span class="logo-separator"></span>
+
+        <a class="engineering-logo-link" href="/">
+            <img
+                class="engineering-logo"
+                src="/static/images/amata_engineering_logo.png?v=1"
+                alt="Amata Engineering"
+            >
+        </a>
+    </div>
+
+    <button class="language-toggle" id="languageToggle" type="button">
+        EN
+    </button>
+</div>
+<div class="dashboard-box">
+        <div class="top-bar">
+            <div>
+                <h1 data-i18n-key="myDocumentsTitle">HỒ SƠ CỦA TÔI</h1>
+                <p>
+                    <span data-i18n-key="employeeLabel">Nhân viên:</span>
+                    <strong>{{ user['full_name'] }}</strong>
+                </p>
+            </div>
+
+            <a class="logout-button" href="/employee" data-i18n-key="backButton">
+                Quay lại
+            </a>
+        </div>
+
+        <hr>
+
+        {% if documents %}
+            <table class="document-table">
+                <thead>
+                    <tr>
+                        <th data-i18n-key="tableId">ID</th>
+                        <th data-i18n-key="fileName">Tên file</th>
+                        <th data-i18n-key="type">Loại</th>
+                        <th data-i18n-key="submittedAt">Ngày gửi</th>
+                        <th data-i18n-key="status">Trạng thái</th>
+                        <th data-i18n-key="approvedBy">Người duyệt</th>
+                        <th data-i18n-key="rejectionReason">Lý do từ chối</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for document in documents %}
+                        <tr>
+                            <td>{{ document['document_code'] or document['id'] }}</td>
+                            <td>{{ document['original_name'] }}</td>
+                            <td>{{ document['category'] }}</td>
+                            <td>{{ document['submitted_at'] }}</td>
+
+                            <td>
+                                {% if document['status'] == 'PENDING' %}
+                                    <span data-i18n-key="statusPending">Chờ quản lý duyệt</span>
+                                {% elif document['status'] == 'APPROVED' %}
+                                    <span data-i18n-key="statusApproved">Đã được duyệt</span>
+                                {% elif document['status'] == 'REJECTED' %}
+                                    <span data-i18n-key="statusRejected">Bị từ chối</span>
+                                {% else %}
+                                    <span data-i18n-key="statusUnknown">Không xác định</span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {{ document['reviewed_by'] or '-' }}
+                            </td>
+
+                            <td>
+                                {{ document['rejection_reason'] or '-' }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        {% else %}
+            <p class="empty-message" data-i18n-key="noEmployeeDocuments">
+                Bạn chưa gửi hồ sơ nào.
+            </p>
+        {% endif %}
+    </div>
+    <script src="/static/language.js?v=700"></script>
+<script>
+(function () {
+    const PAGE_TRANSLATIONS = {
+        vi: {
+            pageTitlePendingProjects: "Project chờ duyệt",
+            pageTitleMyDocuments: "Hồ sơ của tôi",
+            pendingProjectsTitle: "PROJECT CHỜ DUYỆT",
+            myDocumentsTitle: "HỒ SƠ CỦA TÔI",
+            managerLabel: "Quản lý:",
+            employeeLabel: "Nhân viên:",
+            backButton: "Quay lại",
+            noPendingProjects: "Hiện chưa có project nào đang chờ duyệt.",
+            noEmployeeDocuments: "Bạn chưa gửi hồ sơ nào.",
+            tableId: "ID",
+            projectName: "Tên project",
+            requestedBy: "Người yêu cầu",
+            requestedAt: "Ngày yêu cầu",
+            action: "Thao tác",
+            approve: "Duyệt",
+            reject: "Từ chối",
+            rejectionReason: "Lý do từ chối",
+            fileName: "Tên file",
+            type: "Loại",
+            submittedAt: "Ngày gửi",
+            status: "Trạng thái",
+            approvedBy: "Người duyệt",
+            statusPending: "Chờ quản lý duyệt",
+            statusApproved: "Đã được duyệt",
+            statusRejected: "Bị từ chối",
+            statusUnknown: "Không xác định"
+        },
+        en: {
+            pageTitlePendingProjects: "Pending projects",
+            pageTitleMyDocuments: "My document",
+            pendingProjectsTitle: "PENDING PROJECTS",
+            myDocumentsTitle: "MY DOCUMENT",
+            managerLabel: "Manager:",
+            employeeLabel: "Employee:",
+            backButton: "Back",
+            noPendingProjects: "There are no pending projects.",
+            noEmployeeDocuments: "You have not submitted any documents yet.",
+            tableId: "ID",
+            projectName: "Project name",
+            requestedBy: "Requested by",
+            requestedAt: "Requested at",
+            action: "Action",
+            approve: "Approve",
+            reject: "Reject",
+            rejectionReason: "Rejection reason",
+            fileName: "File name",
+            type: "Type",
+            submittedAt: "Submitted at",
+            status: "Status",
+            approvedBy: "Approved by",
+            statusPending: "Pending manager approval",
+            statusApproved: "Approved",
+            statusRejected: "Rejected",
+            statusUnknown: "Unknown"
+        }
+    };
+
+    function getCurrentLanguageSafe() {
+        const savedLanguage = localStorage.getItem("appLanguage");
+
+        if (savedLanguage === "en" || savedLanguage === "vi") {
+            return savedLanguage;
+        }
+
+        return "vi";
+    }
+
+    function setPageLanguage(language) {
+        const languageButton = document.getElementById("languageToggle");
+
+        if (languageButton) {
+            languageButton.textContent = language === "vi" ? "EN" : "VI";
+        }
+
+        document.documentElement.lang = language;
+
+        const translations = PAGE_TRANSLATIONS[language] || PAGE_TRANSLATIONS.vi;
+
+        document.querySelectorAll("[data-i18n-key]").forEach(function (element) {
+            const key = element.getAttribute("data-i18n-key");
+
+            if (translations[key]) {
+                element.textContent = translations[key];
+            }
+        });
+
+        document.querySelectorAll("[data-i18n-placeholder-key]").forEach(function (element) {
+            const key = element.getAttribute("data-i18n-placeholder-key");
+
+            if (translations[key]) {
+                element.setAttribute("placeholder", translations[key]);
+            }
+        });
+
+        const pageTitleKey = document.body.getAttribute("data-page-title-key");
+
+        if (pageTitleKey && translations[pageTitleKey]) {
+            document.title = translations[pageTitleKey];
+        }
+
+        localStorage.setItem("appLanguage", language);
+    }
+
+    function patchGlobalApplyLanguage() {
+        if (
+            typeof window.applyLanguage === "function" &&
+            !window.applyLanguage.__pageTranslationPatched
+        ) {
+            const originalApplyLanguage = window.applyLanguage;
+
+            window.applyLanguage = function (language) {
+                try {
+                    originalApplyLanguage(language);
+                } catch (error) {
+                    console.warn("Global language.js error:", error);
+                }
+
+                setPageLanguage(language);
+            };
+
+            window.applyLanguage.__pageTranslationPatched = true;
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        patchGlobalApplyLanguage();
+
+        setPageLanguage(getCurrentLanguageSafe());
+
+        const languageButton = document.getElementById("languageToggle");
+
+        if (languageButton && !languageButton.dataset.pageTranslationBound) {
+            languageButton.dataset.pageTranslationBound = "1";
+
+            languageButton.addEventListener("click", function (event) {
+                event.preventDefault();
+                event.stopImmediatePropagation();
+
+                const currentLanguage = getCurrentLanguageSafe();
+                const nextLanguage = currentLanguage === "vi" ? "en" : "vi";
+
+                if (typeof window.applyLanguage === "function") {
+                    try {
+                        window.applyLanguage(nextLanguage);
+                    } catch (error) {
+                        console.warn("Global language.js error:", error);
+                        setPageLanguage(nextLanguage);
+                    }
+                } else {
+                    setPageLanguage(nextLanguage);
+                }
+            }, true);
+        }
+    });
+})();
+</script>
+</body>
+</html>

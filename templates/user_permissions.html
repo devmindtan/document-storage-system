@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Phân quyền tài khoản</title>
+    <link rel="stylesheet" href="/static/style.css?v=1000">
+</head>
+
+<body class="app-page">
+<div class="logo-header">
+    <div class="header-logo-group">
+        <a class="corner-logo-link" href="/">
+            <img
+                class="corner-logo akzo-logo"
+                src="/static/images/AkzoNobel_RGB.png?v=31"
+                alt="AkzoNobel"
+            >
+        </a>
+
+        <span class="logo-separator"></span>
+
+        <a class="engineering-logo-link" href="/">
+            <img
+                class="engineering-logo"
+                src="/static/images/amata_engineering_logo.png?v=1"
+                alt="Amata Engineering"
+            >
+        </a>
+    </div>
+
+    <button class="language-toggle" id="languageToggle" type="button">
+        EN
+    </button>
+</div>
+<div class="dashboard-box">
+
+        <div class="top-bar">
+            <div>
+                <h1>PHÂN QUYỀN TÀI KHOẢN</h1>
+                <p>
+                    Quản lý:
+                    <strong>{{ user['full_name'] }}</strong>
+                </p>
+            </div>
+
+            <a class="logout-button" href="/manager/users">
+                Quay lại
+            </a>
+        </div>
+
+        <hr>
+
+        <div class="info-box">
+            <p>
+                <strong>Tài khoản:</strong>
+                {{ target_user['username'] }}
+            </p>
+
+            <p>
+                <strong>Họ tên:</strong>
+                {{ target_user['full_name'] }}
+            </p>
+
+            <p>
+                <strong>Vai trò:</strong>
+                {% if target_user['role'] == 'MANAGER' %}
+                    Quản lý
+                {% else %}
+                    Nhân viên
+                {% endif %}
+            </p>
+        </div>
+
+        <hr>
+
+        <form
+            action="/manager/users/{{ target_user['id'] }}/permissions"
+            method="post"
+        >
+            <h3>Chọn loại hồ sơ được phép xem/download</h3>
+
+            {% for key, category in categories.items() %}
+                <div class="checkbox-row">
+                    <label>
+                        {% if category['label'] in selected_categories %}
+    <input
+        type="checkbox"
+        name="categories"
+        value="{{ category['label'] }}"
+        checked
+    >
+{% else %}
+    <input
+        type="checkbox"
+        name="categories"
+        value="{{ category['label'] }}"
+    >
+{% endif %}
+
+                        {{ category['label'] }}
+                    </label>
+                </div>
+            {% endfor %}
+
+            <br>
+
+            <button class="approve-button" type="submit">
+                Lưu phân quyền
+            </button>
+        </form>
+
+    </div>
+    <script src="/static/language.js?v=3"></script>
+</body>
+</html>

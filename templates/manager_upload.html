@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý upload hồ sơ</title>
+    <link rel="stylesheet" href="/static/style.css?v=8002">
+
+    <style>
+        .required-star {
+            color: #d00000 !important;
+            font-weight: bold !important;
+            margin-left: 4px !important;
+        }
+
+        .conditional-input-box {
+            display: none;
+            margin-top: 10px;
+            padding: 12px 14px;
+            border: 1px dashed #b7c5d6;
+            border-radius: 8px;
+            background: #f8fbff;
+        }
+
+        .conditional-input-box.is-visible {
+            display: block;
+        }
+
+        .manager-maintenance-box {
+            margin-top: 28px;
+            padding: 18px;
+            border: 1px solid #d6dee8;
+            border-radius: 8px;
+            background: #f8fbff;
+        }
+
+        .manager-maintenance-box h2 {
+            margin-top: 0;
+            color: #174a7c;
+        }
+
+        .danger-button {
+            margin-top: 12px;
+            width: 100%;
+            background: #b33131 !important;
+            color: #ffffff !important;
+            border: none !important;
+            border-radius: 6px !important;
+            padding: 12px 18px !important;
+            font-weight: bold !important;
+            cursor: pointer !important;
+        }
+
+        .danger-button:hover {
+            background: #922727 !important;
+        }
+
+        .category-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .category-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 12px 16px;
+            background: #ffffff;
+            border: 1px solid #d6dee8;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+
+        .category-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .category-name {
+            font-size: 17px;
+            font-weight: bold;
+            color: #174a7c;
+        }
+
+        .category-code {
+            font-size: 15px;
+            color: #333333;
+        }
+
+        .category-delete-form {
+            margin: 0;
+            flex-shrink: 0;
+        }
+
+        .btn-delete-small {
+            width: auto !important;
+            min-width: 76px !important;
+            height: 38px !important;
+            padding: 0 16px !important;
+            background: #b33131 !important;
+            color: #ffffff !important;
+            border: none !important;
+            border-radius: 6px !important;
+            font-size: 15px !important;
+            font-weight: bold !important;
+            cursor: pointer !important;
+        }
+
+        .btn-delete-small:hover {
+            background: #922727 !important;
+        }
+
+    </style>
+</head>
+
+<body class="app-page">
+<div class="logo-header">
+    <div class="header-logo-group">
+        <a class="corner-logo-link" href="/">
+            <img
+                class="corner-logo akzo-logo"
+                src="/static/images/AkzoNobel_RGB.png?v=31"
+                alt="AkzoNobel"
+            >
+        </a>
+
+        <span class="logo-separator"></span>
+
+        <a class="engineering-logo-link" href="/">
+            <img
+                class="engineering-logo"
+                src="/static/images/amata_engineering_logo.png?v=1"
+                alt="Amata Engineering"
+            >
+        </a>
+    </div>
+
+    <button class="language-toggle" id="languageToggle" type="button">
+        EN
+    </button>
+</div>
+
+<div class="dashboard-box">
+    <div class="top-bar">
+        <div>
+            <h1>QUẢN LÝ UPLOAD HỒ SƠ</h1>
+            <p>
+                Quản lý:
+                <strong>{{ user["full_name"] }}</strong>
+            </p>
+        </div>
+
+        <a class="logout-button" href="/manager">
+            Quay lại
+        </a>
+    </div>
+
+    <hr>
+
+    {% if error %}
+        <p class="error-message">
+            {{ error }}
+        </p>
+    {% endif %}
+
+    {% if success %}
+        <p class="success-message">
+            {{ success }}
+        </p>
+    {% endif %}
+
+    <form
+        action="/manager/upload"
+        method="post"
+        enctype="multipart/form-data"
+    >
+        <label for="project_key">Project</label>
+
+        <select id="project_key" name="project_key" required>
+            {% for key, project in projects.items() %}
+                {% if selected_project_key == key %}
+                    <option value="{{ key }}" selected>
+                        {{ project['label'] }}
+                    </option>
+                {% else %}
+                    <option value="{{ key }}">
+                        {{ project['label'] }}
+                    </option>
+                {% endif %}
+            {% endfor %}
+
+            {% if selected_project_key == '__new_project__' %}
+                <option value="__new_project__" selected>
+                    + Tạo project mới
+                </option>
+            {% else %}
+                <option value="__new_project__">
+                    + Tạo project mới
+                </option>
+            {% endif %}
+        </select>
+
+        <div id="newProjectBox" class="conditional-input-box">
+            <label for="new_project_name">
+                Tên project mới <span class="required-star">*</span>
+            </label>
+
+            <input
+                id="new_project_name"
+                type="text"
+                name="new_project_name"
+                maxlength="50"
+                placeholder="Nhập tên project mới"
+                value="{{ new_project_name_value or '' }}"
+            >
+
+            <p class="note-text">
+                Project mới sẽ được tạo ngay khi quản lý upload hồ sơ.
+            </p>
+        </div>
+
+        <label for="category_key">Loại hồ sơ</label>
+
+        <select
+            id="category_key"
+            name="category_key"
+            required
+            data-selected-category-key="{{ selected_category_key }}"
+        >
+            <option value="">Đang tải file con...</option>
+        </select>
+
+        <div id="newCategoryBox" class="conditional-input-box">
+            <label for="new_category_name">
+                Tên file con mới <span class="required-star">*</span>
+            </label>
+
+            <input
+                id="new_category_name"
+                type="text"
+                name="new_category_name"
+                maxlength="50"
+                placeholder="Nhập tên file con mới"
+                value="{{ new_category_name_value or '' }}"
+            >
+
+            <label for="new_category_code">
+                Mã file con
+            </label>
+
+            <input
+                id="new_category_code"
+                type="text"
+                name="new_category_code"
+                maxlength="10"
+                placeholder="Ví dụ: IR, QC, LEG"
+                value="{{ new_category_code_value or '' }}"
+            >
+
+            <p class="note-text">
+                Nếu để trống mã file con, hệ thống sẽ tự tạo mã.
+            </p>
+        </div>
+
+        <label>
+            Chọn file
+        </label>
+
+        <div class="custom-file-upload">
+            <input
+                id="uploaded_files"
+                class="real-file-input"
+                type="file"
+                name="uploaded_files"
+                multiple
+                required
+            >
+
+            <label
+                class="custom-file-button"
+                for="uploaded_files"
+            >
+                Chọn tệp
+            </label>
+
+            <span
+                class="selected-file-text"
+                id="selectedFileText"
+            >
+                Không có tệp nào được chọn
+            </span>
+        </div>
+
+        <label for="description">
+            Mô tả <span class="required-star">*</span>
+        </label>
+
+        <input
+            id="description"
+            type="text"
+            name="description"
+            maxlength="50"
+            required
+            aria-required="true"
+            placeholder="Nhập mô tả hồ sơ, tối đa 50 ký tự"
+            value="{{ description_value or '' }}"
+            oninvalid="this.setCustomValidity('Vui lòng nhập mô tả hồ sơ.')"
+            oninput="this.setCustomValidity('')"
+        >
+
+        <p class="note-text">
+            Bắt buộc nhập. Tối đa 50 ký tự.
+        </p>
+
+        <label for="location">
+            Vị trí <span class="required-star">*</span>
+        </label>
+
+        <input
+            id="location"
+            type="text"
+            name="location"
+            maxlength="50"
+            required
+            aria-required="true"
+            placeholder="Nhập vị trí hồ sơ, tối đa 50 ký tự"
+            value="{{ location_value }}"
+            oninvalid="this.setCustomValidity('Vui lòng nhập vị trí hồ sơ.')"
+            oninput="this.setCustomValidity('')"
+        >
+
+        <p class="note-text">
+            Bắt buộc nhập. Tối đa 50 ký tự.
+        </p>
+
+        <button type="submit" class="primary-upload-button">
+    Upload và duyệt ngay
+</button>
+    </form>
+
+    <hr>
+
+    <div class="manager-maintenance-box">
+        <h2 id="deleteProjectTitle">
+            Xóa project
+        </h2>
+
+        <p class="note-text" id="deleteProjectNote">
+            Chỉ xóa project khi không còn cần sử dụng. Khi xóa project, các hồ sơ thuộc project đó cũng sẽ bị xóa.
+        </p>
+
+        <form
+            id="deleteProjectForm"
+            method="post"
+            onsubmit="return handleDeleteProjectSubmit();"
+        >
+            <label for="delete_project_id" id="deleteProjectSelectLabel">
+                Chọn project cần xóa
+            </label>
+
+            <select id="delete_project_id" name="delete_project_id" required>
+                <option value="">
+                    Chọn project cần xóa
+                </option>
+
+                {% for key, project in projects.items() %}
+                    <option value="{{ key }}">
+                        {{ project['label'] }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <button type="submit" class="danger-button" id="deleteProjectButton">
+                Xóa project
+            </button>
+        </form>
+    </div>
+
+    <hr>
+
+    <div class="manager-maintenance-box">
+        <h2 id="existingCategoryTitle">
+            Xóa file con
+        </h2>
+
+        <p class="note-text" id="existingCategoryNote">
+            Chọn project ở phần upload phía trên, sau đó chọn file con cần xóa.
+        </p>
+
+        <form
+            id="deleteCategoryForm"
+            method="post"
+            onsubmit="return handleDeleteCategorySubmit();"
+        >
+            <label for="delete_category_id" id="deleteCategorySelectLabel">
+                Chọn file con cần xóa
+            </label>
+
+            <select id="delete_category_id" name="delete_category_id" required>
+                <option value="">
+                    Vui lòng chọn project để xem file con
+                </option>
+            </select>
+
+            <input
+                id="delete_category_project_key"
+                type="hidden"
+                name="project_key"
+                value=""
+            >
+
+            <button type="submit" class="danger-button" id="deleteCategoryButton" disabled>
+                Xóa file con
+            </button>
+        </form>
+    </div>
+
+    <p class="note-text">
+        Nếu cần project mới hoặc file con mới, hãy chọn trực tiếp trong danh sách phía trên. Hồ sơ do quản lý upload sẽ được đưa thẳng vào kho chính thức.
+    </p>
+</div>
+
+
+
+<script>
+function getCurrentConfirmLanguage() {
+    const currentLanguage = localStorage.getItem("appLanguage");
+
+    if (currentLanguage === "en") {
+        return "en";
+    }
+
+    return "vi";
+}
+
+function getDeleteProjectConfirmText() {
+    const language = getCurrentConfirmLanguage();
+
+    if (language === "en") {
+        return "Are you sure you want to delete this project? All documents under this project will also be deleted.";
+    }
+
+    return "Bạn có chắc muốn xóa project này không? Tất cả hồ sơ trong project này cũng sẽ bị xóa.";
+}
+
+function getDeleteCategoryConfirmText() {
+    const language = getCurrentConfirmLanguage();
+
+    if (language === "en") {
+        return "Are you sure you want to delete this document type? It will be hidden from new uploads.";
+    }
+
+    return "Bạn có chắc muốn xóa file con này không? File con này sẽ bị ẩn khỏi danh sách upload mới.";
+}
+
+function handleDeleteProjectSubmit() {
+    const deleteProjectForm = document.getElementById("deleteProjectForm");
+    const deleteProjectSelect = document.getElementById("delete_project_id");
+
+    if (!deleteProjectForm || !deleteProjectSelect || !deleteProjectSelect.value) {
+        return false;
+    }
+
+    deleteProjectForm.action = "/projects/" + deleteProjectSelect.value + "/delete";
+
+    return confirm(getDeleteProjectConfirmText());
+}
+
+function handleDeleteCategorySubmit() {
+    const deleteCategoryForm = document.getElementById("deleteCategoryForm");
+    const deleteCategorySelect = document.getElementById("delete_category_id");
+
+    if (!deleteCategoryForm || !deleteCategorySelect || !deleteCategorySelect.value) {
+        return false;
+    }
+
+    deleteCategoryForm.action = "/manager/project-categories/" + deleteCategorySelect.value + "/delete";
+
+    return confirm(getDeleteCategoryConfirmText());
+}
+</script>
+
+
+<script>
+(function () {
+    const PAGE_TEXT = {
+        vi: {
+            title: "QUẢN LÝ UPLOAD HỒ SƠ",
+            personLabel: "Quản lý:",
+            back: "Quay lại",
+            projectLabel: "Project",
+            documentTypeLabel: "Loại hồ sơ",
+            newProjectOption: "+ Tạo project mới",
+            newProjectNameLabel: "Tên project mới",
+            newProjectPlaceholder: "Nhập tên project mới",
+            newProjectNote: "Project mới sẽ được tạo ngay khi quản lý upload hồ sơ.",
+            newCategoryNameLabel: "Tên file con mới",
+            newCategoryNamePlaceholder: "Nhập tên file con mới",
+            newCategoryCodeLabel: "Mã file con",
+            newCategoryCodePlaceholder: "Ví dụ: IR, QC, LEG",
+            newCategoryNote: "Nếu để trống mã file con, hệ thống sẽ tự tạo mã.",
+            fileSelectionLabel: "Chọn file",
+            chooseFileButton: "Chọn tệp",
+            noFilesSelected: "Không có tệp nào được chọn",
+            descriptionLabel: "Mô tả",
+            descriptionPlaceholder: "Nhập mô tả hồ sơ, tối đa 50 ký tự",
+            locationLabel: "Vị trí",
+            locationPlaceholder: "Nhập vị trí hồ sơ, tối đa 50 ký tự",
+            requiredNote: "Bắt buộc nhập. Tối đa 50 ký tự.",
+            submitButton: "Upload và duyệt ngay",
+            bottomNote: "Nếu cần project mới hoặc file con mới, hãy chọn trực tiếp trong danh sách phía trên. Hồ sơ do quản lý upload sẽ được đưa thẳng vào kho chính thức.",
+            deleteProjectTitle: "Xóa project",
+            deleteProjectNote: "Chỉ xóa project khi không còn cần sử dụng. Khi xóa project, các hồ sơ thuộc project đó cũng sẽ bị xóa.",
+            selectProjectToDelete: "Chọn project cần xóa",
+            deleteProjectButton: "Xóa project",
+            existingCategoryTitle: "Xóa file con",
+            existingCategoryNote: "Chọn project ở phần upload phía trên, sau đó chọn file con cần xóa.",
+            selectProjectForCategories: "Vui lòng chọn project để xem file con.",
+            selectExistingProjectForCategories: "Vui lòng chọn project có sẵn để xem file con.",
+            noCategoriesInProject: "Project này chưa có file con.",
+            categoryCodePrefix: "Mã:",
+            selectCategoryToDelete: "Chọn file con cần xóa",
+            deleteCategoryButton: "Xóa file con"
+        },
+        en: {
+            title: "MANAGER DOCUMENT UPLOAD",
+            personLabel: "Manager:",
+            back: "Back",
+            projectLabel: "Project",
+            documentTypeLabel: "Document type",
+            newProjectOption: "+ Create new project",
+            newProjectNameLabel: "New project name",
+            newProjectPlaceholder: "Enter new project name",
+            newProjectNote: "The new project will be created immediately when the manager uploads the document.",
+            newCategoryNameLabel: "New document type name",
+            newCategoryNamePlaceholder: "Enter new document type name",
+            newCategoryCodeLabel: "Document type code",
+            newCategoryCodePlaceholder: "Example: IR, QC, LEG",
+            newCategoryNote: "If left blank, the system will generate the code automatically.",
+            fileSelectionLabel: "File selection",
+            chooseFileButton: "Choose files",
+            noFilesSelected: "No files selected",
+            descriptionLabel: "Description",
+            descriptionPlaceholder: "Enter document description, maximum 50 characters",
+            locationLabel: "Location",
+            locationPlaceholder: "Enter document location, maximum 50 characters",
+            requiredNote: "Required. Maximum 50 characters.",
+            submitButton: "Upload and approve now",
+            bottomNote: "If a new project or document type is needed, select it directly from the dropdown above. Documents uploaded by managers will be moved directly to official storage.",
+            deleteProjectTitle: "Delete project",
+            deleteProjectNote: "Only delete a project when it is no longer needed. When a project is deleted, documents under that project will also be deleted.",
+            selectProjectToDelete: "Select project to delete",
+            deleteProjectButton: "Delete project",
+            existingCategoryTitle: "Delete document type",
+            existingCategoryNote: "Select a project in the upload section above, then choose the document type to delete.",
+            selectProjectForCategories: "Please select a project to view document types.",
+            selectExistingProjectForCategories: "Please select an existing project to view document types.",
+            noCategoriesInProject: "This project has no document types.",
+            categoryCodePrefix: "Code:",
+            selectCategoryToDelete: "Select document type to delete",
+            deleteCategoryButton: "Delete document type"
+        }
+    };
+
+    // Cho script dropdown/file con phía dưới dùng chung bộ dịch này.
+    window.MANAGER_UPLOAD_PAGE_TEXT = PAGE_TEXT;
+
+    function getLanguage() {
+        return localStorage.getItem("appLanguage") || "vi";
+    }
+
+    function setLanguage(language) {
+        localStorage.setItem("appLanguage", language);
+    }
+
+    function setText(selector, value) {
+        const element = document.querySelector(selector);
+        if (element) {
+            element.textContent = value;
+        }
+    }
+
+    function setPlaceholder(selector, value) {
+        const element = document.querySelector(selector);
+        if (element) {
+            element.setAttribute("placeholder", value);
+        }
+    }
+
+    function setHeaderPersonLabel(value) {
+        const paragraph = document.querySelector(".top-bar p");
+        if (!paragraph) {
+            return;
+        }
+
+        const strong = paragraph.querySelector("strong");
+        const name = strong ? strong.textContent : "";
+
+        paragraph.innerHTML = "";
+        paragraph.appendChild(document.createTextNode(value + " "));
+
+        const newStrong = document.createElement("strong");
+        newStrong.textContent = name;
+        paragraph.appendChild(newStrong);
+    }
+
+    function setLabelWithRequiredStar(selector, value) {
+        const label = document.querySelector(selector);
+        if (!label) {
+            return;
+        }
+
+        label.innerHTML = "";
+        label.appendChild(document.createTextNode(value + " "));
+
+        const star = document.createElement("span");
+        star.className = "required-star";
+        star.textContent = "*";
+        label.appendChild(star);
+    }
+
+    function setPlainLabel(selector, value) {
+        const label = document.querySelector(selector);
+        if (label) {
+            label.textContent = value;
+        }
+    }
+
+    function updateNoFileText(value) {
+        const element = document.getElementById("selectedFileText");
+        if (!element) {
+            return;
+        }
+
+        const currentText = element.textContent.replace(/\s+/g, " ").trim();
+        const defaultTexts = [
+            "Không có tệp nào được chọn",
+            "No files selected"
+        ];
+
+        if (defaultTexts.includes(currentText)) {
+            element.textContent = value;
+        }
+    }
+
+    function applyUploadPageLanguage(language) {
+        const text = PAGE_TEXT[language];
+        const button = document.getElementById("languageToggle");
+
+        document.documentElement.lang = language;
+
+        if (button) {
+            button.textContent = language === "vi" ? "EN" : "VI";
+        }
+
+        setText("h1", text.title);
+        setHeaderPersonLabel(text.personLabel);
+        setText(".logout-button", text.back);
+
+        setPlainLabel("label[for='project_key']", text.projectLabel);
+        setPlainLabel("label[for='category_key']", text.documentTypeLabel);
+        setText("#project_key option[value='__new_project__']", text.newProjectOption);
+
+        setLabelWithRequiredStar("label[for='new_project_name']", text.newProjectNameLabel);
+        setPlaceholder("#new_project_name", text.newProjectPlaceholder);
+        setText("#newProjectBox .note-text", text.newProjectNote);
+
+        setLabelWithRequiredStar("label[for='new_category_name']", text.newCategoryNameLabel);
+        setPlainLabel("label[for='new_category_code']", text.newCategoryCodeLabel);
+        setPlaceholder("#new_category_name", text.newCategoryNamePlaceholder);
+        setPlaceholder("#new_category_code", text.newCategoryCodePlaceholder);
+        setText("#newCategoryBox .note-text", text.newCategoryNote);
+
+        const fileUploadBox = document.querySelector(".custom-file-upload");
+        if (fileUploadBox && fileUploadBox.previousElementSibling) {
+            fileUploadBox.previousElementSibling.textContent = text.fileSelectionLabel;
+        }
+
+        setText(".custom-file-button", text.chooseFileButton);
+        updateNoFileText(text.noFilesSelected);
+
+        setLabelWithRequiredStar("label[for='description']", text.descriptionLabel);
+        setPlaceholder("#description", text.descriptionPlaceholder);
+
+        setLabelWithRequiredStar("label[for='location']", text.locationLabel);
+        setPlaceholder("#location", text.locationPlaceholder);
+
+        const requiredNotes = document.querySelectorAll("form > p.note-text");
+        if (requiredNotes[0]) {
+            requiredNotes[0].textContent = text.requiredNote;
+        }
+        if (requiredNotes[1]) {
+            requiredNotes[1].textContent = text.requiredNote;
+        }
+
+        const submitButton = document.querySelector("form button[type='submit']");
+        if (submitButton) {
+            submitButton.textContent = text.submitButton;
+        }
+
+        const bottomNote = document.querySelector(".dashboard-box > p.note-text");
+        if (bottomNote) {
+            bottomNote.textContent = text.bottomNote;
+        }
+
+        setText("#deleteProjectTitle", text.deleteProjectTitle);
+        setText("#deleteProjectNote", text.deleteProjectNote);
+        setPlainLabel("label[for='delete_project_id']", text.selectProjectToDelete);
+        const deleteProjectSelect = document.getElementById("delete_project_id");
+        if (deleteProjectSelect && deleteProjectSelect.options.length > 0) {
+            deleteProjectSelect.options[0].textContent = text.selectProjectToDelete;
+        }
+        setText("#deleteProjectButton", text.deleteProjectButton);
+
+        setText("#existingCategoryTitle", text.existingCategoryTitle);
+        setText("#existingCategoryNote", text.existingCategoryNote);
+        setPlainLabel("label[for='delete_category_id']", text.selectCategoryToDelete);
+        setText("#deleteCategoryButton", text.deleteCategoryButton);
+
+        const deleteCategorySelect = document.getElementById("delete_category_id");
+        if (deleteCategorySelect && deleteCategorySelect.options.length > 0 && !deleteCategorySelect.value) {
+            deleteCategorySelect.options[0].textContent = text.selectCategoryToDelete;
+        }
+
+        if (typeof window.renderCategoryManagementList === "function") {
+            window.renderCategoryManagementList(
+                window.currentCategoryManagementData || [],
+                window.currentCategoryManagementProjectId || ""
+            );
+        }
+
+        setLanguage(language);
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        applyUploadPageLanguage(getLanguage());
+
+        const button = document.getElementById("languageToggle");
+        if (button) {
+            button.addEventListener("click", function () {
+                const currentLanguage = getLanguage();
+                const nextLanguage = currentLanguage === "vi" ? "en" : "vi";
+                applyUploadPageLanguage(nextLanguage);
+            });
+        }
+    });
+
+    window.applyUploadPageLanguage = applyUploadPageLanguage;
+})();
+</script>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const NEW_PROJECT_KEY = "__new_project__";
+    const NEW_CATEGORY_KEY = "__new_category__";
+    const DEFAULT_CATEGORY_PREFIX = "__default_category__:";
+
+    const defaultCategories = [
+        { id: DEFAULT_CATEGORY_PREFIX + "BC", label: "Business Case" },
+        { id: DEFAULT_CATEGORY_PREFIX + "CAPEX", label: "CAPEX" },
+        { id: DEFAULT_CATEGORY_PREFIX + "PTW", label: "PTW" },
+        { id: DEFAULT_CATEGORY_PREFIX + "JSA", label: "JSA" },
+        { id: DEFAULT_CATEGORY_PREFIX + "RAHS", label: "Risk Assessment / Hazard Study" },
+        { id: DEFAULT_CATEGORY_PREFIX + "DWG", label: "Drawings" },
+        { id: DEFAULT_CATEGORY_PREFIX + "FSH", label: "FAT / SAT / Handover" },
+        { id: DEFAULT_CATEGORY_PREFIX + "PHOTO", label: "Photos" },
+        { id: DEFAULT_CATEGORY_PREFIX + "TSOP", label: "Training / SOP" },
+        { id: DEFAULT_CATEGORY_PREFIX + "LEG", label: "Legal" },
+        { id: DEFAULT_CATEGORY_PREFIX + "VM", label: "Vendor Manual" },
+        { id: DEFAULT_CATEGORY_PREFIX + "OTH", label: "Others" }
+    ];
+
+    const projectSelect = document.getElementById("project_key");
+    const categorySelect = document.getElementById("category_key");
+    const newProjectBox = document.getElementById("newProjectBox");
+    const newProjectInput = document.getElementById("new_project_name");
+    const newCategoryBox = document.getElementById("newCategoryBox");
+    const newCategoryNameInput = document.getElementById("new_category_name");
+    const fileInput = document.getElementById("uploaded_files");
+    const selectedFileText = document.getElementById("selectedFileText");
+
+
+    function renderCategoryManagementList(categories, projectId) {
+        const deleteCategoryForm = document.getElementById("deleteCategoryForm");
+        const deleteCategorySelect = document.getElementById("delete_category_id");
+        const hiddenProjectInput = document.getElementById("delete_category_project_key");
+        const deleteCategoryButton = document.getElementById("deleteCategoryButton");
+        const languageSource = window.MANAGER_UPLOAD_PAGE_TEXT || {};
+        const languageText = languageSource[currentLanguage()] || languageSource.vi || {};
+
+        window.currentCategoryManagementData = categories || [];
+        window.currentCategoryManagementProjectId = projectId || "";
+
+        if (!deleteCategorySelect) {
+            return;
+        }
+
+        deleteCategorySelect.innerHTML = "";
+
+        function addDeleteCategoryOption(value, label) {
+            const option = document.createElement("option");
+            option.value = value;
+            option.textContent = label;
+            deleteCategorySelect.appendChild(option);
+        }
+
+        function disableDeleteCategoryForm(message) {
+            addDeleteCategoryOption("", message);
+            deleteCategorySelect.disabled = true;
+
+            if (deleteCategoryButton) {
+                deleteCategoryButton.disabled = true;
+            }
+
+            if (hiddenProjectInput) {
+                hiddenProjectInput.value = "";
+            }
+        }
+
+        if (!projectId) {
+            disableDeleteCategoryForm(languageText.selectProjectForCategories);
+            return;
+        }
+
+        if (projectId === NEW_PROJECT_KEY) {
+            disableDeleteCategoryForm(languageText.selectExistingProjectForCategories);
+            return;
+        }
+
+        if (!categories || categories.length === 0) {
+            disableDeleteCategoryForm(languageText.noCategoriesInProject);
+            return;
+        }
+
+        addDeleteCategoryOption("", languageText.selectCategoryToDelete);
+
+        categories.forEach(function (category) {
+            let label = category.label;
+
+            if (category.code) {
+                label = label + " - " + languageText.categoryCodePrefix + " " + category.code;
+            }
+
+            addDeleteCategoryOption(category.id, label);
+        });
+
+        deleteCategorySelect.disabled = false;
+
+        if (deleteCategoryButton) {
+            deleteCategoryButton.disabled = false;
+            deleteCategoryButton.textContent = languageText.deleteCategoryButton;
+        }
+
+        if (hiddenProjectInput) {
+            hiddenProjectInput.value = projectId;
+        }
+
+        if (deleteCategoryForm) {
+            deleteCategoryForm.onsubmit = function () {
+                const categoryId = deleteCategorySelect.value;
+
+                if (!categoryId) {
+                    return false;
+                }
+
+                deleteCategoryForm.action = "/manager/project-categories/" + categoryId + "/delete";
+
+                return confirm(getDeleteCategoryConfirmText());
+            };
+        }
+    }
+
+    window.renderCategoryManagementList = renderCategoryManagementList;
+
+    function currentLanguage() {
+        return localStorage.getItem("appLanguage") || "vi";
+    }
+
+    function text(vi, en) {
+        return currentLanguage() === "en" ? en : vi;
+    }
+
+    function setRequired(input, required) {
+        if (!input) {
+            return;
+        }
+
+        if (required) {
+            input.setAttribute("required", "required");
+        } else {
+            input.removeAttribute("required");
+        }
+    }
+
+    function addOption(value, label, selectedValue) {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = label;
+
+        if (String(value) === String(selectedValue)) {
+            option.selected = true;
+        }
+
+        categorySelect.appendChild(option);
+    }
+
+    function updateNewProjectBox() {
+        const isNewProject = projectSelect.value === NEW_PROJECT_KEY;
+
+        newProjectBox.classList.toggle("is-visible", isNewProject);
+        setRequired(newProjectInput, isNewProject);
+    }
+
+    function updateNewCategoryBox() {
+        const isNewCategory = categorySelect.value === NEW_CATEGORY_KEY;
+
+        newCategoryBox.classList.toggle("is-visible", isNewCategory);
+        setRequired(newCategoryNameInput, isNewCategory);
+    }
+
+    function addCreateNewCategoryOption(selectedCategoryKey) {
+        addOption(
+            NEW_CATEGORY_KEY,
+            text("+ Tạo file con mới", "+ Create new document type"),
+            selectedCategoryKey
+        );
+    }
+
+    function loadDefaultCategoriesForNewProject(selectedCategoryKey) {
+        categorySelect.innerHTML = "";
+
+        defaultCategories.forEach(function (category) {
+            addOption(category.id, category.label, selectedCategoryKey);
+        });
+
+        addCreateNewCategoryOption(selectedCategoryKey);
+
+        categorySelect.disabled = false;
+
+        if (!categorySelect.value && categorySelect.options.length > 0) {
+            categorySelect.selectedIndex = 0;
+        }
+
+        categorySelect.dataset.selectedCategoryKey = categorySelect.value;
+        updateNewCategoryBox();
+        renderCategoryManagementList([], NEW_PROJECT_KEY);
+    }
+
+    function updateCategoryDropdown() {
+        const projectId = projectSelect.value;
+        const selectedCategoryKey = categorySelect.dataset.selectedCategoryKey || "";
+
+        updateNewProjectBox();
+
+        if (projectId === NEW_PROJECT_KEY) {
+            loadDefaultCategoriesForNewProject(selectedCategoryKey);
+            return;
+        }
+
+        categorySelect.innerHTML = "";
+
+        if (!projectId) {
+            addOption("", text("Không có file con", "No document types"), "");
+            categorySelect.disabled = true;
+            updateNewCategoryBox();
+            renderCategoryManagementList([], "");
+            return;
+        }
+
+        addOption("", text("Đang tải file con...", "Loading document types..."), "");
+
+        fetch("/project-categories/" + projectId, {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        })
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (data) {
+            categorySelect.innerHTML = "";
+
+            if (!data.success || !data.categories || data.categories.length === 0) {
+                addOption("", text("Không có file con", "No document types"), "");
+                addCreateNewCategoryOption(selectedCategoryKey);
+                categorySelect.disabled = false;
+                updateNewCategoryBox();
+                renderCategoryManagementList([], projectId);
+                return;
+            }
+
+            data.categories.forEach(function (category) {
+                addOption(category.id, category.label, selectedCategoryKey);
+            });
+
+            renderCategoryManagementList(data.categories, projectId);
+
+            addCreateNewCategoryOption(selectedCategoryKey);
+
+            categorySelect.disabled = false;
+
+            if (!categorySelect.value && categorySelect.options.length > 0) {
+                categorySelect.selectedIndex = 0;
+            }
+
+            categorySelect.dataset.selectedCategoryKey = categorySelect.value;
+            updateNewCategoryBox();
+        })
+        .catch(function () {
+            categorySelect.innerHTML = "";
+            addOption("", text("Không thể tải file con", "Cannot load document types"), "");
+            categorySelect.disabled = true;
+            updateNewCategoryBox();
+            renderCategoryManagementList([], projectId);
+        });
+    }
+
+    if (fileInput && selectedFileText) {
+        fileInput.addEventListener("change", function () {
+            const files = Array.from(fileInput.files);
+
+            if (files.length === 0) {
+                selectedFileText.textContent = text("Không có tệp nào được chọn", "No files selected");
+                return;
+            }
+
+            if (files.length === 1) {
+                selectedFileText.textContent = files[0].name;
+                return;
+            }
+
+            selectedFileText.textContent = text("Đã chọn ", "Selected ") + files.length + text(" tệp", " files");
+        });
+    }
+
+    if (projectSelect && categorySelect) {
+        projectSelect.addEventListener("change", function () {
+            categorySelect.dataset.selectedCategoryKey = "";
+            updateCategoryDropdown();
+        });
+
+        categorySelect.addEventListener("change", function () {
+            categorySelect.dataset.selectedCategoryKey = categorySelect.value;
+            updateNewCategoryBox();
+        });
+
+        updateCategoryDropdown();
+    }
+
+    const languageButton = document.getElementById("languageToggle");
+
+    if (languageButton) {
+        languageButton.addEventListener("click", function () {
+            setTimeout(function () {
+                if (projectSelect && categorySelect) {
+                    const currentCategoryValue = categorySelect.value;
+                    categorySelect.dataset.selectedCategoryKey = currentCategoryValue;
+                    updateCategoryDropdown();
+                }
+            }, 120);
+        });
+    }
+});
+</script>
+
+</body>
+</html>

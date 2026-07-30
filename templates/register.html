@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Đăng ký tài khoản</title>
+    <link rel="stylesheet" href="/static/style.css?v=1000">
+</head>
+
+<body class="login-page">
+<div class="logo-header">
+    <div class="header-logo-group">
+        <a class="corner-logo-link" href="/">
+            <img
+                class="corner-logo akzo-logo"
+                src="/static/images/AkzoNobel_RGB.png?v=31"
+                alt="AkzoNobel"
+            >
+        </a>
+
+        <span class="logo-separator"></span>
+
+        <a class="engineering-logo-link" href="/">
+            <img
+                class="engineering-logo"
+                src="/static/images/amata_engineering_logo.png?v=1"
+                alt="Amata Engineering"
+            >
+        </a>
+    </div>
+
+    <button class="language-toggle" id="languageToggle" type="button">
+        EN
+    </button>
+</div>
+<div class="login-box">
+        <h1>ĐĂNG KÝ TÀI KHOẢN</h1>
+
+        <p class="login-subtitle">
+            Tạo tài khoản nhân viên để sử dụng hệ thống.
+        </p>
+
+        {% if error %}
+            <p class="error-message">
+                {{ error }}
+            </p>
+        {% endif %}
+
+        <form action="/register" method="post">
+            <label for="username">Username</label>
+            <input
+                id="username"
+                type="text"
+                name="username"
+                placeholder="Nhập username"
+                required
+            >
+
+            <label for="full_name">Họ và tên</label>
+            <input
+                id="full_name"
+                type="text"
+                name="full_name"
+                placeholder="Nhập họ và tên"
+                required
+            >
+
+            <label for="password">Mật khẩu</label>
+            <input
+                id="password"
+                type="password"
+                name="password"
+                placeholder="Ít nhất 8 ký tự"
+                required
+            >
+
+            <label for="confirm_password">Nhập lại mật khẩu</label>
+            <input
+                id="confirm_password"
+                type="password"
+                name="confirm_password"
+                placeholder="Nhập lại mật khẩu"
+                required
+            >
+
+            <button type="submit">
+                Đăng ký
+            </button>
+        </form>
+
+        <p class="register-link">
+            Đã có tài khoản?
+            <a href="/">Quay lại đăng nhập</a>
+        </p>
+    </div>
+    <script src="/static/language.js?v=3"></script>
+</body>
+</html>

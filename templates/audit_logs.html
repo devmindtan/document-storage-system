@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Nhật ký hoạt động</title>
+   <link rel="stylesheet" href="/static/style.css?v=1000">
+</head>
+
+<body class="app-page">
+<div class="logo-header">
+    <div class="header-logo-group">
+        <a class="corner-logo-link" href="/">
+            <img
+                class="corner-logo akzo-logo"
+                src="/static/images/AkzoNobel_RGB.png?v=31"
+                alt="AkzoNobel"
+            >
+        </a>
+
+        <span class="logo-separator"></span>
+
+        <a class="engineering-logo-link" href="/">
+            <img
+                class="engineering-logo"
+                src="/static/images/amata_engineering_logo.png?v=1"
+                alt="Amata Engineering"
+            >
+        </a>
+    </div>
+
+    <button class="language-toggle" id="languageToggle" type="button">
+        EN
+    </button>
+</div>
+<div class="dashboard-box">
+
+        <div class="top-bar">
+            <div>
+                <h1>NHẬT KÝ HOẠT ĐỘNG</h1>
+                <p>
+                    Quản lý:
+                    <strong>{{ user['full_name'] }}</strong>
+                </p>
+            </div>
+
+            <a class="logout-button" href="/manager">
+                Quay lại
+            </a>
+        </div>
+
+        <hr>
+
+        <form
+            class="search-form"
+            action="/manager/audit-logs"
+            method="get"
+        >
+            <div class="search-field">
+                <label for="action">Loại hoạt động</label>
+
+                <select id="action" name="action">
+    <option value="">Tất cả hoạt động</option>
+
+    {% if selected_action == 'UPLOAD' %}
+        <option value="UPLOAD" selected>
+            Upload hồ sơ
+        </option>
+    {% else %}
+        <option value="UPLOAD">
+            Upload hồ sơ
+        </option>
+    {% endif %}
+
+    {% if selected_action == 'APPROVE' %}
+        <option value="APPROVE" selected>
+            Duyệt hồ sơ
+        </option>
+    {% else %}
+        <option value="APPROVE">
+            Duyệt hồ sơ
+        </option>
+    {% endif %}
+
+    {% if selected_action == 'REJECT' %}
+        <option value="REJECT" selected>
+            Từ chối hồ sơ
+        </option>
+    {% else %}
+        <option value="REJECT">
+            Từ chối hồ sơ
+        </option>
+    {% endif %}
+
+    {% if selected_action == 'DOWNLOAD' %}
+        <option value="DOWNLOAD" selected>
+            Download hồ sơ
+        </option>
+    {% else %}
+        <option value="DOWNLOAD">
+            Download hồ sơ
+        </option>
+    {% endif %}
+</select>
+            </div>
+
+            <div class="search-buttons">
+                <button class="search-button" type="submit">
+                    Lọc nhật ký
+                </button>
+
+                <a class="reset-button" href="/manager/audit-logs">
+                    Xóa bộ lọc
+                </a>
+            </div>
+        </form>
+
+        {% if logs %}
+            <table class="document-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Thời gian</th>
+                        <th>Người dùng</th>
+                        <th>Username</th>
+                        <th>Hành động</th>
+                        <th>Mã hồ sơ</th>
+                        <th>Chi tiết</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for log in logs %}
+                        <tr>
+                            <td>{{ log['id'] }}</td>
+                            <td>{{ log['created_at'] }}</td>
+                            <td>{{ log['full_name'] or '-' }}</td>
+                            <td>{{ log['username'] or '-' }}</td>
+
+                            <td>
+                                {% if log['action'] == 'UPLOAD' %}
+                                    Đã upload
+                                {% elif log['action'] == 'MANAGER_UPLOAD' %}
+    Quản lý upload
+                                {% elif log['action'] == 'APPROVE' %}
+                                    Đã duyệt
+                                {% elif log['action'] == 'REJECT' %}
+                                    Đã từ chối
+                                {% elif log['action'] == 'DOWNLOAD' %}
+                                    Đã download
+                                {% else %}
+                                    {{ log['action'] }}
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {{ log['document_id'] or '-' }}
+                            </td>
+
+                            <td>
+                                {{ log['details'] or '-' }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        {% else %}
+            <p class="empty-message">
+                Chưa có hoạt động nào được ghi nhận.
+            </p>
+        {% endif %}
+
+    </div>
+    <script src="/static/language.js?v=3"></script>
+</body>
+</html>

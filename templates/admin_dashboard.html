@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Trang Admin</title>
+    <link rel="stylesheet" href="/static/style.css?v=1000">
+</head>
+
+<body class="app-page">
+    <div class="logo-header">
+    <div class="header-logo-group">
+        <a class="corner-logo-link" href="/">
+            <img
+                class="corner-logo akzo-logo"
+                src="/static/images/AkzoNobel_RGB.png?v=31"
+                alt="AkzoNobel"
+            >
+        </a>
+
+        <span class="logo-separator"></span>
+
+        <a class="engineering-logo-link" href="/">
+            <img
+                class="engineering-logo"
+                src="/static/images/amata_engineering_logo.png?v=1"
+                alt="Amata Engineering"
+            >
+        </a>
+    </div>
+
+    <button class="language-toggle" id="languageToggle" type="button">
+        EN
+    </button>
+</div>
+<div class="dashboard-box">
+        <div class="top-bar">
+            <div>
+                <h1 data-i18n="adminDashboardTitle">TRANG ADMIN</h1>
+                <p>
+                    <span data-i18n="admin">Admin:</span>
+                    <strong>{{ user['full_name'] }}</strong>
+                </p>
+            </div>
+
+            <div class="top-action-buttons">
+    <a class="admin-back-button" href="/manager">
+        Vào trang quản lý
+    </a>
+
+    <a class="logout-button" href="/logout">
+        Đăng xuất
+    </a>
+</div>
+        </div>
+
+        <hr>
+
+        <div class="menu-grid">
+
+    <a class="menu-card menu-link" href="/admin/users">
+        <h3>Quản lý quyền tài khoản</h3>
+        <p>Tạo quản lý mới hoặc chuyển nhân viên thành quản lý.</p>
+    </a>
+
+    <a class="menu-card menu-link" href="/admin/create-manager">
+        <h3>Tạo tài khoản quản lý</h3>
+        <p>Tạo trực tiếp tài khoản quản lý mới.</p>
+    </a>
+
+    <a class="menu-card menu-link" href="/manager/users">
+        <h3>Quản lý tài khoản</h3>
+        <p>Xem danh sách, khóa hoặc mở lại tài khoản người dùng.</p>
+    </a>
+
+    <a class="menu-card menu-link" href="/manager/audit-logs">
+        <h3>Nhật ký hoạt động</h3>
+        <p>Xem lịch sử upload, duyệt, từ chối và download hồ sơ.</p>
+    </a>
+
+            
+</div>
+    </div>
+
+        <script src="/static/language.js?v=3"></script>
+</body>
+</html>

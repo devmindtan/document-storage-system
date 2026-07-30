@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý tài khoản</title>
+    <link rel="stylesheet" href="/static/style.css?v=1000">
+</head>
+
+<body class="app-page">
+<div class="logo-header">
+    <div class="header-logo-group">
+        <a class="corner-logo-link" href="/">
+            <img
+                class="corner-logo akzo-logo"
+                src="/static/images/AkzoNobel_RGB.png?v=31"
+                alt="AkzoNobel"
+            >
+        </a>
+
+        <span class="logo-separator"></span>
+
+        <a class="engineering-logo-link" href="/">
+            <img
+                class="engineering-logo"
+                src="/static/images/amata_engineering_logo.png?v=1"
+                alt="Amata Engineering"
+            >
+        </a>
+    </div>
+
+    <button class="language-toggle" id="languageToggle" type="button">
+        EN
+    </button>
+</div>
+<div class="dashboard-box">
+
+        <div class="top-bar">
+            <div>
+                <h1>QUẢN LÝ TÀI KHOẢN</h1>
+                <p>
+                    Quản lý:
+                    <strong>{{ user['full_name'] }}</strong>
+                </p>
+            </div>
+
+            <a class="logout-button" href="/manager">
+                Quay lại
+            </a>
+        </div>
+
+        <hr>
+
+        {% if users %}
+            <table class="document-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Họ tên</th>
+                        <th>Vai trò</th>
+                        <th>Ngày tạo</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for account in users %}
+                        <tr>
+                            <td>{{ account['id'] }}</td>
+                            <td>{{ account['username'] }}</td>
+                            <td>{{ account['full_name'] }}</td>
+
+                            <td>
+                                {% if account['role'] == 'MANAGER' %}
+                                    Quản lý
+                                {% else %}
+                                    Nhân viên
+                                {% endif %}
+                            </td>
+
+                            <td>{{ account['created_at'] }}</td>
+
+                            <td>
+    {% if account['approval_status'] == 'PENDING' %}
+        <span class="status-pending">
+            Chờ duyệt
+        </span>
+    {% elif account['approval_status'] == 'REJECTED' %}
+        <span class="status-locked">
+            Đã từ chối
+        </span>
+    {% else %}
+        {% if account['is_active'] %}
+            <span class="status-active">
+                Đang hoạt động
+            </span>
+        {% else %}
+            <span class="status-locked">
+                Đã khóa
+            </span>
+        {% endif %}
+    {% endif %}
+</td>
+
+                          <td class="user-action-cell">
+    {% if account['id'] == user['id'] %}
+        <span class="self-account">
+            Tài khoản hiện tại
+        </span>
+
+    {% elif account['approval_status'] == 'PENDING' %}
+    <div class="user-account-actions">
+        <form
+            action="/manager/users/{{ account['id'] }}/approve"
+            method="post"
+        >
+            <button
+                class="approve-button user-account-button"
+                type="submit"
+            >
+                Duyệt tài khoản
+            </button>
+        </form>
+
+        <form
+            action="/manager/users/{{ account['id'] }}/reject"
+            method="post"
+        >
+            <button
+                class="reject-button user-account-button"
+                type="submit"
+            >
+                Từ chối
+            </button>
+        </form>
+    </div>
+    {% else %}
+        <form
+            action="/manager/users/{{ account['id'] }}/toggle-status"
+            method="post"
+        >
+            {% if account['is_active'] %}
+    <button
+        class="reject-button user-account-button"
+        type="submit"
+    >
+        Khóa tài khoản
+    </button>
+{% else %}
+    <button
+        class="approve-button user-account-button"
+        type="submit"
+    >
+        Mở khóa
+    </button>
+{% endif %}
+        </form>
+    {% endif %}
+</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        {% else %}
+            <p class="empty-message">
+                Chưa có tài khoản nào trong hệ thống.
+            </p>
+        {% endif %}
+    </div>
+    <script src="/static/language.js?v=3"></script>
+</body>
+</html>

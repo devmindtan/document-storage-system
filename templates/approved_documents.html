@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Kho hồ sơ đã được duyệt</title>
+   <link rel="stylesheet" href="/static/style.css?v=1001">
+</head>
+
+<body class="app-page approved-documents-page">
+<div class="logo-header">
+    <div class="header-logo-group">
+        <a class="corner-logo-link" href="/">
+            <img
+                class="corner-logo akzo-logo"
+                src="/static/images/AkzoNobel_RGB.png?v=31"
+                alt="AkzoNobel"
+            >
+        </a>
+
+        <span class="logo-separator"></span>
+
+        <a class="engineering-logo-link" href="/">
+            <img
+                class="engineering-logo"
+                src="/static/images/amata_engineering_logo.png?v=1"
+                alt="Amata Engineering"
+            >
+        </a>
+    </div>
+
+    <button class="language-toggle" id="languageToggle" type="button">
+        EN
+    </button>
+</div>
+<div class="dashboard-box">
+        <div class="top-bar">
+            <div>
+                <h1>KHO HỒ SƠ ĐÃ ĐƯỢC DUYỆT</h1>
+                <p>
+                    Người dùng:
+                    <strong>{{ user['full_name'] }}</strong>
+                </p>
+            </div>
+
+            {% if user['role'] == 'MANAGER' %}
+                <a class="logout-button" href="/manager">
+                    Quay lại
+                </a>
+            {% else %}
+                <a class="logout-button" href="/employee">
+                    Quay lại
+                </a>
+            {% endif %}
+        </div>
+
+                <hr>
+    <div class="document-summary-line">
+    <div class="summary-item">
+        <span data-i18n="totalProjectsLabel">
+            Tổng số project hiện có:
+        </span>
+
+        <strong>{{ total_project_count }}</strong>
+    </div>
+
+    <div class="summary-item">
+        <span data-i18n="totalUploadedDocumentsLabel">
+            Tổng số tài liệu đã upload:
+        </span>
+
+        <strong>{{ total_uploaded_documents }}</strong>
+    </div>
+
+    <div class="summary-item">
+        <span data-i18n="totalApprovedDocumentsLabel">
+            Tài liệu đã được duyệt:
+        </span>
+
+        <strong>{{ total_approved_documents }}</strong>
+    </div>
+        
+
+
+</div>
+
+<hr>
+
+       <form
+    id="approvedSearchForm"
+    class="search-form advanced-search-form"
+    action="/documents/approved"
+    method="get"
+>
+            <div class="search-field">
+                <label for="keyword">Tên file</label>
+                <input
+                    id="keyword"
+                    type="text"
+                    name="keyword"
+                    placeholder="Nhập tên file..."
+                    value="{{ filters['keyword'] }}"
+                >
+            </div>
+
+            <div class="search-field">
+    <label for="project">Project</label>
+
+    <select id="project" name="project">
+        <option value="" data-project-id="">Tất cả project</option>
+
+        {% for key, item in projects.items() %}
+            {% if filters['project'] == item['label'] %}
+                <option value="{{ item['label'] }}" data-project-id="{{ key }}" selected>
+                    {{ item['label'] }}
+                </option>
+            {% else %}
+                <option value="{{ item['label'] }}" data-project-id="{{ key }}">
+                    {{ item['label'] }}
+                </option>
+            {% endif %}
+        {% endfor %}
+    </select>
+</div>
+            <div class="search-field">
+    <label for="category">Loại hồ sơ</label>
+
+    <select id="category" name="category" data-selected-category="{{ filters['category'] }}">
+        <option value="">Tất cả loại</option>
+
+        {% for key, item in categories.items() %}
+            {% if filters['category'] == item['label'] %}
+                <option value="{{ item['label'] }}" data-project-id="{{ key }}" selected>
+                    {{ item['label'] }}
+                </option>
+            {% else %}
+                <option value="{{ item['label'] }}" data-project-id="{{ key }}">
+                    {{ item['label'] }}
+                </option>
+            {% endif %}
+        {% endfor %}
+    </select>
+</div>
+
+            <div class="search-field">
+                <label for="submitted_by">Người gửi</label>
+                <input
+                    id="submitted_by"
+                    type="text"
+                    name="submitted_by"
+                    placeholder="Nhập tên người gửi..."
+                    value="{{ filters['submitted_by'] }}"
+                >
+            </div>
+
+            <div class="search-field">
+                <label for="date_from">Từ ngày</label>
+                <input
+                    id="date_from"
+                    type="date"
+                    name="date_from"
+                    value="{{ filters['date_from'] }}"
+                >
+            </div>
+
+            <div class="search-field">
+                <label for="date_to">Đến ngày</label>
+                <input
+                    id="date_to"
+                    type="date"
+                    name="date_to"
+                    value="{{ filters['date_to'] }}"
+                >
+            </div>
+
+            <div class="search-buttons">
+    <a class="reset-button" href="/documents/approved">
+        Xóa bộ lọc
+    </a>
+</div>
+        </form>
+
+        <hr>
+
+        {% if error %}
+            <p class="error-message">
+                {{ error }}
+            </p>
+        {% endif %}
+
+        {% if documents %}
+            <table class="document-table">
+                <thead>
+                    <tr>
+    <th>ID</th>
+    <th>Tên file</th>
+    <th>Loại</th>
+    <th>Người gửi</th>
+    <th>Ngày duyệt</th>
+    <th>Người duyệt</th>
+    <th class="description-column">Mô tả</th>
+   <th class="location-column" data-i18n="locationLabel">Vị trí</th>
+   <th class="action-column">Thao tác</th>
+</tr>
+                </thead>
+
+                <tbody id="approvedDocumentsBody">
+                    {% for document in documents %}
+                        <tr>
+                            <td>{{ document['document_code'] or document['id'] }}</td>
+                            <td>{{ document['original_name'] }}</td>
+                            <td>{{ document['category'] }}</td>
+                            <td>{{ document['submitted_by'] }}</td>
+                            <td>{{ document['reviewed_at'] or '-' }}</td>
+                            <td>{{ document['reviewed_by'] or '-' }}</td>
+                            <td class="description-cell description-column">
+    {{ document['description'] or '-' }}
+</td>
+                            <td class="location-cell location-column">
+    {{ document['location'] or '-' }}
+</td>
+                           <td class="action-column">
+    <div class="document-action-buttons">
+        <a
+            class="download-button"
+            href="/documents/{{ document['id'] }}/download"
+            target="_blank"
+            rel="noopener"
+        >
+            Download
+        </a>
+
+        {% if user['role'] == 'MANAGER' %}
+            <form
+                action="/documents/{{ document['id'] }}/delete"
+                method="post"
+                onsubmit="return confirm('Bạn có chắc muốn xóa hồ sơ này không?');"
+            >
+                <button
+                    class="delete-document-button"
+                    type="submit"
+                >
+                   Xóa hồ sơ
+                </button>
+            </form>
+        {% endif %}
+    </div>
+</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        {% else %}
+            <p class="empty-message">
+                Hiện chưa có hồ sơ nào được quản lý duyệt.
+            </p>
+        {% endif %}
+    </div>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const searchForm = document.getElementById("approvedSearchForm");
+    const tableBody = document.getElementById("approvedDocumentsBody");
+
+    if (!searchForm || !tableBody) {
+        return;
+    }
+
+    let searchTimer = null;
+    let activeController = null;
+
+    function escapeHtml(value) {
+        return String(value || "")
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+    }
+
+    function buildActionButtons(documentId, isManager) {
+        let html = `
+            <div class="document-action-buttons">
+                <a
+                    class="download-button"
+                    href="/documents/${documentId}/download"
+                    target="_blank"
+                    rel="noopener"
+                >
+                    Download
+                </a>
+        `;
+
+        if (isManager) {
+            html += `
+                <form
+                    action="/documents/${documentId}/delete"
+                    method="post"
+                    onsubmit="return confirm('Bạn có chắc muốn xóa hồ sơ này không?');"
+                >
+                    <button class="delete-document-button" type="submit">
+                        Xóa hồ sơ
+                    </button>
+                </form>
+            `;
+        }
+
+        html += `</div>`;
+        return html;
+    }
+
+    function renderDocuments(documents, isManager) {
+        if (!documents || documents.length === 0) {
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="9" style="text-align: center;">
+                        Không tìm thấy tài liệu phù hợp.
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        let html = "";
+
+        documents.forEach(function (doc) {
+            html += `
+                <tr>
+                    <td>${escapeHtml(doc.document_code || doc.id || "-")}</td>
+                    <td>${escapeHtml(doc.original_name)}</td>
+                    <td>${escapeHtml(doc.category)}</td>
+                    <td>${escapeHtml(doc.submitted_by)}</td>
+                    <td>${escapeHtml(doc.reviewed_at || "-")}</td>
+                    <td>${escapeHtml(doc.reviewed_by || "-")}</td>
+                    <td class="description-cell description-column">
+                        ${escapeHtml(doc.description || "-")}
+                    </td>
+                    <td class="location-cell location-column">
+                        ${escapeHtml(doc.location || "-")}
+                    </td>
+                    <td class="action-column">
+                        ${buildActionButtons(doc.id, isManager)}
+                    </td>
+                </tr>
+            `;
+        });
+
+        tableBody.innerHTML = html;
+        if (window.applyApprovedLanguage) {
+    window.applyApprovedLanguage(localStorage.getItem("appLanguage") || "vi");
+}
+
+        if (typeof applyLanguage === "function") {
+            applyLanguage(localStorage.getItem("appLanguage") || "vi");
+        }
+    }
+
+    function liveSearch() {
+        const formData = new FormData(searchForm);
+        const params = new URLSearchParams(formData);
+
+        if (activeController) {
+            activeController.abort();
+        }
+
+        activeController = new AbortController();
+
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="9" style="text-align: center;">
+                    Đang tìm kiếm...
+                </td>
+            </tr>
+        `;
+
+        fetch("/documents/approved/live-search?" + params.toString(), {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            },
+            signal: activeController.signal
+        })
+        .then(function (response) {
+            if (!response.ok) {
+                throw new Error("Search request failed");
+            }
+
+            return response.json();
+        })
+        .then(function (data) {
+            renderDocuments(data.documents, data.is_manager);
+        })
+        .catch(function (error) {
+            if (error.name === "AbortError") {
+                return;
+            }
+
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="9" style="text-align: center; color: red;">
+                        Có lỗi khi tìm kiếm dữ liệu.
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    function liveSearchWithDelay() {
+        clearTimeout(searchTimer);
+
+        searchTimer = setTimeout(function () {
+            liveSearch();
+        }, 350);
+    }
+
+    searchForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        liveSearch();
+    });
+
+    const inputs = searchForm.querySelectorAll("input, select");
+
+    inputs.forEach(function (input) {
+        if (input.tagName.toLowerCase() === "input") {
+            input.addEventListener("input", liveSearchWithDelay);
+        } else {
+            input.addEventListener("change", liveSearch);
+        }
+    });
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const projectSelect = document.getElementById("project");
+    const categorySelect = document.getElementById("category");
+
+    if (!projectSelect || !categorySelect) return;
+
+    function updateApprovedCategoryOptions() {
+        const selectedOption = projectSelect.options[projectSelect.selectedIndex];
+        const projectId = selectedOption ? selectedOption.dataset.projectId : "";
+        const selectedCategory = categorySelect.dataset.selectedCategory || categorySelect.value || "";
+
+        if (!projectId) {
+            return;
+        }
+
+        fetch("/project-categories/" + projectId)
+            .then(response => response.json())
+            .then(data => {
+                const allTypesText = localStorage.getItem("appLanguage") === "en"
+                    ? "All types"
+                    : "Tất cả loại";
+                categorySelect.innerHTML = '<option value="">' + allTypesText + '</option>';
+
+                if (!data.success || !data.categories) {
+                    return;
+                }
+
+                data.categories.forEach(function (category) {
+                    const option = document.createElement("option");
+                    option.value = category.label;
+                    option.textContent = category.label;
+
+                    if (String(category.label) === String(selectedCategory)) {
+                        option.selected = true;
+                    }
+
+                    categorySelect.appendChild(option);
+                });
+
+                categorySelect.dataset.selectedCategory = categorySelect.value;
+            });
+    }
+
+    projectSelect.addEventListener("change", function () {
+        categorySelect.dataset.selectedCategory = "";
+        updateApprovedCategoryOptions();
+    });
+
+    updateApprovedCategoryOptions();
+});
+</script>
+
+<script>
+(function () {
+    const VI_TO_EN = {
+        "KHO HỒ SƠ ĐÃ ĐƯỢC DUYỆT": "APPROVED DOCUMENT STORAGE",
+        "Người dùng:": "User:",
+        "Quay lại": "Back",
+
+        "Tổng số project hiện có:": "Total existing projects:",
+        "Tổng số tài liệu đã upload:": "Total uploaded documents:",
+        "Tài liệu đã được duyệt:": "Approved documents:",
+
+        "Tên file": "File name",
+        "Loại hồ sơ": "Document type",
+        "Người gửi": "Submitted by",
+        "Từ ngày": "From date",
+        "Đến ngày": "To date",
+        "Tất cả project": "All projects",
+        "Tất cả loại": "All types",
+        "Xóa bộ lọc": "Clear filters",
+
+        "Loại": "Type",
+        "Ngày duyệt": "Approved date",
+        "Người duyệt": "Approved by",
+        "Mô tả": "Description",
+        "Vị trí": "Location",
+        "Thao tác": "Action",
+        "Xóa hồ sơ": "Delete",
+
+        "Hiện chưa có hồ sơ nào được quản lý duyệt.": "There are no approved documents yet.",
+        "Không tìm thấy tài liệu phù hợp.": "No matching documents found.",
+        "Đang tìm kiếm...": "Searching...",
+        "Có lỗi khi tìm kiếm dữ liệu.": "An error occurred while searching data."
+    };
+
+    const PLACEHOLDER_VI_TO_EN = {
+        "Nhập tên file...": "Enter file name...",
+        "Nhập tên người gửi...": "Enter submitter name..."
+    };
+
+    function reverseMap(map) {
+        const result = {};
+
+        Object.keys(map).forEach(function (key) {
+            result[map[key]] = key;
+        });
+
+        return result;
+    }
+
+    const EN_TO_VI = reverseMap(VI_TO_EN);
+    const PLACEHOLDER_EN_TO_VI = reverseMap(PLACEHOLDER_VI_TO_EN);
+
+    function getLanguage() {
+        return localStorage.getItem("appLanguage") || "vi";
+    }
+
+    function setLanguage(language) {
+        localStorage.setItem("appLanguage", language);
+    }
+
+    function normalizeText(value) {
+        return String(value || "").replace(/\s+/g, " ").trim();
+    }
+
+    function translateTextNodes(language) {
+        const map = language === "en" ? VI_TO_EN : EN_TO_VI;
+
+        const walker = document.createTreeWalker(
+            document.body,
+            NodeFilter.SHOW_TEXT,
+            {
+                acceptNode: function (node) {
+                    const parent = node.parentElement;
+
+                    if (!parent) {
+                        return NodeFilter.FILTER_REJECT;
+                    }
+
+                    const tagName = parent.tagName.toLowerCase();
+
+                    if (
+                        tagName === "script" ||
+                        tagName === "style" ||
+                        tagName === "textarea"
+                    ) {
+                        return NodeFilter.FILTER_REJECT;
+                    }
+
+                    if (!normalizeText(node.nodeValue)) {
+                        return NodeFilter.FILTER_REJECT;
+                    }
+
+                    return NodeFilter.FILTER_ACCEPT;
+                }
+            }
+        );
+
+        const nodes = [];
+
+        while (walker.nextNode()) {
+            nodes.push(walker.currentNode);
+        }
+
+        nodes.forEach(function (node) {
+            let originalText = node.nodeValue;
+            let text = normalizeText(originalText);
+
+            Object.keys(map).forEach(function (key) {
+                if (text.includes(key)) {
+                    text = text.replaceAll(key, map[key]);
+                }
+            });
+
+            const leading = originalText.match(/^\s*/)[0];
+            const trailing = originalText.match(/\s*$/)[0];
+
+            node.nodeValue = leading + text + trailing;
+        });
+    }
+
+    function translatePlaceholders(language) {
+        const map = language === "en" ? PLACEHOLDER_VI_TO_EN : PLACEHOLDER_EN_TO_VI;
+
+        document.querySelectorAll("input[placeholder]").forEach(function (input) {
+            const currentPlaceholder = normalizeText(input.getAttribute("placeholder"));
+
+            if (map[currentPlaceholder]) {
+                input.setAttribute("placeholder", map[currentPlaceholder]);
+            }
+        });
+    }
+
+    function translateOptions(language) {
+        const map = language === "en" ? VI_TO_EN : EN_TO_VI;
+
+        document.querySelectorAll("option").forEach(function (option) {
+            const text = normalizeText(option.textContent);
+
+            if (map[text]) {
+                option.textContent = map[text];
+            }
+        });
+    }
+
+    function applyApprovedLanguage(language) {
+        const button = document.getElementById("languageToggle");
+
+        document.documentElement.lang = language;
+
+        if (button) {
+            button.textContent = language === "vi" ? "EN" : "VI";
+        }
+
+        translateTextNodes(language);
+        translatePlaceholders(language);
+        translateOptions(language);
+
+        setLanguage(language);
+    }
+
+    function bindApprovedLanguageButton() {
+        const button = document.getElementById("languageToggle");
+
+        if (!button) {
+            return;
+        }
+
+        button.onclick = function () {
+            const currentLanguage = getLanguage();
+            const nextLanguage = currentLanguage === "vi" ? "en" : "vi";
+
+            applyApprovedLanguage(nextLanguage);
+        };
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        applyApprovedLanguage(getLanguage());
+        bindApprovedLanguageButton();
+    });
+
+    window.addEventListener("load", function () {
+        applyApprovedLanguage(getLanguage());
+        bindApprovedLanguageButton();
+    });
+
+    window.applyApprovedLanguage = applyApprovedLanguage;
+})();
+</script>
+
+</body>
+</html>

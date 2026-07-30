@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Đăng nhập hệ thống hồ sơ</title>
+    <link rel="stylesheet" href="/static/style.css?v=8001">
+</head>
+
+<body class="login-page">
+    <div class="logo-header">
+        <div class="header-logo-group">
+            <a class="corner-logo-link" href="/">
+                <img
+                    class="corner-logo akzo-logo"
+                    src="/static/images/AkzoNobel_RGB.png?v=31"
+                    alt="AkzoNobel"
+                >
+            </a>
+
+            <span class="logo-separator"></span>
+
+            <a class="engineering-logo-link" href="/">
+                <img
+                    class="engineering-logo"
+                    src="/static/images/amata_engineering_logo.png?v=1"
+                    alt="Amata Engineering"
+                >
+            </a>
+        </div>
+
+        <button class="language-toggle" id="languageToggle" type="button">
+            EN
+        </button>
+    </div>
+
+    <div class="login-box">
+        <h1 id="loginTitle">
+            HỆ THỐNG LƯU TRỮ HỒ SƠ
+        </h1>
+
+        <p class="login-subtitle" id="loginSubtitle">
+            Đăng nhập để truy cập hệ thống.
+        </p>
+
+        {% if error %}
+            <p class="error-message">{{ error }}</p>
+        {% endif %}
+
+        {% if message %}
+            <p class="success-message">
+                {{ message }}
+            </p>
+        {% endif %}
+
+        <form action="/login" method="post">
+            <label for="username" id="usernameLabel">
+                Tên đăng nhập
+            </label>
+
+            <input
+                id="username"
+                type="text"
+                name="username"
+                placeholder="Nhập tên đăng nhập"
+                required
+            >
+
+            <label for="password" id="passwordLabel">
+                Mật khẩu
+            </label>
+
+            <input
+                id="password"
+                type="password"
+                name="password"
+                placeholder="Nhập mật khẩu"
+                required
+            >
+
+            <button type="submit" id="loginButton">
+                Đăng nhập
+            </button>
+        </form>
+
+        <p class="register-link">
+            <span id="noAccountText">
+                Chưa có tài khoản?
+            </span>
+
+            <a href="/register" id="registerNow">
+                Đăng ký ngay
+            </a>
+        </p>
+    </div>
+
+    <div class="login-clock" id="loginClock">
+        --/--/---- --:--:--
+    </div>
+
+    <script>
+        function updateLoginClock() {
+            const now = new Date();
+
+            const day = String(now.getDate()).padStart(2, "0");
+            const month = String(now.getMonth() + 1).padStart(2, "0");
+            const year = now.getFullYear();
+
+            const hours = String(now.getHours()).padStart(2, "0");
+            const minutes = String(now.getMinutes()).padStart(2, "0");
+            const seconds = String(now.getSeconds()).padStart(2, "0");
+
+            const timeText =
+                `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+
+            const clock = document.getElementById("loginClock");
+
+            if (clock) {
+                clock.textContent = timeText;
+            }
+        }
+
+        updateLoginClock();
+        setInterval(updateLoginClock, 1000);
+    </script>
+
+    <script>
+        (function () {
+            const LOGIN_TEXT = {
+                vi: {
+                    pageTitle: "Đăng nhập hệ thống hồ sơ",
+                    loginTitle: "HỆ THỐNG LƯU TRỮ HỒ SƠ",
+                    loginSubtitle: "Đăng nhập để truy cập hệ thống.",
+                    usernameLabel: "Tên đăng nhập",
+                    usernamePlaceholder: "Nhập tên đăng nhập",
+                    passwordLabel: "Mật khẩu",
+                    passwordPlaceholder: "Nhập mật khẩu",
+                    loginButton: "Đăng nhập",
+                    noAccountText: "Chưa có tài khoản?",
+                    registerNow: "Đăng ký ngay"
+                },
+
+                en: {
+                    pageTitle: "Document storage system login",
+                    loginTitle: "DOCUMENT STORAGE SYSTEM",
+                    loginSubtitle: "Log in to access the system.",
+                    usernameLabel: "Username",
+                    usernamePlaceholder: "Enter username",
+                    passwordLabel: "Password",
+                    passwordPlaceholder: "Enter password",
+                    loginButton: "Log in",
+                    noAccountText: "Don't have an account?",
+                    registerNow: "Register now"
+                }
+            };
+
+            function getLoginLanguage() {
+                const savedLanguage = localStorage.getItem("appLanguage");
+
+                if (savedLanguage === "en" || savedLanguage === "vi") {
+                    return savedLanguage;
+                }
+
+                return "vi";
+            }
+
+            function saveLoginLanguage(language) {
+                localStorage.setItem("appLanguage", language);
+            }
+
+            function setTextById(id, value) {
+                const element = document.getElementById(id);
+
+                if (element) {
+                    element.textContent = value;
+                }
+            }
+
+            function setPlaceholderById(id, value) {
+                const element = document.getElementById(id);
+
+                if (element) {
+                    element.setAttribute("placeholder", value);
+                }
+            }
+
+            function applyLoginLanguage(language) {
+                const text = LOGIN_TEXT[language];
+                const languageButton = document.getElementById("languageToggle");
+
+                document.documentElement.lang = language;
+                document.title = text.pageTitle;
+
+                if (languageButton) {
+                    languageButton.textContent = language === "vi" ? "EN" : "VI";
+                }
+
+                setTextById("loginTitle", text.loginTitle);
+                setTextById("loginSubtitle", text.loginSubtitle);
+                setTextById("usernameLabel", text.usernameLabel);
+                setPlaceholderById("username", text.usernamePlaceholder);
+                setTextById("passwordLabel", text.passwordLabel);
+                setPlaceholderById("password", text.passwordPlaceholder);
+                setTextById("loginButton", text.loginButton);
+                setTextById("noAccountText", text.noAccountText);
+                setTextById("registerNow", text.registerNow);
+
+                saveLoginLanguage(language);
+            }
+
+            document.addEventListener("DOMContentLoaded", function () {
+                applyLoginLanguage(getLoginLanguage());
+
+                const languageButton = document.getElementById("languageToggle");
+
+                if (languageButton) {
+                    languageButton.onclick = function () {
+                        const currentLanguage = getLoginLanguage();
+                        const nextLanguage = currentLanguage === "vi" ? "en" : "vi";
+
+                        applyLoginLanguage(nextLanguage);
+                    };
+                }
+            });
+
+            window.applyLoginLanguage = applyLoginLanguage;
+        })();
+    </script>
+</body>
+</html>

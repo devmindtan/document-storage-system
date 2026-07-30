@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Tạo tài khoản quản lý</title>
+    <link rel="stylesheet" href="/static/style.css?v=1000">
+</head>
+
+<body class="app-page">
+    <div class="logo-header">
+    <div class="header-logo-group">
+        <a class="corner-logo-link" href="/">
+            <img
+                class="corner-logo akzo-logo"
+                src="/static/images/AkzoNobel_RGB.png?v=31"
+                alt="AkzoNobel"
+            >
+        </a>
+
+        <span class="logo-separator"></span>
+
+        <a class="engineering-logo-link" href="/">
+            <img
+                class="engineering-logo"
+                src="/static/images/amata_engineering_logo.png?v=1"
+                alt="Amata Engineering"
+            >
+        </a>
+    </div>
+
+    <button class="language-toggle" id="languageToggle" type="button">
+        EN
+    </button>
+</div>
+<div class="dashboard-box">
+
+        <div class="top-bar">
+            <div>
+                <h1>TẠO TÀI KHOẢN QUẢN LÝ</h1>
+                <p>
+                    Admin:
+                    <strong>{{ user['full_name'] }}</strong>
+                </p>
+            </div>
+
+            <a class="logout-button" href="/admin">
+                Quay lại
+            </a>
+        </div>
+
+        <hr>
+
+        {% if error %}
+            <p class="error-message">
+                {{ error }}
+            </p>
+        {% endif %}
+
+        {% if success %}
+            <p class="success-message">
+                {{ success }}
+            </p>
+        {% endif %}
+
+        <form action="/admin/create-manager" method="post">
+            <label for="username">Username</label>
+            <input
+                id="username"
+                type="text"
+                name="username"
+                placeholder="Nhập username quản lý"
+                required
+            >
+
+            <label for="full_name">Họ và tên</label>
+            <input
+                id="full_name"
+                type="text"
+                name="full_name"
+                placeholder="Nhập họ tên quản lý"
+                required
+            >
+
+            <label for="password">Mật khẩu</label>
+            <input
+                id="password"
+                type="password"
+                name="password"
+                placeholder="Ít nhất 8 ký tự"
+                required
+            >
+
+            <label for="confirm_password">Nhập lại mật khẩu</label>
+            <input
+                id="confirm_password"
+                type="password"
+                name="confirm_password"
+                placeholder="Nhập lại mật khẩu"
+                required
+            >
+
+            <button type="submit">
+                Tạo tài khoản quản lý
+            </button>
+        </form>
+
+    </div>
+    <script src="/static/language.js?v=3"></script>
+</body>
+</html>
