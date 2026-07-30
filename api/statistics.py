@@ -159,6 +159,18 @@ def statistics_page(request: Request):
             FROM documents
         """).fetchone()["total"]
 
+        total_approved_documents = conn.execute("""
+            SELECT COUNT(*) AS total FROM documents WHERE status = 'APPROVED'
+        """).fetchone()["total"]
+
+        total_pending_documents = conn.execute("""
+            SELECT COUNT(*) AS total FROM documents WHERE status = 'PENDING'
+        """).fetchone()["total"]
+
+        total_rejected_documents = conn.execute("""
+            SELECT COUNT(*) AS total FROM documents WHERE status = 'REJECTED'
+        """).fetchone()["total"]
+
     monthly_count_map = {
         row["upload_month"]: row["total_documents"]
         for row in monthly_rows
@@ -192,6 +204,9 @@ def statistics_page(request: Request):
             "monthly_values_json": json.dumps(monthly_values, ensure_ascii=False),
             "user_rows": user_rows,
             "total_uploaded_documents": total_uploaded_documents,
+            "total_approved_documents": total_approved_documents,
+            "total_pending_documents": total_pending_documents,
+            "total_rejected_documents": total_rejected_documents,
         },
     )
 

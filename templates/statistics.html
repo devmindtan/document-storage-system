@@ -23,17 +23,44 @@
             <div class="summary-number">{{ total_uploaded_documents }}</div>
             <div class="summary-label">Tổng số tài liệu đã upload</div>
         </div>
+
+        <div class="statistics-summary-card">
+            <div class="summary-number" style="color: var(--success);">{{ total_approved_documents }}</div>
+            <div class="summary-label">Đã duyệt</div>
+        </div>
+
+        <div class="statistics-summary-card">
+            <div class="summary-number" style="color: #b26a00;">{{ total_pending_documents }}</div>
+            <div class="summary-label">Chờ duyệt</div>
+        </div>
+
+        <div class="statistics-summary-card">
+            <div class="summary-number" style="color: var(--danger);">{{ total_rejected_documents }}</div>
+            <div class="summary-label">Từ chối</div>
+        </div>
     </div>
 
     <div class="chart-grid">
         <div class="chart-card">
-            <h2>Tài liệu upload theo tháng - Biểu đồ cột</h2>
+            <h2>Tài liệu upload theo tháng</h2>
             <canvas id="barChartCanvas"></canvas>
         </div>
 
         <div class="chart-card">
-            <h2>Tài liệu upload theo tháng - Biểu đồ đường</h2>
-            <canvas id="lineChartCanvas"></canvas>
+            <h2>Tỉ lệ theo trạng thái</h2>
+
+            {% set status_total = (total_approved_documents + total_pending_documents + total_rejected_documents) or 1 %}
+            <div class="status-ratio-bar">
+                <div class="status-ratio-segment" style="width: {{ (total_approved_documents / status_total * 100) | round(1) }}%; background: var(--success);"></div>
+                <div class="status-ratio-segment" style="width: {{ (total_pending_documents / status_total * 100) | round(1) }}%; background: #d99a2b;"></div>
+                <div class="status-ratio-segment" style="width: {{ (total_rejected_documents / status_total * 100) | round(1) }}%; background: var(--danger);"></div>
+            </div>
+
+            <div class="status-ratio-legend">
+                <span><span class="status-ratio-dot" style="background: var(--success);"></span>Đã duyệt ({{ total_approved_documents }})</span>
+                <span><span class="status-ratio-dot" style="background: #d99a2b;"></span>Chờ duyệt ({{ total_pending_documents }})</span>
+                <span><span class="status-ratio-dot" style="background: var(--danger);"></span>Từ chối ({{ total_rejected_documents }})</span>
+            </div>
         </div>
     </div>
 
@@ -257,7 +284,6 @@ function drawLineChart() {
 
 function drawAllCharts() {
     drawBarChart();
-    drawLineChart();
 }
 
 window.addEventListener("load", drawAllCharts);

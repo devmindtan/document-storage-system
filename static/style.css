@@ -1492,6 +1492,7 @@ body.statistics-page .statistics-box {
 
 .statistics-summary {
     display: flex !important;
+    flex-wrap: wrap !important;
     gap: 16px !important;
     margin: 22px 0 !important;
 }
@@ -1546,6 +1547,38 @@ body.statistics-page .statistics-box {
     display: block !important;
     width: 100% !important;
     height: 320px !important;
+}
+
+.status-ratio-bar {
+    display: flex;
+    width: 100%;
+    height: 28px;
+    margin-top: 40px;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: var(--slate-100);
+}
+
+.status-ratio-segment {
+    height: 100%;
+    transition: width var(--transition-fast);
+}
+
+.status-ratio-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 16px;
+    font-size: 14px;
+    color: var(--slate-700);
+}
+
+.status-ratio-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin-right: 6px;
+    border-radius: 50%;
 }
 
 .table-card {
