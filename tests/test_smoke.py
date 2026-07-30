@@ -23,14 +23,15 @@ from fastapi.testclient import TestClient
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-import app as app_module  # noqa: E402
+import main as app_module  # noqa: E402
 import database.connection as connection_module  # noqa: E402
+from core.security import hash_password  # noqa: E402
 
 
 def _seed_user(db_path, username, full_name, role, is_admin, is_active=1, approval_status="APPROVED"):
     import sqlite3
 
-    salt, pw_hash = app_module.hash_password("Test@12345")
+    salt, pw_hash = hash_password("Test@12345")
 
     with sqlite3.connect(db_path) as conn:
         conn.execute(
