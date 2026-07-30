@@ -1037,6 +1037,33 @@ document.addEventListener("DOMContentLoaded", function () {
 
             selectedFileText.textContent = text("Đã chọn ", "Selected ") + files.length + text(" tệp", " files");
         });
+
+        const dropZone = fileInput.closest(".custom-file-upload");
+
+        if (dropZone) {
+            ["dragover", "dragenter"].forEach(function (eventName) {
+                dropZone.addEventListener(eventName, function (event) {
+                    event.preventDefault();
+                    dropZone.classList.add("is-dragover");
+                });
+            });
+
+            ["dragleave", "dragend"].forEach(function (eventName) {
+                dropZone.addEventListener(eventName, function () {
+                    dropZone.classList.remove("is-dragover");
+                });
+            });
+
+            dropZone.addEventListener("drop", function (event) {
+                event.preventDefault();
+                dropZone.classList.remove("is-dragover");
+
+                if (event.dataTransfer && event.dataTransfer.files.length > 0) {
+                    fileInput.files = event.dataTransfer.files;
+                    fileInput.dispatchEvent(new Event("change"));
+                }
+            });
+        }
     }
 
     if (projectSelect && categorySelect) {

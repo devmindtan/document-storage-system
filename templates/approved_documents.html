@@ -367,11 +367,9 @@ document.addEventListener("DOMContentLoaded", function () {
         activeController = new AbortController();
 
         tableBody.innerHTML = `
-            <tr>
-                <td colspan="9" style="text-align: center;">
-                    Đang tìm kiếm...
-                </td>
-            </tr>
+            <tr class="skeleton-row"><td colspan="9"><div class="skeleton-bar"></div></td></tr>
+            <tr class="skeleton-row"><td colspan="9"><div class="skeleton-bar"></div></td></tr>
+            <tr class="skeleton-row"><td colspan="9"><div class="skeleton-bar"></div></td></tr>
         `;
 
         fetch("/documents/approved/live-search?" + params.toString(), {

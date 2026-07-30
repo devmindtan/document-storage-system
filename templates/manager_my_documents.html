@@ -91,11 +91,11 @@
 
                             <td>
                                 {% if document['status'] == 'PENDING' %}
-                                    <span data-i18n-key="pendingStatus">Chờ quản lý duyệt</span>
+                                    <span class="badge badge-pending" data-i18n-key="pendingStatus">Chờ quản lý duyệt</span>
                                 {% elif document['status'] == 'APPROVED' %}
-                                    <span data-i18n-key="approvedStatus">Đã được duyệt</span>
+                                    <span class="badge badge-approved" data-i18n-key="approvedStatus">Đã được duyệt</span>
                                 {% elif document['status'] == 'REJECTED' %}
-                                    <span data-i18n-key="rejectedStatus">Bị từ chối</span>
+                                    <span class="badge badge-rejected" data-i18n-key="rejectedStatus">Bị từ chối</span>
                                 {% else %}
                                     <span data-i18n-key="unknownStatus">Không xác định</span>
                                 {% endif %}
