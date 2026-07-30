@@ -1,7 +1,9 @@
 .venv/
+.env
 __pycache__/
 *.pyc
 *.db
+*.db.bak.*
 *.xml
 storage/
 pending/
