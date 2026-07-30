@@ -1,4 +1,5 @@
 import re
+import sqlite3
 import unicodedata
 import uuid
 from datetime import datetime
@@ -11,7 +12,11 @@ from core.config import (
     STORAGE_DIR,
 )
 from database.connection import get_connection
-from services.documents import cleanup_deleted_project_records, write_audit_log
+from services.documents import (
+    category_code_from_label,
+    cleanup_deleted_project_records,
+    write_audit_log,
+)
 
 
 def make_project_code_from_project_name(project_name):

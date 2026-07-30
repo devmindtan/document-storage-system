@@ -14,6 +14,7 @@ Phạm vi có chủ đích:
 Chạy: .venv/bin/pytest tests/test_smoke.py -q
 """
 
+import sqlite3
 import sys
 from pathlib import Path
 
@@ -284,3 +285,56 @@ def test_logout(clients):
     r = fresh.get("/employee", follow_redirects=False)
     assert r.status_code == 303
     assert r.headers["location"] == "/"
+
+
+def test_employee_upload_real_file(clients):
+    """
+    Bug thật từng lọt lưới: 71 smoke test ở trên chỉ kiểm tra auth guard, không
+    ai thực sự POST 1 file qua /employee/upload -- nên thiếu `from typing
+    import List` (api/employee.py) và MAX_FILE_SIZE_MB (services/documents.py)
+    không bị phát hiện cho tới khi người dùng thật bấm nút upload. Test này
+    đi hết đường: chọn project/category có sẵn, gửi 1 file thật, xác nhận
+    trả về thành công và tạo đúng 1 dòng trong bảng documents.
+
+    Ghi chú: mỗi router tự giữ bản copy PENDING_DIR/STORAGE_DIR riêng (import
+    trực tiếp từ core.config vào namespace của từng file api/*.py), nên
+    monkeypatch 1 module không chặn được nơi file thật sẽ ghi xuống -- test
+    này chấp nhận ghi 1 file thật rồi tự xóa lại trong finally.
+    """
+    import io
+    from pathlib import Path
+
+    from services.projects import get_active_categories_for_project_key
+
+    cat_key = next(iter(get_active_categories_for_project_key("1").keys()))
+
+    files = [("uploaded_files", ("smoke_test_upload.pdf", io.BytesIO(b"%PDF-1.4 fake"), "application/pdf"))]
+    data = {
+        "project_key": "1",
+        "category_key": cat_key,
+        "new_project_name": "",
+        "new_category_name": "",
+        "new_category_code": "",
+        "description": "Smoke test upload.",
+        "location": "Kho test",
+    }
+
+    written_path = None
+
+    try:
+        r = clients["employee"].post("/employee/upload", data=data, files=files, follow_redirects=False)
+        assert r.status_code == 200, r.text[:500]
+        assert "success-message" in r.text, r.text[:500]
+
+        with sqlite3.connect(connection_module.DB_PATH) as conn:
+            conn.row_factory = sqlite3.Row
+            row = conn.execute(
+                "SELECT * FROM documents WHERE original_name = 'smoke_test_upload.pdf'"
+            ).fetchone()
+
+        assert row is not None
+        assert row["status"] == "PENDING"
+        written_path = row["file_path"]
+    finally:
+        if written_path:
+            Path(written_path).unlink(missing_ok=True)

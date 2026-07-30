@@ -6,6 +6,7 @@ import mimetypes
 import os
 import re
 import shutil
+import sqlite3
 import stat
 import time
 import uuid

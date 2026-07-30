@@ -10,7 +10,15 @@ from pathlib import Path
 
 from fastapi import UploadFile
 
-from core.config import DOWNLOADS_DIR, PENDING_DIR, REJECTED_DIR, STORAGE_DIR
+from core.config import (
+    CATEGORY_MAP,
+    DOWNLOADS_DIR,
+    MAX_FILE_SIZE_MB,
+    PENDING_DIR,
+    PROJECT_MAP,
+    REJECTED_DIR,
+    STORAGE_DIR,
+)
 from database.connection import get_connection
 
 
@@ -336,6 +344,8 @@ def category_code_from_label(category_label: str, project_label: str | None = No
 
     if category_label in legacy_category_codes:
         return legacy_category_codes[category_label]
+
+    from services.projects import make_category_code_from_label
 
     return make_category_code_from_label(category_label)
 

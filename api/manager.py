@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import List
 from urllib.parse import quote
 from datetime import datetime
 import json

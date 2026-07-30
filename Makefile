@@ -8,6 +8,7 @@ run:
 	.venv/bin/uvicorn main:app --reload --host 127.0.0.1 --port 8000
 
 test:
+	! .venv/bin/python -m pyflakes core/ database/ services/ api/ main.py 2>&1 | grep "undefined name"
 	.venv/bin/pytest tests/ -q
 
 backup-db:
