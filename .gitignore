@@ -1,8 +1,8 @@
-.venv/*
-pending/*
-rejected/*
-storage/*
-downloads/*
-*.xml
-*.db
-__pycache__/*
+.venv/
+__pycache__/
+*.pyc
+data.db
+storage/
+pending/
+rejected/
+downloads/
