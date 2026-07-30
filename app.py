@@ -1,7 +1,5 @@
 from pathlib import Path
 from typing import List
-import hashlib
-import hmac
 import sqlite3
 import shutil
 import uuid
@@ -22,119 +20,30 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
 
-
-# ============================================================
-# CẤU HÌNH
-# ============================================================
-
-BASE_DIR = Path(__file__).resolve().parent
-DB_PATH = BASE_DIR / "data.db"
-TEMPLATES_DIR = BASE_DIR / "templates"
-STATIC_DIR = BASE_DIR / "static"
-
-LOCAL_STORAGE_DIR = BASE_DIR
-
-PENDING_DIR = LOCAL_STORAGE_DIR / "pending"
-STORAGE_DIR = LOCAL_STORAGE_DIR / "storage"
-REJECTED_DIR = LOCAL_STORAGE_DIR / "rejected"
-DOWNLOADS_DIR = LOCAL_STORAGE_DIR / "downloads"
-
-MAX_FILE_SIZE_MB = 100
-
-ALLOWED_EXTENSIONS = {
-    ".pdf", ".doc", ".docx", ".xls", ".xlsx",
-    ".ppt", ".pptx", ".png", ".jpg", ".jpeg",
-    ".txt", ".zip",
-}
-
-CATEGORY_MAP = {
-    "BC": {
-        "label": "Business Case",
-        "folder": "business_case",
-        "code": "BC",
-    },
-    "CAPEX": {
-        "label": "CAPEX",
-        "folder": "capex",
-        "code": "CAPEX",
-    },
-    "PTW": {
-        "label": "PTW",
-        "folder": "ptw",
-        "code": "PTW",
-    },
-    "JSA": {
-        "label": "JSA",
-        "folder": "jsa",
-        "code": "JSA",
-    },
-    "RAHS": {
-        "label": "Risk Assessment / Hazard Study",
-        "folder": "risk_assessment_hazard_study",
-        "code": "RAHS",
-    },
-    "DWG": {
-        "label": "Drawings",
-        "folder": "drawings",
-        "code": "DWG",
-    },
-    "FSH": {
-        "label": "FAT / SAT / Handover",
-        "folder": "fat_sat_handover",
-        "code": "FSH",
-    },
-    "PHOTO": {
-        "label": "Photos",
-        "folder": "photos",
-        "code": "PHOTO",
-    },
-    "TSOP": {
-        "label": "Training / SOP",
-        "folder": "training_sop",
-        "code": "TSOP",
-    },
-    "LEG": {
-        "label": "Legal",
-        "folder": "legal",
-        "code": "LEG",
-    },
-    "VM": {
-        "label": "Vendor Manual",
-        "folder": "vendor_manual",
-        "code": "VM",
-    },
-    "OTH": {
-        "label": "Others",
-        "folder": "others",
-        "code": "OTH",
-    },
-}
-PROJECT_MAP = {
-    "1": {
-        "label": "Project 1",
-        "folder": "project_1",
-    },
-    "2": {
-        "label": "Project 2",
-        "folder": "project_2",
-    },
-    "3": {
-        "label": "Project 3",
-        "folder": "project_3",
-    },
-}
-
-# Phải giống số PASSWORD_ITERATIONS của project Terminal cũ
-PASSWORD_ITERATIONS = 600_000
-
-ROLE_EMPLOYEE = "EMPLOYEE"
-ROLE_MANAGER = "MANAGER"
-
-# Giá trị đặc biệt dùng trong dropdown upload.
-# Khi user chọn các giá trị này, hệ thống sẽ hiện ô nhập mới.
-NEW_PROJECT_KEY = "__new_project__"
-NEW_CATEGORY_KEY = "__new_category__"
-DEFAULT_CATEGORY_PREFIX = "__default_category__:"
+from core.config import (
+    BASE_DIR,
+    DB_PATH,
+    TEMPLATES_DIR,
+    STATIC_DIR,
+    LOCAL_STORAGE_DIR,
+    PENDING_DIR,
+    STORAGE_DIR,
+    REJECTED_DIR,
+    DOWNLOADS_DIR,
+    MAX_FILE_SIZE_MB,
+    ALLOWED_EXTENSIONS,
+    CATEGORY_MAP,
+    PROJECT_MAP,
+    PASSWORD_ITERATIONS,
+    ROLE_EMPLOYEE,
+    ROLE_MANAGER,
+    NEW_PROJECT_KEY,
+    NEW_CATEGORY_KEY,
+    DEFAULT_CATEGORY_PREFIX,
+    SESSION_SECRET_KEY,
+)
+from database.connection import get_connection
+from core.security import hash_password, verify_password
 
 
 # ============================================================
@@ -143,11 +52,9 @@ DEFAULT_CATEGORY_PREFIX = "__default_category__:"
 
 app = FastAPI()
 
-# Khóa session: chỉ dùng demo nội bộ.
-# Sau này cần đổi thành chuỗi bí mật dài và không đưa lên GitHub.
 app.add_middleware(
     SessionMiddleware,
-    secret_key="day-la-khoa-demo-cho-he-thong-luu-tru-ho-so-2026"
+    secret_key=SESSION_SECRET_KEY,
 )
 
 app.mount(
@@ -159,25 +66,6 @@ app.mount(
 templates = Jinja2Templates(directory=TEMPLATES_DIR)
 
 
-# ============================================================
-# HÀM DATABASE VÀ MẬT KHẨU
-# ============================================================
-
-def get_connection():
-    """
-    Mở kết nối SQLite.
-
-    timeout=10 cho phép SQLite chờ tối đa 10 giây
-    nếu database đang bận ghi dữ liệu.
-    """
-
-    conn = sqlite3.connect(DB_PATH, timeout=10)
-    conn.row_factory = sqlite3.Row
-
-    # Chờ tối đa 10 giây khi database đang bận.
-    conn.execute("PRAGMA busy_timeout = 10000")
-
-    return conn
 def make_project_code_from_project_name(project_name):
     """
     Tạo mã project từ 3 ký tự đầu của tên project.
@@ -2264,40 +2152,6 @@ def startup():
     initialize_user_approval_status()
     initialize_admin_status()
     initialize_user_sessions()
-def hash_password(password: str):
-    """
-    Tạo salt và password hash để lưu vào database.
-
-    Không bao giờ lưu mật khẩu gốc.
-    """
-
-    salt = secrets.token_bytes(16)
-
-    password_hash = hashlib.pbkdf2_hmac(
-        "sha256",
-        password.encode("utf-8"),
-        salt,
-        PASSWORD_ITERATIONS,
-    ).hex()
-
-    return salt.hex(), password_hash
-
-def verify_password(password, saved_salt, saved_hash):
-    """
-    Kiểm tra mật khẩu người dùng nhập
-    với password hash đang lưu trong database.
-    """
-
-    salt = bytes.fromhex(saved_salt)
-
-    entered_hash = hashlib.pbkdf2_hmac(
-        "sha256",
-        password.encode("utf-8"),
-        salt,
-        PASSWORD_ITERATIONS,
-    ).hex()
-
-    return hmac.compare_digest(entered_hash, saved_hash)
 
 def create_employee_user(username: str, full_name: str, password: str):
     """
