@@ -586,11 +586,14 @@ def manager_delete_project_category(
 @router.get("/manager/pending", response_class=HTMLResponse)
 def manager_pending_documents(
     request: Request,
+    keyword: str = "",
     message: str | None = None,
     error: str | None = None
 ):
     """
     Hiển thị toàn bộ hồ sơ đang chờ quản lý duyệt.
+
+    Có thể lọc theo 1 từ khóa chung (tên file, project, loại hồ sơ, người gửi).
     """
 
     current_user = get_current_user(request)
@@ -601,15 +604,31 @@ def manager_pending_documents(
     if current_user["role"] != ROLE_MANAGER:
         return RedirectResponse("/employee", status_code=303)
 
+    keyword = keyword.strip()
+
+    query = """
+        SELECT *
+        FROM documents
+        WHERE status = 'PENDING'
+    """
+    params = []
+
+    if keyword:
+        query += """
+            AND (
+                lower(COALESCE(original_name, '')) LIKE lower(?)
+                OR lower(COALESCE(project, '')) LIKE lower(?)
+                OR lower(COALESCE(category, '')) LIKE lower(?)
+                OR lower(COALESCE(submitted_by, '')) LIKE lower(?)
+            )
+        """
+        keyword_like = f"%{keyword}%"
+        params.extend([keyword_like, keyword_like, keyword_like, keyword_like])
+
+    query += " ORDER BY id ASC"
+
     with get_connection() as conn:
-        documents = conn.execute(
-            """
-            SELECT *
-            FROM documents
-            WHERE status = 'PENDING'
-            ORDER BY id ASC
-            """
-        ).fetchall()
+        documents = conn.execute(query, params).fetchall()
 
     return templates.TemplateResponse(
         request=request,
@@ -619,6 +638,7 @@ def manager_pending_documents(
             "documents": documents,
             "message": message,
             "error": error,
+            "keyword": keyword,
         }
     )
 

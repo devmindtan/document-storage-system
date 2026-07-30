@@ -37,6 +37,26 @@
 
     <hr>
 
+    <form class="search-form" action="/manager/pending" method="get">
+        <div class="search-field">
+            <label for="keyword">Tìm theo tên file / project / loại hồ sơ / người gửi</label>
+            <input
+                id="keyword"
+                type="text"
+                name="keyword"
+                placeholder="Nhập từ khóa..."
+                value="{{ keyword }}"
+            >
+        </div>
+
+        <div class="search-buttons" style="margin-top: 12px;">
+            <button class="search-button" type="submit">Tìm</button>
+            <a class="reset-button" href="/manager/pending">Xóa lọc</a>
+        </div>
+    </form>
+
+    <hr>
+
     {% if message %}
         <p class="success-message">
             {{ message }}
