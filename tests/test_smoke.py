@@ -24,6 +24,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 import app as app_module  # noqa: E402
+import database.connection as connection_module  # noqa: E402
 
 
 def _seed_user(db_path, username, full_name, role, is_admin, is_active=1, approval_status="APPROVED"):
@@ -63,7 +64,10 @@ def _seed_user(db_path, username, full_name, role, is_admin, is_active=1, approv
 @pytest.fixture(scope="module")
 def clients(tmp_path_factory):
     db_path = tmp_path_factory.mktemp("db") / "test.db"
-    app_module.DB_PATH = db_path
+    # get_connection() đọc DB_PATH từ namespace của module nơi nó được định
+    # nghĩa (database.connection), không phải từ app_module — phải patch
+    # đúng chỗ đó thì override mới có tác dụng.
+    connection_module.DB_PATH = db_path
 
     _seed_user(db_path, "employee1", "Nhân viên Test", "EMPLOYEE", is_admin=0)
     _seed_user(db_path, "manager1", "Quản lý Test", "MANAGER", is_admin=0)
