@@ -1,37 +1,9 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <title>Trang quản lý</title>
-    <link rel="stylesheet" href="/static/style.css?v=1001">
-</head>
+{% extends "layout/base.html" %}
 
-<body class="app-page">
-    <div class="logo-header">
-    <div class="header-logo-group">
-        <a class="corner-logo-link" href="/">
-            <img
-                class="corner-logo akzo-logo"
-                src="/static/images/AkzoNobel_RGB.png?v=31"
-                alt="AkzoNobel"
-            >
-        </a>
+{% block title %}Trang quản lý{% endblock %}
+{% block body_class %}app-page{% endblock %}
 
-        <span class="logo-separator"></span>
-
-        <a class="engineering-logo-link" href="/">
-            <img
-                class="engineering-logo"
-                src="/static/images/amata_engineering_logo.png?v=1"
-                alt="Amata Engineering"
-            >
-        </a>
-    </div>
-
-    <button class="language-toggle" id="languageToggle" type="button">
-        EN
-    </button>
-</div>
+{% block content %}
 <div class="dashboard-box">
         <div class="top-bar">
             <div>
@@ -183,6 +155,4 @@ myDocumentsTitle: "My document",
     });
 })();
 </script>
-
-</body>
-</html>
+{% endblock %}

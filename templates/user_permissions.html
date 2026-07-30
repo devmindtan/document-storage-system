@@ -1,37 +1,9 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <title>Phân quyền tài khoản</title>
-    <link rel="stylesheet" href="/static/style.css?v=1000">
-</head>
+{% extends "layout/base.html" %}
 
-<body class="app-page">
-<div class="logo-header">
-    <div class="header-logo-group">
-        <a class="corner-logo-link" href="/">
-            <img
-                class="corner-logo akzo-logo"
-                src="/static/images/AkzoNobel_RGB.png?v=31"
-                alt="AkzoNobel"
-            >
-        </a>
+{% block title %}Phân quyền tài khoản{% endblock %}
+{% block body_class %}app-page{% endblock %}
 
-        <span class="logo-separator"></span>
-
-        <a class="engineering-logo-link" href="/">
-            <img
-                class="engineering-logo"
-                src="/static/images/amata_engineering_logo.png?v=1"
-                alt="Amata Engineering"
-            >
-        </a>
-    </div>
-
-    <button class="language-toggle" id="languageToggle" type="button">
-        EN
-    </button>
-</div>
+{% block content %}
 <div class="dashboard-box">
 
         <div class="top-bar">
@@ -111,5 +83,4 @@
 
     </div>
     <script src="/static/language.js?v=3"></script>
-</body>
-</html>
+{% endblock %}

@@ -1,11 +1,9 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <title>Hồ sơ chờ duyệt</title>
-    <link rel="stylesheet" href="/static/style.css?v=5001">
+{% extends "layout/base.html" %}
 
-    <style>
+{% block title %}Hồ sơ chờ duyệt{% endblock %}
+{% block body_class %}app-page manager-pending-page{% endblock %}
+{% block extra_style %}
+<style>
         .pending-new-badge {
             display: inline-block;
             margin-top: 6px;
@@ -18,35 +16,9 @@
             white-space: nowrap;
         }
     </style>
-</head>
+{% endblock %}
 
-<body class="app-page manager-pending-page">
-<div class="logo-header">
-    <div class="header-logo-group">
-        <a class="corner-logo-link" href="/">
-            <img
-                class="corner-logo akzo-logo"
-                src="/static/images/AkzoNobel_RGB.png?v=31"
-                alt="AkzoNobel"
-            >
-        </a>
-
-        <span class="logo-separator"></span>
-
-        <a class="engineering-logo-link" href="/">
-            <img
-                class="engineering-logo"
-                src="/static/images/amata_engineering_logo.png?v=1"
-                alt="Amata Engineering"
-            >
-        </a>
-    </div>
-
-    <button class="language-toggle" id="languageToggle" type="button">
-        EN
-    </button>
-</div>
-
+{% block content %}
 <div class="dashboard-box">
     <div class="top-bar">
         <div>
@@ -334,5 +306,4 @@
     });
 })();
 </script>
-</body>
-</html>
+{% endblock %}
