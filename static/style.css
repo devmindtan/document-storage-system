@@ -285,7 +285,8 @@ body.login-page {
     gap: 14px !important;
 }
 
-.admin-back-button {
+.admin-back-button,
+.back-link {
     height: 38px !important;
     min-height: 38px !important;
 
@@ -308,7 +309,8 @@ body.login-page {
     text-decoration: none !important;
 }
 
-.admin-back-button:hover {
+.admin-back-button:hover,
+.back-link:hover {
     background-color: var(--primary-dark) !important;
 }
 
@@ -496,19 +498,30 @@ body.login-page {
     }
 }
 
-.status-active {
-    color: var(--success);
+.status-active,
+.status-locked,
+.status-pending {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: var(--radius-lg);
+    font-size: 13px;
     font-weight: bold;
+    white-space: nowrap;
+}
+
+.status-active {
+    background: #e6f4ea;
+    color: var(--success);
 }
 
 .status-locked {
-    color: #a83232;
-    font-weight: bold;
+    background: #ffe4e4;
+    color: #b00020;
 }
 
 .status-pending {
+    background: #fff2df;
     color: #b26a00;
-    font-weight: bold;
 }
 
 .self-account {

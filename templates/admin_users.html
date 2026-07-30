@@ -15,7 +15,7 @@
                 </p>
             </div>
 
-            <a class="logout-button" href="/admin">
+            <a class="back-link" href="/admin">
                 Quay lại
             </a>
         </div>
@@ -53,9 +53,9 @@
 
                             <td>
                                 {% if account['is_admin'] %}
-                                    Có
+                                    <span class="status-active">Có</span>
                                 {% else %}
-                                    Không
+                                    <span class="self-account">Không</span>
                                 {% endif %}
                             </td>
 
@@ -123,5 +123,5 @@
         {% endif %}
 
     </div>
-    <script src="/static/language.js?v=3"></script>
+
 {% endblock %}
