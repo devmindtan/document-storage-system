@@ -78,6 +78,21 @@ label {
     font-weight: bold;
 }
 
+.form-step-heading {
+    margin-top: 28px;
+    margin-bottom: 4px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+    color: var(--primary);
+    font-size: 15px;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.form-step-heading:first-of-type {
+    margin-top: 4px;
+}
+
 input,
 select {
     width: 100%;
