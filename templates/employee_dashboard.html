@@ -13,8 +13,9 @@
         </div>
 
         <div class="relative z-10">
-            <h2 class="text-xl md:text-2xl font-bold tracking-tight text-white">Xin chào, {{ user.full_name }} 👋</h2>
-            <p class="text-slate-400 text-sm mt-1.5 max-w-xl leading-relaxed">
+            <h2 class="text-xl md:text-2xl font-bold tracking-tight text-white">
+                <span data-i18n-key="welcomeGreeting">Xin chào,</span> {{ user.full_name }} 👋</h2>
+            <p class="text-slate-400 text-sm mt-1.5 max-w-xl leading-relaxed" data-i18n-key="employeeWelcomeText">
                 Chào mừng bạn quay lại. Hệ thống kho lưu trữ hồ sơ của Amata Documentation đã sẵn sàng hỗ trợ công việc
                 của bạn hôm nay.
             </p>
@@ -22,7 +23,7 @@
     </div>
 
     <div>
-        <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4">Lối tắt tác vụ</h3>
+        <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4" data-i18n-key="quickShortcutsHeading">Lối tắt tác vụ</h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
 
             <a href="/employee/upload"
@@ -32,9 +33,9 @@
                     <i class="ti ti-cloud-upload text-xl"></i>
                 </div>
                 <div>
-                    <h4 class="font-semibold text-slate-800 group-hover:text-brand-900 transition-colors">Gửi hồ sơ mới
+                    <h4 class="font-semibold text-slate-800 group-hover:text-brand-900 transition-colors" data-i18n-key="submitNewDocTitle">Gửi hồ sơ mới
                     </h4>
-                    <p class="text-xs text-slate-500 mt-0.5 line-clamp-1">Upload hồ sơ chờ duyệt.</p>
+                    <p class="text-xs text-slate-500 mt-0.5 line-clamp-1" data-i18n-key="submitNewDocDesc">Upload hồ sơ chờ duyệt.</p>
                 </div>
             </a>
 
@@ -45,9 +46,9 @@
                     <i class="ti ti-file-text text-xl"></i>
                 </div>
                 <div>
-                    <h4 class="font-semibold text-slate-800 group-hover:text-brand-900 transition-colors">Hồ sơ của tôi
+                    <h4 class="font-semibold text-slate-800 group-hover:text-brand-900 transition-colors" data-i18n-key="myDocsTitle">Hồ sơ của tôi
                     </h4>
-                    <p class="text-xs text-slate-500 mt-0.5 line-clamp-1">Xem trạng thái hồ sơ đã gửi.</p>
+                    <p class="text-xs text-slate-500 mt-0.5 line-clamp-1" data-i18n-key="myDocsDesc">Xem trạng thái hồ sơ đã gửi.</p>
                 </div>
             </a>
 
@@ -58,9 +59,9 @@
                     <i class="ti ti-archive text-xl"></i>
                 </div>
                 <div>
-                    <h4 class="font-semibold text-slate-800 group-hover:text-brand-900 transition-colors">Kho đã duyệt
+                    <h4 class="font-semibold text-slate-800 group-hover:text-brand-900 transition-colors" data-i18n-key="approvedArchiveTitle">Kho đã duyệt
                     </h4>
-                    <p class="text-xs text-slate-500 mt-0.5 line-clamp-1">Tra cứu tài liệu chính thức.</p>
+                    <p class="text-xs text-slate-500 mt-0.5 line-clamp-1" data-i18n-key="approvedArchiveDesc">Tra cứu tài liệu chính thức.</p>
                 </div>
             </a>
 
@@ -71,8 +72,8 @@
                     <i class="ti ti-chart-bar text-xl"></i>
                 </div>
                 <div>
-                    <h4 class="font-semibold text-slate-800 group-hover:text-brand-900 transition-colors">Thống kê</h4>
-                    <p class="text-xs text-slate-500 mt-0.5 line-clamp-1">Biểu đồ upload cá nhân.</p>
+                    <h4 class="font-semibold text-slate-800 group-hover:text-brand-900 transition-colors" data-i18n-key="statisticsTitle">Thống kê</h4>
+                    <p class="text-xs text-slate-500 mt-0.5 line-clamp-1" data-i18n-key="statisticsDesc">Biểu đồ upload cá nhân.</p>
                 </div>
             </a>
 
@@ -97,4 +98,69 @@
         }
     }
 </style>
+{% endblock %}
+
+{% block extra_script %}
+<script>
+    // ============================================================
+    // PAGE-SPECIFIC TRANSLATION FIX
+    // Employee Dashboard page
+    // ============================================================
+    (function () {
+        const PAGE_TRANSLATIONS = {
+            vi: {
+                welcomeGreeting: "Xin chào,",
+                employeeWelcomeText: "Chào mừng bạn quay lại. Hệ thống kho lưu trữ hồ sơ của Amata Documentation đã sẵn sàng hỗ trợ công việc của bạn hôm nay.",
+                quickShortcutsHeading: "Lối tắt tác vụ",
+                submitNewDocTitle: "Gửi hồ sơ mới",
+                submitNewDocDesc: "Upload hồ sơ chờ duyệt.",
+                myDocsTitle: "Hồ sơ của tôi",
+                myDocsDesc: "Xem trạng thái hồ sơ đã gửi.",
+                approvedArchiveTitle: "Kho đã duyệt",
+                approvedArchiveDesc: "Tra cứu tài liệu chính thức.",
+                statisticsTitle: "Thống kê",
+                statisticsDesc: "Biểu đồ upload cá nhân."
+            },
+            en: {
+                welcomeGreeting: "Hello,",
+                employeeWelcomeText: "Welcome back. The Amata Documentation archive system is ready to support your work today.",
+                quickShortcutsHeading: "Quick Shortcuts",
+                submitNewDocTitle: "Submit New Document",
+                submitNewDocDesc: "Upload a document for approval.",
+                myDocsTitle: "My Documents",
+                myDocsDesc: "View the status of submitted documents.",
+                approvedArchiveTitle: "Approved Archive",
+                approvedArchiveDesc: "Look up official documents.",
+                statisticsTitle: "Statistics",
+                statisticsDesc: "Chart of personal uploads."
+            }
+        };
+
+        function getPageLanguage() {
+            const savedLanguage = localStorage.getItem("appLanguage");
+            return (savedLanguage === "en" || savedLanguage === "vi") ? savedLanguage : "vi";
+        }
+
+        function applyPageTranslations() {
+            const currentLanguage = getPageLanguage();
+            document.querySelectorAll("[data-i18n-key]").forEach(function (element) {
+                const key = element.getAttribute("data-i18n-key");
+                if (PAGE_TRANSLATIONS[currentLanguage] && PAGE_TRANSLATIONS[currentLanguage][key]) {
+                    element.textContent = PAGE_TRANSLATIONS[currentLanguage][key];
+                }
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            applyPageTranslations();
+
+            const languageButton = document.getElementById("languageToggle");
+            if (languageButton) {
+                languageButton.addEventListener("click", function () {
+                    setTimeout(applyPageTranslations, 100);
+                });
+            }
+        });
+    })();
+</script>
 {% endblock %}

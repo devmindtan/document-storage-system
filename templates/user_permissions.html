@@ -7,12 +7,12 @@
 {% block content %}
 <div class="space-y-6 max-w-2xl">
     <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-        <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">Thông tin tài khoản</h3>
+        <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4" data-i18n-key="accountInfoTitle">Thông tin tài khoản</h3>
         <dl class="space-y-2 text-sm">
-            <div class="flex gap-2"><dt class="font-medium text-slate-500 w-24 shrink-0">Tài khoản</dt><dd class="text-slate-800">{{ target_user.username }}</dd></div>
-            <div class="flex gap-2"><dt class="font-medium text-slate-500 w-24 shrink-0">Họ tên</dt><dd class="text-slate-800">{{ target_user.full_name }}</dd></div>
+            <div class="flex gap-2"><dt class="font-medium text-slate-500 w-24 shrink-0" data-i18n-key="accountHeader">Tài khoản</dt><dd class="text-slate-800">{{ target_user.username }}</dd></div>
+            <div class="flex gap-2"><dt class="font-medium text-slate-500 w-24 shrink-0" data-i18n-key="fullNameHeader">Họ tên</dt><dd class="text-slate-800">{{ target_user.full_name }}</dd></div>
             <div class="flex gap-2">
-                <dt class="font-medium text-slate-500 w-24 shrink-0">Vai trò</dt>
+                <dt class="font-medium text-slate-500 w-24 shrink-0" data-i18n-key="roleHeader">Vai trò</dt>
                 <dd>
                     {% if target_user.role == 'MANAGER' %}
                         <span class="bg-blue-100 text-blue-700 px-2.5 py-1 rounded text-xs font-bold">MANAGER</span>
@@ -26,7 +26,7 @@
 
     <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         <div class="p-6 border-b border-slate-200 bg-slate-50/50">
-            <h2 class="text-lg font-semibold text-slate-800">Chọn loại hồ sơ được phép xem/download</h2>
+            <h2 class="text-lg font-semibold text-slate-800" data-i18n-key="permissionsSectionTitle">Chọn loại hồ sơ được phép xem/download</h2>
         </div>
 
         <form action="/manager/users/{{ target_user.id }}/permissions" method="post" class="p-6 space-y-4">
@@ -47,10 +47,66 @@
 
             <div class="pt-4 border-t border-slate-200 flex justify-end">
                 <button type="submit" class="bg-brand-900 hover:bg-brand-800 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm inline-flex items-center gap-2">
-                    <i class="ti ti-shield-check"></i> Lưu phân quyền
+                    <i class="ti ti-shield-check"></i> <span data-i18n-key="savePermissionsButton">Lưu phân quyền</span>
                 </button>
             </div>
         </form>
     </div>
 </div>
+
+<script>
+    (function () {
+        const PAGE_TRANSLATIONS = {
+            vi: {
+                accountInfoTitle: "Thông tin tài khoản",
+                accountHeader: "Tài khoản",
+                fullNameHeader: "Họ tên",
+                roleHeader: "Vai trò",
+                permissionsSectionTitle: "Chọn loại hồ sơ được phép xem/download",
+                savePermissionsButton: "Lưu phân quyền"
+            },
+            en: {
+                accountInfoTitle: "Account information",
+                accountHeader: "Account",
+                fullNameHeader: "Full name",
+                roleHeader: "Role",
+                permissionsSectionTitle: "Select document types allowed to view/download",
+                savePermissionsButton: "Save permissions"
+            }
+        };
+
+        function getPageLanguage() {
+            const savedLanguage = localStorage.getItem("appLanguage");
+            if (savedLanguage === "en" || savedLanguage === "vi") {
+                return savedLanguage;
+            }
+            return "vi";
+        }
+
+        function applyPageTranslations() {
+            const currentLanguage = getPageLanguage();
+            const dict = PAGE_TRANSLATIONS[currentLanguage];
+            if (!dict) return;
+
+            document.querySelectorAll("[data-i18n-key]").forEach(function (element) {
+                const key = element.getAttribute("data-i18n-key");
+                if (dict[key]) {
+                    element.textContent = dict[key];
+                }
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            applyPageTranslations();
+
+            const languageButton = document.getElementById("languageToggle");
+
+            if (languageButton) {
+                languageButton.addEventListener("click", function () {
+                    setTimeout(applyPageTranslations, 100);
+                });
+            }
+        });
+    })();
+</script>
 {% endblock %}

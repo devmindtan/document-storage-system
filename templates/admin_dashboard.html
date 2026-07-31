@@ -13,8 +13,9 @@
         </div>
 
         <div class="relative z-10">
-            <h2 class="text-xl md:text-2xl font-bold tracking-tight text-white">Xin chào, {{ user.full_name }} 👋</h2>
-            <p class="text-slate-400 text-sm mt-1.5 max-w-xl leading-relaxed">
+            <h2 class="text-xl md:text-2xl font-bold tracking-tight text-white">
+                <span data-i18n-key="welcomeGreeting">Xin chào,</span> {{ user.full_name }} 👋</h2>
+            <p class="text-slate-400 text-sm mt-1.5 max-w-xl leading-relaxed" data-i18n-key="adminWelcomeText">
                 Bảng điều khiển quản trị hệ thống. Bạn có toàn quyền quản lý nhân sự, phân quyền và giám sát hoạt động
                 của kho lưu trữ.
             </p>
@@ -22,7 +23,7 @@
     </div>
 
     <div>
-        <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4">Công cụ hệ thống</h3>
+        <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4" data-i18n-key="systemToolsHeading">Công cụ hệ thống</h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
 
             <a href="/admin/users"
@@ -32,9 +33,9 @@
                     <i class="ti ti-shield-check text-xl"></i>
                 </div>
                 <div>
-                    <h4 class="font-semibold text-slate-800 group-hover:text-brand-900 transition-colors">Quản lý phân
+                    <h4 class="font-semibold text-slate-800 group-hover:text-brand-900 transition-colors" data-i18n-key="permissionsTitle">Quản lý phân
                         quyền</h4>
-                    <p class="text-xs text-slate-500 mt-0.5 line-clamp-1">Chỉnh sửa quyền hạn tài khoản.</p>
+                    <p class="text-xs text-slate-500 mt-0.5 line-clamp-1" data-i18n-key="permissionsDesc">Chỉnh sửa quyền hạn tài khoản.</p>
                 </div>
             </a>
 
@@ -45,9 +46,9 @@
                     <i class="ti ti-users text-xl"></i>
                 </div>
                 <div>
-                    <h4 class="font-semibold text-slate-800 group-hover:text-brand-900 transition-colors">Duyệt tài
+                    <h4 class="font-semibold text-slate-800 group-hover:text-brand-900 transition-colors" data-i18n-key="accountApprovalTitle">Duyệt tài
                         khoản</h4>
-                    <p class="text-xs text-slate-500 mt-0.5 line-clamp-1">Xem, khóa hoặc mở lại người dùng.</p>
+                    <p class="text-xs text-slate-500 mt-0.5 line-clamp-1" data-i18n-key="accountApprovalDesc">Xem, khóa hoặc mở lại người dùng.</p>
                 </div>
             </a>
 
@@ -58,9 +59,9 @@
                     <i class="ti ti-user-plus text-xl"></i>
                 </div>
                 <div>
-                    <h4 class="font-semibold text-slate-800 group-hover:text-brand-900 transition-colors">Tạo tài khoản
+                    <h4 class="font-semibold text-slate-800 group-hover:text-brand-900 transition-colors" data-i18n-key="createManagerTitle">Tạo tài khoản
                         Quản lý</h4>
-                    <p class="text-xs text-slate-500 mt-0.5 line-clamp-1">Tạo mới tài khoản cấp quản lý.</p>
+                    <p class="text-xs text-slate-500 mt-0.5 line-clamp-1" data-i18n-key="createManagerDesc">Tạo mới tài khoản cấp quản lý.</p>
                 </div>
             </a>
 
@@ -71,9 +72,9 @@
                     <i class="ti ti-history text-xl"></i>
                 </div>
                 <div>
-                    <h4 class="font-semibold text-slate-800 group-hover:text-brand-900 transition-colors">Nhật ký hoạt
+                    <h4 class="font-semibold text-slate-800 group-hover:text-brand-900 transition-colors" data-i18n-key="auditLogsTitle">Nhật ký hoạt
                         động</h4>
-                    <p class="text-xs text-slate-500 mt-0.5 line-clamp-1">Giám sát upload, duyệt và tải về.</p>
+                    <p class="text-xs text-slate-500 mt-0.5 line-clamp-1" data-i18n-key="auditLogsDesc">Giám sát upload, duyệt và tải về.</p>
                 </div>
             </a>
 
@@ -84,8 +85,8 @@
                     <i class="ti ti-chart-bar text-xl"></i>
                 </div>
                 <div>
-                    <h4 class="font-semibold text-slate-800 group-hover:text-brand-900 transition-colors">Thống kê</h4>
-                    <p class="text-xs text-slate-500 mt-0.5 line-clamp-1">Xem báo cáo tổng quan hệ thống.</p>
+                    <h4 class="font-semibold text-slate-800 group-hover:text-brand-900 transition-colors" data-i18n-key="statisticsTitle">Thống kê</h4>
+                    <p class="text-xs text-slate-500 mt-0.5 line-clamp-1" data-i18n-key="statisticsDesc">Xem báo cáo tổng quan hệ thống.</p>
                 </div>
             </a>
 
@@ -110,4 +111,73 @@
         }
     }
 </style>
+{% endblock %}
+
+{% block extra_script %}
+<script>
+    // ============================================================
+    // PAGE-SPECIFIC TRANSLATION FIX
+    // Admin Dashboard page
+    // ============================================================
+    (function () {
+        const PAGE_TRANSLATIONS = {
+            vi: {
+                welcomeGreeting: "Xin chào,",
+                adminWelcomeText: "Bảng điều khiển quản trị hệ thống. Bạn có toàn quyền quản lý nhân sự, phân quyền và giám sát hoạt động của kho lưu trữ.",
+                systemToolsHeading: "Công cụ hệ thống",
+                permissionsTitle: "Quản lý phân quyền",
+                permissionsDesc: "Chỉnh sửa quyền hạn tài khoản.",
+                accountApprovalTitle: "Duyệt tài khoản",
+                accountApprovalDesc: "Xem, khóa hoặc mở lại người dùng.",
+                createManagerTitle: "Tạo tài khoản Quản lý",
+                createManagerDesc: "Tạo mới tài khoản cấp quản lý.",
+                auditLogsTitle: "Nhật ký hoạt động",
+                auditLogsDesc: "Giám sát upload, duyệt và tải về.",
+                statisticsTitle: "Thống kê",
+                statisticsDesc: "Xem báo cáo tổng quan hệ thống."
+            },
+            en: {
+                welcomeGreeting: "Hello,",
+                adminWelcomeText: "System administration dashboard. You have full control over staff management, permissions, and archive monitoring.",
+                systemToolsHeading: "System Tools",
+                permissionsTitle: "Manage Permissions",
+                permissionsDesc: "Edit account permissions.",
+                accountApprovalTitle: "Account Approval",
+                accountApprovalDesc: "View, lock or unlock users.",
+                createManagerTitle: "Create Manager Account",
+                createManagerDesc: "Create a new manager-level account.",
+                auditLogsTitle: "Activity Log",
+                auditLogsDesc: "Monitor uploads, approvals and downloads.",
+                statisticsTitle: "Statistics",
+                statisticsDesc: "View system overview reports."
+            }
+        };
+
+        function getPageLanguage() {
+            const savedLanguage = localStorage.getItem("appLanguage");
+            return (savedLanguage === "en" || savedLanguage === "vi") ? savedLanguage : "vi";
+        }
+
+        function applyPageTranslations() {
+            const currentLanguage = getPageLanguage();
+            document.querySelectorAll("[data-i18n-key]").forEach(function (element) {
+                const key = element.getAttribute("data-i18n-key");
+                if (PAGE_TRANSLATIONS[currentLanguage] && PAGE_TRANSLATIONS[currentLanguage][key]) {
+                    element.textContent = PAGE_TRANSLATIONS[currentLanguage][key];
+                }
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            applyPageTranslations();
+
+            const languageButton = document.getElementById("languageToggle");
+            if (languageButton) {
+                languageButton.addEventListener("click", function () {
+                    setTimeout(applyPageTranslations, 100);
+                });
+            }
+        });
+    })();
+</script>
 {% endblock %}

@@ -22,9 +22,9 @@
 
     <div class="flex-1 flex items-center justify-center p-4 my-8">
         <div class="w-[480px] max-w-[calc(100%-2rem)] bg-white rounded-xl shadow-lg p-8 sm:p-10">
-            <h1 class="text-center text-[24px] font-bold text-brand-900">ĐĂNG KÝ TÀI KHOẢN</h1>
-            <p class="text-center text-slate-500 mt-2 mb-6 text-sm sm:text-base">Tạo tài khoản nhân viên để sử dụng hệ
-                thống.</p>
+            <h1 id="registerTitle" class="text-center text-[24px] font-bold text-brand-900">ĐĂNG KÝ TÀI KHOẢN</h1>
+            <p id="registerSubtitle" class="text-center text-slate-500 mt-2 mb-6 text-sm sm:text-base">Tạo tài khoản
+                nhân viên để sử dụng hệ thống.</p>
 
             {% if error %}
             <p class="bg-rose-100 text-rose-700 rounded-md px-3.5 py-2.5 mt-4 mb-4 font-bold whitespace-pre-line">{{
@@ -32,34 +32,101 @@
             {% endif %}
 
             <form action="/register" method="post">
-                <label for="username" class="block mt-4 mb-1.5 font-bold text-slate-800">Username</label>
+                <label for="username" id="usernameLabel" class="block mt-4 mb-1.5 font-bold text-slate-800">Username</label>
                 <input id="username" type="text" name="username" placeholder="Nhập username" required
                     class="w-full px-3 py-3 border border-slate-300 rounded-lg text-sm bg-white outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all">
 
-                <label for="full_name" class="block mt-4 mb-1.5 font-bold text-slate-800">Họ và tên</label>
+                <label for="full_name" id="fullNameLabel" class="block mt-4 mb-1.5 font-bold text-slate-800">Họ và tên</label>
                 <input id="full_name" type="text" name="full_name" placeholder="Nhập họ và tên" required
                     class="w-full px-3 py-3 border border-slate-300 rounded-lg text-sm bg-white outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all">
 
-                <label for="password" class="block mt-4 mb-1.5 font-bold text-slate-800">Mật khẩu</label>
+                <label for="password" id="passwordLabel" class="block mt-4 mb-1.5 font-bold text-slate-800">Mật khẩu</label>
                 <input id="password" type="password" name="password" placeholder="Ít nhất 8 ký tự" required
                     class="w-full px-3 py-3 border border-slate-300 rounded-lg text-sm bg-white outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all">
 
-                <label for="confirm_password" class="block mt-4 mb-1.5 font-bold text-slate-800">Nhập lại mật
+                <label for="confirm_password" id="confirmPasswordLabel" class="block mt-4 mb-1.5 font-bold text-slate-800">Nhập lại mật
                     khẩu</label>
                 <input id="confirm_password" type="password" name="confirm_password" placeholder="Nhập lại mật khẩu"
                     required
                     class="w-full px-3 py-3 border border-slate-300 rounded-lg text-sm bg-white outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all">
 
-                <button type="submit"
+                <button type="submit" id="registerButton"
                     class="w-full mt-8 py-3 bg-brand-900 hover:bg-brand-800 text-white rounded-lg font-semibold text-base shadow-sm transition-colors">Đăng
                     ký</button>
             </form>
 
             <p class="text-center text-sm mt-5">
-                <span class="text-slate-600">Đã có tài khoản?</span>
-                <a href="/" class="text-brand-700 font-bold hover:underline">Quay lại đăng nhập</a>
+                <span id="haveAccountText" class="text-slate-600">Đã có tài khoản?</span>
+                <a href="/" id="backToLogin" class="text-brand-700 font-bold hover:underline">Quay lại đăng nhập</a>
             </p>
         </div>
     </div>
 </div>
+
+<script>
+    (function () {
+        const REGISTER_TEXT = {
+            vi: {
+                pageTitle: "Đăng ký tài khoản", registerTitle: "ĐĂNG KÝ TÀI KHOẢN",
+                registerSubtitle: "Tạo tài khoản nhân viên để sử dụng hệ thống.", usernameLabel: "Username",
+                usernamePlaceholder: "Nhập username", fullNameLabel: "Họ và tên",
+                fullNamePlaceholder: "Nhập họ và tên", passwordLabel: "Mật khẩu",
+                passwordPlaceholder: "Ít nhất 8 ký tự", confirmPasswordLabel: "Nhập lại mật khẩu",
+                confirmPasswordPlaceholder: "Nhập lại mật khẩu", registerButton: "Đăng ký",
+                haveAccountText: "Đã có tài khoản?", backToLogin: "Quay lại đăng nhập"
+            },
+            en: {
+                pageTitle: "Register account", registerTitle: "CREATE AN ACCOUNT",
+                registerSubtitle: "Create a staff account to use the system.", usernameLabel: "Username",
+                usernamePlaceholder: "Enter username", fullNameLabel: "Full name",
+                fullNamePlaceholder: "Enter full name", passwordLabel: "Password",
+                passwordPlaceholder: "At least 8 characters", confirmPasswordLabel: "Confirm password",
+                confirmPasswordPlaceholder: "Re-enter password", registerButton: "Register",
+                haveAccountText: "Already have an account?", backToLogin: "Back to login"
+            }
+        };
+
+        function getRegisterLanguage() {
+            const savedLanguage = localStorage.getItem("appLanguage");
+            return (savedLanguage === "en" || savedLanguage === "vi") ? savedLanguage : "vi";
+        }
+        function saveRegisterLanguage(language) { localStorage.setItem("appLanguage", language); }
+        function setTextById(id, value) { const el = document.getElementById(id); if (el) el.textContent = value; }
+        function setPlaceholderById(id, value) { const el = document.getElementById(id); if (el) el.setAttribute("placeholder", value); }
+
+        function applyRegisterLanguage(language) {
+            const text = REGISTER_TEXT[language];
+            const languageButton = document.getElementById("languageToggle");
+            document.documentElement.lang = language;
+            document.title = text.pageTitle;
+            if (languageButton) languageButton.textContent = language === "vi" ? "EN" : "VI";
+            setTextById("registerTitle", text.registerTitle);
+            setTextById("registerSubtitle", text.registerSubtitle);
+            setTextById("usernameLabel", text.usernameLabel);
+            setPlaceholderById("username", text.usernamePlaceholder);
+            setTextById("fullNameLabel", text.fullNameLabel);
+            setPlaceholderById("full_name", text.fullNamePlaceholder);
+            setTextById("passwordLabel", text.passwordLabel);
+            setPlaceholderById("password", text.passwordPlaceholder);
+            setTextById("confirmPasswordLabel", text.confirmPasswordLabel);
+            setPlaceholderById("confirm_password", text.confirmPasswordPlaceholder);
+            setTextById("registerButton", text.registerButton);
+            setTextById("haveAccountText", text.haveAccountText);
+            setTextById("backToLogin", text.backToLogin);
+            saveRegisterLanguage(language);
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            applyRegisterLanguage(getRegisterLanguage());
+            const languageButton = document.getElementById("languageToggle");
+            if (languageButton) {
+                languageButton.onclick = function () {
+                    applyRegisterLanguage(getRegisterLanguage() === "vi" ? "en" : "vi");
+                };
+            }
+        });
+
+        window.applyRegisterLanguage = applyRegisterLanguage;
+    })();
+</script>
 {% endblock %}

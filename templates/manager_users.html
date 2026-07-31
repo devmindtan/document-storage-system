@@ -12,12 +12,12 @@
                 <table class="w-full text-left text-sm text-slate-600 whitespace-nowrap">
                     <thead class="bg-slate-50 border-b border-slate-200 text-slate-700 uppercase font-semibold text-xs">
                         <tr>
-                            <th class="px-6 py-4">Tên người dùng</th>
-                            <th class="px-6 py-4">Tài khoản</th>
-                            <th class="px-6 py-4">Phân quyền</th>
-                            <th class="px-6 py-4">Ngày tạo</th>
-                            <th class="px-6 py-4">Trạng thái</th>
-                            <th class="px-6 py-4 text-right">Thao tác</th>
+                            <th class="px-6 py-4" data-i18n-key="userNameHeader">Tên người dùng</th>
+                            <th class="px-6 py-4" data-i18n-key="accountHeader">Tài khoản</th>
+                            <th class="px-6 py-4" data-i18n-key="roleHeader">Phân quyền</th>
+                            <th class="px-6 py-4" data-i18n-key="createdAtHeader">Ngày tạo</th>
+                            <th class="px-6 py-4" data-i18n-key="statusHeader">Trạng thái</th>
+                            <th class="px-6 py-4 text-right" data-i18n-key="actionHeader">Thao tác</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
@@ -35,39 +35,39 @@
                             <td class="px-6 py-4">{{ u.created_at }}</td>
                             <td class="px-6 py-4">
                                 {% if u.approval_status == 'PENDING' %}
-                                    <span class="flex items-center gap-1.5 text-amber-600 text-xs font-medium"><span class="w-2 h-2 rounded-full bg-amber-500"></span> Chờ duyệt</span>
+                                    <span class="flex items-center gap-1.5 text-amber-600 text-xs font-medium"><span class="w-2 h-2 rounded-full bg-amber-500"></span> <span data-i18n-key="pendingStatus">Chờ duyệt</span></span>
                                 {% elif u.approval_status == 'REJECTED' %}
-                                    <span class="flex items-center gap-1.5 text-rose-600 text-xs font-medium"><span class="w-2 h-2 rounded-full bg-rose-500"></span> Đã từ chối</span>
+                                    <span class="flex items-center gap-1.5 text-rose-600 text-xs font-medium"><span class="w-2 h-2 rounded-full bg-rose-500"></span> <span data-i18n-key="rejectedStatus">Đã từ chối</span></span>
                                 {% elif u.is_active %}
-                                    <span class="flex items-center gap-1.5 text-emerald-600 text-xs font-medium"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> Đang hoạt động</span>
+                                    <span class="flex items-center gap-1.5 text-emerald-600 text-xs font-medium"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> <span data-i18n-key="activeStatus">Đang hoạt động</span></span>
                                 {% else %}
-                                    <span class="flex items-center gap-1.5 text-slate-400 text-xs font-medium"><span class="w-2 h-2 rounded-full bg-slate-300"></span> Đã khóa</span>
+                                    <span class="flex items-center gap-1.5 text-slate-400 text-xs font-medium"><span class="w-2 h-2 rounded-full bg-slate-300"></span> <span data-i18n-key="lockedStatus">Đã khóa</span></span>
                                 {% endif %}
                             </td>
                             <td class="px-6 py-4 text-right">
                                 {% if u.id == user.id %}
-                                    <span class="text-xs text-slate-400 italic">Tài khoản hiện tại</span>
+                                    <span class="text-xs text-slate-400 italic" data-i18n-key="currentAccount">Tài khoản hiện tại</span>
                                 {% elif u.approval_status == 'PENDING' %}
                                     <div class="flex items-center justify-end gap-2">
                                         <form method="post" action="/manager/users/{{ u.id }}/approve">
                                             <button type="submit" class="px-3 py-1.5 bg-emerald-100 text-emerald-700 hover:bg-emerald-200 rounded text-xs font-semibold inline-flex items-center gap-1 transition-colors">
-                                                <i class="ti ti-check"></i> Duyệt tài khoản
+                                                <i class="ti ti-check"></i> <span data-i18n-key="approveButton">Duyệt tài khoản</span>
                                             </button>
                                         </form>
                                         <form method="post" action="/manager/users/{{ u.id }}/reject">
                                             <button type="submit" class="px-3 py-1.5 bg-rose-100 text-rose-700 hover:bg-rose-200 rounded text-xs font-semibold inline-flex items-center gap-1 transition-colors">
-                                                <i class="ti ti-x"></i> Từ chối
+                                                <i class="ti ti-x"></i> <span data-i18n-key="rejectButton">Từ chối</span>
                                             </button>
                                         </form>
                                     </div>
                                 {% else %}
                                     <form method="post" action="/manager/users/{{ u.id }}/toggle-status">
                                         {% if u.is_active %}
-                                            <button type="submit" class="text-slate-400 hover:text-rose-500 p-1.5 bg-white border border-slate-200 rounded shadow-sm" title="Khóa tài khoản">
+                                            <button type="submit" class="text-slate-400 hover:text-rose-500 p-1.5 bg-white border border-slate-200 rounded shadow-sm" data-i18n-title="lockTitle" title="Khóa tài khoản">
                                                 <i class="ti ti-lock text-lg"></i>
                                             </button>
                                         {% else %}
-                                            <button type="submit" class="text-slate-400 hover:text-emerald-500 p-1.5 bg-white border border-slate-200 rounded shadow-sm" title="Mở khóa">
+                                            <button type="submit" class="text-slate-400 hover:text-emerald-500 p-1.5 bg-white border border-slate-200 rounded shadow-sm" data-i18n-title="unlockTitle" title="Mở khóa">
                                                 <i class="ti ti-lock-open text-lg"></i>
                                             </button>
                                         {% endif %}
@@ -82,8 +82,91 @@
         </div>
     {% else %}
         <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm text-sm text-slate-500 text-center">
-            Chưa có tài khoản nào trong hệ thống.
+            <span data-i18n-key="noAccounts">Chưa có tài khoản nào trong hệ thống.</span>
         </div>
     {% endif %}
 </div>
+
+<script>
+    (function () {
+        const PAGE_TRANSLATIONS = {
+            vi: {
+                userNameHeader: "Tên người dùng",
+                accountHeader: "Tài khoản",
+                roleHeader: "Phân quyền",
+                createdAtHeader: "Ngày tạo",
+                statusHeader: "Trạng thái",
+                actionHeader: "Thao tác",
+                pendingStatus: "Chờ duyệt",
+                rejectedStatus: "Đã từ chối",
+                activeStatus: "Đang hoạt động",
+                lockedStatus: "Đã khóa",
+                currentAccount: "Tài khoản hiện tại",
+                approveButton: "Duyệt tài khoản",
+                rejectButton: "Từ chối",
+                lockTitle: "Khóa tài khoản",
+                unlockTitle: "Mở khóa",
+                noAccounts: "Chưa có tài khoản nào trong hệ thống."
+            },
+            en: {
+                userNameHeader: "User name",
+                accountHeader: "Account",
+                roleHeader: "Role",
+                createdAtHeader: "Created at",
+                statusHeader: "Status",
+                actionHeader: "Action",
+                pendingStatus: "Pending",
+                rejectedStatus: "Rejected",
+                activeStatus: "Active",
+                lockedStatus: "Locked",
+                currentAccount: "Current account",
+                approveButton: "Approve account",
+                rejectButton: "Reject",
+                lockTitle: "Lock account",
+                unlockTitle: "Unlock",
+                noAccounts: "No accounts in the system yet."
+            }
+        };
+
+        function getPageLanguage() {
+            const savedLanguage = localStorage.getItem("appLanguage");
+            if (savedLanguage === "en" || savedLanguage === "vi") {
+                return savedLanguage;
+            }
+            return "vi";
+        }
+
+        function applyPageTranslations() {
+            const currentLanguage = getPageLanguage();
+            const dict = PAGE_TRANSLATIONS[currentLanguage];
+            if (!dict) return;
+
+            document.querySelectorAll("[data-i18n-key]").forEach(function (element) {
+                const key = element.getAttribute("data-i18n-key");
+                if (dict[key]) {
+                    element.textContent = dict[key];
+                }
+            });
+
+            document.querySelectorAll("[data-i18n-title]").forEach(function (element) {
+                const key = element.getAttribute("data-i18n-title");
+                if (dict[key]) {
+                    element.setAttribute("title", dict[key]);
+                }
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            applyPageTranslations();
+
+            const languageButton = document.getElementById("languageToggle");
+
+            if (languageButton) {
+                languageButton.addEventListener("click", function () {
+                    setTimeout(applyPageTranslations, 100);
+                });
+            }
+        });
+    })();
+</script>
 {% endblock %}

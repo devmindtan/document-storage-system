@@ -515,6 +515,47 @@ def project_categories_by_project(
     }
 
 
+@router.get("/document-code-preview")
+def document_code_preview(
+    request: Request,
+    project_id: int,
+    category_key: str,
+):
+    """
+    Xem trước mã hồ sơ sẽ được tạo (chỉ đọc, không ghi DB).
+    Số thứ tự có thể đổi tới lúc upload thật vì đây chỉ là bản xem trước.
+    """
+
+    current_user = get_current_user(request)
+
+    if not current_user:
+        return JSONResponse({"success": False}, status_code=401)
+
+    project = get_approved_project_by_key(str(project_id))
+
+    if not project:
+        return {"success": False}
+
+    category_label = None
+
+    if category_key == NEW_CATEGORY_KEY:
+        category_label = None
+    elif category_key.startswith(DEFAULT_CATEGORY_PREFIX):
+        default_category = get_default_category_from_special_key(category_key)
+        category_label = default_category["label"] if default_category else None
+    else:
+        category_row = get_project_category_by_key(category_key, project_id)
+        category_label = category_row["label"] if category_row else None
+
+    if not category_label:
+        return {"success": False}
+
+    with get_connection() as conn:
+        preview_code = generate_document_code(conn, project["label"], category_label)
+
+    return {"success": True, "preview_code": preview_code}
+
+
 @router.post("/manager/project-categories/add")
 def manager_add_project_category(
     request: Request,

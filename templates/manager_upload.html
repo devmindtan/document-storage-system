@@ -1,7 +1,7 @@
 {% extends "layout/base.html" %}
 
 {% block title %}Quản lý upload hồ sơ{% endblock %}
-{% block page_title %}QUẢN LÝ UPLOAD HỒ SƠ{% endblock %}
+{% block page_title %}<span data-i18n-key="pageHeading">QUẢN LÝ UPLOAD HỒ SƠ</span>{% endblock %}
 {% block active_nav %}upload{% endblock %}
 {% block extra_style %}
 <style>
@@ -67,53 +67,6 @@
         background: #fecaca;
     }
 
-    /* ---- Toast ---- */
-    #toastHost {
-        position: fixed;
-        top: 1rem;
-        right: 1rem;
-        z-index: 9999;
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-
-    .toast-item {
-        min-width: 260px;
-        max-width: 340px;
-        background: #0f172a;
-        color: #fff;
-        padding: 0.75rem 1rem;
-        border-radius: 0.75rem;
-        font-size: 0.8rem;
-        font-weight: 600;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, .2);
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        animation: toast-in .2s ease-out;
-    }
-
-    .toast-item.success {
-        background: #166534;
-    }
-
-    .toast-item.danger {
-        background: #b91c1c;
-    }
-
-    @keyframes toast-in {
-        from {
-            opacity: 0;
-            transform: translateY(-8px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
     /* ---- Workspace ---- */
     .workspace-sidebar-item.is-active {
         background: #eff6ff;
@@ -147,23 +100,48 @@
             transform: rotate(360deg);
         }
     }
+
+    /* ================================================================
+       FIX #1 — LỚP MODAL BỊ CẮT / LỆCH DO ANCESTOR CÓ transform/filter
+       Ép z-index cao hơn hẳn mọi phần tử layout (sidebar, header...) và
+       kèm theo JS bên dưới sẽ "teleport" các modal ra làm con trực tiếp
+       của <body> để thoát khỏi containing block sai của bất kỳ ancestor
+       nào có transform/filter/backdrop-filter.
+       ================================================================ */
+    #masterCatalogModal {
+        z-index: 999;
+    }
+
+    #projectModal,
+    #categoryModal {
+        z-index: 1000;
+    }
+
+    #confirmDeleteModal {
+        z-index: 1001;
+    }
+
+    /* Khi select đang chờ dữ liệu mới nhưng vẫn hiển thị dữ liệu cũ,
+       làm mờ nhẹ để người dùng biết đang tải mà không bị "giật trắng" */
+    .category-select-loading {
+        opacity: 0.55;
+        pointer-events: none;
+    }
 </style>
 {% endblock %}
 
 {% block content %}
 {% import "layout/_macros.html" as macros %}
 
-<div id="toastHost"></div>
-
 <div class="dashboard-box max-w-5xl mx-auto space-y-6">
     <div class="top-bar flex flex-wrap items-center justify-between gap-3">
         <p class="text-sm text-slate-500">
-            Quản lý: <strong class="text-slate-800 font-semibold">{{ user['full_name'] }}</strong>
+            <span data-i18n-key="managerLabel">Quản lý:</span> <strong class="text-slate-800 font-semibold">{{ user['full_name'] }}</strong>
         </p>
 
         <a class="back-link inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600 transition-colors"
             href="/manager">
-            <i class="ti ti-arrow-left"></i> Quay lại
+            <i class="ti ti-arrow-left"></i> <span data-i18n-key="backButton">Quay lại</span>
         </a>
     </div>
 
@@ -178,14 +156,14 @@
                     <i class="ti ti-cloud-upload text-xl"></i>
                 </div>
                 <div>
-                    <h2 class="text-lg font-semibold text-slate-800">Upload hồ sơ</h2>
-                    <p class="text-sm text-slate-500">Hồ sơ do quản lý upload sẽ được đưa thẳng vào kho chính thức.</p>
+                    <h2 class="text-lg font-semibold text-slate-800" data-i18n-key="cardTitle">Upload hồ sơ</h2>
+                    <p class="text-sm text-slate-500" data-i18n-key="cardSubtitle">Hồ sơ do quản lý upload sẽ được đưa thẳng vào kho chính thức.</p>
                 </div>
             </div>
 
             <button type="button" onclick="openMasterCatalogModal()"
                 class="btn-secondary inline-flex items-center gap-2 px-4 py-2 text-xs">
-                <i class="ti ti-layout-kanban text-base"></i> Quản lý danh mục
+                <i class="ti ti-layout-kanban text-base"></i> <span data-i18n-key="manageCatalogBtn">Quản lý danh mục</span>
             </button>
         </div>
 
@@ -195,16 +173,18 @@
                 <div class="flex items-center gap-2">
                     <span
                         class="w-6 h-6 rounded-full bg-brand-900 text-white text-xs font-bold flex items-center justify-center shrink-0">1</span>
-                    <h3 class="form-step-heading text-sm font-semibold text-slate-800 uppercase tracking-wide">Chọn vị
+                    <h3 class="form-step-heading text-sm font-semibold text-slate-800 uppercase tracking-wide"
+                        data-i18n-key="step1Heading">Chọn vị
                         trí lưu trữ</h3>
                 </div>
 
                 <div>
                     <div class="flex items-center justify-between mb-1.5">
-                        <label for="project_key" class="block text-sm font-medium text-slate-700">Project</label>
+                        <label for="project_key" class="block text-sm font-medium text-slate-700"
+                            data-i18n-key="projectLabel">Project</label>
                         <button type="button" onclick="openProjectModal('add')"
                             class="text-xs font-semibold text-brand-600 hover:text-brand-800 inline-flex items-center gap-1">
-                            <i class="ti ti-plus"></i> Thêm project mới
+                            <i class="ti ti-plus"></i> <span data-i18n-key="addProjectBtn">Thêm project mới</span>
                         </button>
                     </div>
 
@@ -220,20 +200,26 @@
 
                 <div>
                     <div class="flex items-center justify-between mb-1.5">
-                        <label for="category_key" class="block text-sm font-medium text-slate-700">Loại hồ sơ (File
+                        <label for="category_key" class="block text-sm font-medium text-slate-700"
+                            data-i18n-key="categoryLabel">Loại hồ sơ (File
                             con)</label>
                         <button type="button" onclick="openCategoryModal('add')"
                             class="text-xs font-semibold text-brand-600 hover:text-brand-800 inline-flex items-center gap-1">
-                            <i class="ti ti-plus"></i> Thêm file con mới
+                            <i class="ti ti-plus"></i> <span data-i18n-key="addCategoryBtn">Thêm loại hồ sơ mới</span>
                         </button>
                     </div>
 
                     <div class="flex items-center gap-2">
                         <select id="category_key" name="category_key" required
                             class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 bg-white outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
-                            <option value="">Vui lòng chọn project trước...</option>
+                            <option value="">Vui lòng chọn dự án trước...</option>
                         </select>
                         <div id="categoryLoadingSpinner" class="spinner hidden shrink-0"></div>
+                    </div>
+
+                    <div id="codePreviewBox" class="hidden mt-3 px-3.5 py-2.5 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-500">
+                        <span data-i18n-key="codePreviewLabel">Mã hồ sơ dự kiến:</span> <span id="codePreviewText" class="font-mono font-semibold text-slate-700"></span>
+                        <span class="text-slate-400" data-i18n-key="codePreviewNote">(có thể thay đổi tại thời điểm tải lên)</span>
                     </div>
                 </div>
             </div>
@@ -243,7 +229,8 @@
                 <div class="flex items-center gap-2">
                     <span
                         class="w-6 h-6 rounded-full bg-brand-900 text-white text-xs font-bold flex items-center justify-center shrink-0">2</span>
-                    <h3 class="form-step-heading text-sm font-semibold text-slate-800 uppercase tracking-wide">Chọn tệp
+                    <h3 class="form-step-heading text-sm font-semibold text-slate-800 uppercase tracking-wide"
+                        data-i18n-key="step2Heading">Chọn tệp
                     </h3>
                 </div>
 
@@ -256,16 +243,16 @@
                             class="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-sm mb-3 pointer-events-none">
                             <i class="ti ti-cloud-upload text-2xl text-brand-500"></i>
                         </div>
-                        <p class="text-sm font-semibold text-slate-700 pointer-events-none">Kéo thả tệp vào đây, hoặc
+                        <p class="text-sm font-semibold text-slate-700 pointer-events-none" data-i18n-key="dragDropText">Kéo thả tệp vào đây, hoặc
                             bấm để chọn</p>
-                        <p class="text-xs text-slate-400 mt-1 pointer-events-none">Hỗ trợ nhiều tệp • PDF, DOCX, XLSX,
+                        <p class="text-xs text-slate-400 mt-1 pointer-events-none" data-i18n-key="supportedFormats">Hỗ trợ nhiều tệp • PDF, DOCX, XLSX,
                             JPG</p>
                         <span
                             class="custom-file-button text-sm font-semibold text-brand-600 underline underline-offset-2 mt-3 pointer-events-none">
-                            Chọn tệp
+                            <span data-i18n-key="chooseFileBtn">Chọn tệp</span>
                         </span>
                         <span class="selected-file-text text-xs text-slate-500 mt-2 pointer-events-none"
-                            id="selectedFileText">Không có tệp nào được chọn</span>
+                            id="selectedFileText" data-i18n-key="noFileSelected">Không có tệp nào được chọn</span>
                     </label>
                 </div>
             </div>
@@ -275,35 +262,36 @@
                 <div class="flex items-center gap-2">
                     <span
                         class="w-6 h-6 rounded-full bg-brand-900 text-white text-xs font-bold flex items-center justify-center shrink-0">3</span>
-                    <h3 class="form-step-heading text-sm font-semibold text-slate-800 uppercase tracking-wide">Thông tin
+                    <h3 class="form-step-heading text-sm font-semibold text-slate-800 uppercase tracking-wide"
+                        data-i18n-key="step3Heading">Thông tin
                         mô tả</h3>
                 </div>
 
                 <div>
                     <label for="description" class="block text-sm font-medium text-slate-700 mb-1.5">
-                        Mô tả <span class="required-star">*</span>
+                        <span data-i18n-key="descriptionLabel">Mô tả</span> <span class="required-star">*</span>
                     </label>
                     <input id="description" type="text" name="description" maxlength="50" required
                         placeholder="Nhập mô tả hồ sơ, tối đa 50 ký tự" value="{{ description_value or '' }}"
                         class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
-                    <p class="note-text text-xs text-slate-500 mt-1">Bắt buộc nhập. Tối đa 50 ký tự.</p>
+                    <p class="note-text text-xs text-slate-500 mt-1" data-i18n-key="requiredNote">Bắt buộc nhập. Tối đa 50 ký tự.</p>
                 </div>
 
                 <div>
                     <label for="location" class="block text-sm font-medium text-slate-700 mb-1.5">
-                        Vị trí <span class="required-star">*</span>
+                        <span data-i18n-key="locationLabel">Vị trí</span> <span class="required-star">*</span>
                     </label>
                     <input id="location" type="text" name="location" maxlength="50" required
                         placeholder="Nhập vị trí hồ sơ, tối đa 50 ký tự" value="{{ location_value }}"
                         class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
-                    <p class="note-text text-xs text-slate-500 mt-1">Bắt buộc nhập. Tối đa 50 ký tự.</p>
+                    <p class="note-text text-xs text-slate-500 mt-1" data-i18n-key="requiredNote">Bắt buộc nhập. Tối đa 50 ký tự.</p>
                 </div>
             </div>
 
             <div class="pt-2 flex justify-end">
                 <button type="submit" id="primaryUploadBtn"
                     class="btn-primary inline-flex items-center gap-2 px-5 py-2.5 text-sm">
-                    <i class="ti ti-send"></i> Upload và duyệt ngay
+                    <i class="ti ti-send"></i> <span data-i18n-key="submitBtn">Upload và duyệt ngay</span>
                 </button>
             </div>
         </form>
@@ -318,8 +306,8 @@
 
         <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between shrink-0">
             <div>
-                <h3 class="font-bold text-slate-800 text-base">Quản lý kho Project &amp; Danh mục</h3>
-                <p class="text-xs text-slate-500 mt-0.5">Tìm kiếm, thêm, sửa, xóa project và loại hồ sơ.</p>
+                <h3 class="font-bold text-slate-800 text-base" data-i18n-key="catalogModalTitle">Quản lý kho Project &amp; Danh mục</h3>
+                <p class="text-xs text-slate-500 mt-0.5" data-i18n-key="catalogModalSubtitle">Tìm kiếm, thêm, sửa, xóa project và loại hồ sơ.</p>
             </div>
             <button onclick="closeMasterCatalogModal()" class="btn-ghost w-8 h-8 flex items-center justify-center">
                 <i class="ti ti-x text-lg"></i>
@@ -329,15 +317,15 @@
         <!-- Quick stats -->
         <div class="px-6 py-4 border-b border-slate-200 grid grid-cols-2 sm:grid-cols-3 gap-3 shrink-0 bg-white">
             <div class="rounded-xl border border-slate-200 p-3">
-                <p class="text-xs text-slate-500">Tổng project</p>
+                <p class="text-xs text-slate-500" data-i18n-key="totalProjectsLabel">Tổng project</p>
                 <p id="statTotalProjects" class="text-xl font-bold text-slate-800">--</p>
             </div>
             <div class="rounded-xl border border-slate-200 p-3">
-                <p class="text-xs text-slate-500">Loại hồ sơ (project đang chọn)</p>
+                <p class="text-xs text-slate-500" data-i18n-key="totalCategoriesLabel">Loại hồ sơ (project đang chọn)</p>
                 <p id="statTotalCategories" class="text-xl font-bold text-slate-800">--</p>
             </div>
             <div class="rounded-xl border border-slate-200 p-3 hidden sm:block">
-                <p class="text-xs text-slate-500">Project đang chọn</p>
+                <p class="text-xs text-slate-500" data-i18n-key="activeProjectLabel">Project đang chọn</p>
                 <p id="statActiveProject" class="text-sm font-bold text-brand-600 truncate">--</p>
             </div>
         </div>
@@ -350,10 +338,10 @@
                 class="w-full md:w-64 border-b md:border-b-0 md:border-r border-slate-200 flex flex-col min-h-0 shrink-0">
                 <div class="p-3 border-b border-slate-100 space-y-2 shrink-0">
                     <div class="flex items-center justify-between">
-                        <h4 class="font-bold text-slate-700 text-xs uppercase tracking-wide">Projects</h4>
+                        <h4 class="font-bold text-slate-700 text-xs uppercase tracking-wide" data-i18n-key="projectsHeading">Projects</h4>
                         <button type="button" onclick="openProjectModal('add')"
                             class="btn-ghost text-brand-600 text-xs font-semibold px-2 py-1 inline-flex items-center gap-1">
-                            <i class="ti ti-plus text-sm"></i> Thêm
+                            <i class="ti ti-plus text-sm"></i> <span data-i18n-key="addBtn">Thêm</span>
                         </button>
                     </div>
                     <div class="relative">
@@ -368,14 +356,14 @@
 
             <!-- Content Panel: Categories -->
             <div class="flex-1 flex flex-col min-h-0">
-                <div class="p-3 border-b border-slate-100 space-y-2 shrink-0">
+                <div class="p-3 border-b border-slate-100 shrink-0">
                     <div class="flex items-center justify-between gap-2 flex-wrap">
                         <h4 class="font-bold text-slate-700 text-xs uppercase tracking-wide">
-                            File con của: <span id="catalogActiveProjectName" class="text-brand-600">--</span>
+                            <span data-i18n-key="categoriesOfLabel">Loại hồ sơ của:</span> <span id="catalogActiveProjectName" class="text-brand-600">--</span>
                         </h4>
                         <button type="button" onclick="openCategoryModal('add')"
                             class="btn-secondary text-xs font-semibold px-3 py-1.5 inline-flex items-center gap-1">
-                            <i class="ti ti-plus text-sm"></i> Thêm file con
+                            <i class="ti ti-plus text-sm"></i> <span data-i18n-key="addCategoryModalBtn">Thêm loại hồ sơ</span>
                         </button>
                     </div>
                     <div class="relative max-w-xs">
@@ -390,9 +378,9 @@
                     <table class="w-full text-sm">
                         <thead class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wide sticky top-0">
                             <tr>
-                                <th class="text-left font-semibold px-4 py-2.5">Tên loại hồ sơ</th>
-                                <th class="text-left font-semibold px-4 py-2.5">Mã</th>
-                                <th class="text-right font-semibold px-4 py-2.5">Thao tác</th>
+                                <th class="text-left font-semibold px-4 py-2.5" data-i18n-key="categoryNameHeader">Tên loại hồ sơ</th>
+                                <th class="text-left font-semibold px-4 py-2.5" data-i18n-key="codeHeader">Mã</th>
+                                <th class="text-right font-semibold px-4 py-2.5" data-i18n-key="actionHeader">Thao tác</th>
                             </tr>
                         </thead>
                         <tbody id="catalogCategoryList" class="divide-y divide-slate-100"></tbody>
@@ -402,7 +390,7 @@
         </div>
 
         <div class="px-6 py-3.5 bg-slate-50 border-t border-slate-200 flex justify-end shrink-0">
-            <button onclick="closeMasterCatalogModal()" class="btn-primary px-5 py-2 text-sm">Đóng</button>
+            <button onclick="closeMasterCatalogModal()" class="btn-primary px-5 py-2 text-sm" data-i18n-key="closeBtn">Đóng</button>
         </div>
     </div>
 </div>
@@ -413,16 +401,16 @@
     <div class="bg-white rounded-2xl shadow-xl border border-slate-200 w-full max-w-md p-6 space-y-4">
         <h3 id="projectModalTitle" class="text-lg font-bold text-slate-800">Thêm Project mới</h3>
         <div>
-            <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">Tên Project</label>
+            <label class="block text-xs font-semibold text-slate-500 uppercase mb-1" data-i18n-key="projectNameFieldLabel">Tên Project</label>
             <input id="projectInputName" type="text" maxlength="50"
                 oninput="toggleSaveDisabled('projectInputName','projectSaveBtn')"
                 class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-sm outline-none focus:ring-2 focus:ring-brand-500"
                 placeholder="Nhập tên project...">
         </div>
         <div class="flex justify-end gap-2 pt-2">
-            <button type="button" onclick="closeProjectModal()" class="btn-secondary px-4 py-2 text-sm">Hủy</button>
+            <button type="button" onclick="closeProjectModal()" class="btn-secondary px-4 py-2 text-sm" data-i18n-key="cancelBtn">Hủy</button>
             <button type="button" id="projectSaveBtn" onclick="submitProjectModal()" disabled
-                class="btn-primary px-4 py-2 text-sm disabled:opacity-40 disabled:cursor-not-allowed">Lưu lại</button>
+                class="btn-primary px-4 py-2 text-sm disabled:opacity-40 disabled:cursor-not-allowed" data-i18n-key="saveBtn">Lưu lại</button>
         </div>
     </div>
 </div>
@@ -434,23 +422,23 @@
         <h3 id="categoryModalTitle" class="text-lg font-bold text-slate-800">Thêm File con mới</h3>
         <div class="space-y-3">
             <div>
-                <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">Tên file con</label>
+                <label class="block text-xs font-semibold text-slate-500 uppercase mb-1" data-i18n-key="categoryNameFieldLabel">Tên file con</label>
                 <input id="categoryInputName" type="text" maxlength="50"
                     oninput="toggleSaveDisabled('categoryInputName','categorySaveBtn')"
                     class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-sm outline-none focus:ring-2 focus:ring-brand-500"
                     placeholder="VD: Báo cáo tài chính...">
             </div>
             <div>
-                <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">Mã file con (Tùy chọn)</label>
+                <label class="block text-xs font-semibold text-slate-500 uppercase mb-1" data-i18n-key="categoryCodeFieldLabel">Mã file con (Tùy chọn)</label>
                 <input id="categoryInputCode" type="text" maxlength="10"
                     class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-sm outline-none focus:ring-2 focus:ring-brand-500"
                     placeholder="VD: BCTC...">
             </div>
         </div>
         <div class="flex justify-end gap-2 pt-2">
-            <button type="button" onclick="closeCategoryModal()" class="btn-secondary px-4 py-2 text-sm">Hủy</button>
+            <button type="button" onclick="closeCategoryModal()" class="btn-secondary px-4 py-2 text-sm" data-i18n-key="cancelBtn">Hủy</button>
             <button type="button" id="categorySaveBtn" onclick="submitCategoryModal()" disabled
-                class="btn-primary px-4 py-2 text-sm disabled:opacity-40 disabled:cursor-not-allowed">Lưu lại</button>
+                class="btn-primary px-4 py-2 text-sm disabled:opacity-40 disabled:cursor-not-allowed" data-i18n-key="saveBtn">Lưu lại</button>
         </div>
     </div>
 </div>
@@ -463,13 +451,13 @@
             <i class="ti ti-alert-triangle text-2xl"></i>
         </div>
         <div>
-            <h3 class="text-base font-bold text-slate-800">Xác nhận xóa</h3>
+            <h3 class="text-base font-bold text-slate-800" data-i18n-key="confirmDeleteTitle">Xác nhận xóa</h3>
             <p id="confirmDeleteMessage" class="text-sm text-slate-500 mt-1">Bạn có chắc muốn xóa mục này?</p>
         </div>
         <div class="flex justify-center gap-2 pt-1">
             <button type="button" onclick="closeConfirmDeleteModal()"
-                class="btn-secondary px-4 py-2 text-sm">Hủy</button>
-            <button type="button" id="confirmDeleteBtn" class="btn-danger px-4 py-2 text-sm">Xóa</button>
+                class="btn-secondary px-4 py-2 text-sm" data-i18n-key="cancelBtn">Hủy</button>
+            <button type="button" id="confirmDeleteBtn" class="btn-danger px-4 py-2 text-sm" data-i18n-key="deleteConfirmBtn">Xóa</button>
         </div>
     </div>
 </div>
@@ -481,20 +469,25 @@
     let categoryModalMode = 'add';
     let currentEditingKey = null;
 
-    /* ---------------- Toast ---------------- */
-    function showToast(message, type = 'success') {
-        const host = document.getElementById("toastHost");
-        const el = document.createElement("div");
-        el.className = `toast-item ${type}`;
-        const icon = type === 'danger' ? 'ti-circle-x' : (type === 'info' ? 'ti-info-circle' : 'ti-circle-check');
-        el.innerHTML = `<i class="ti ${icon} text-base"></i><span>${message}</span>`;
-        host.appendChild(el);
-        setTimeout(() => {
-            el.style.opacity = "0";
-            el.style.transition = "opacity .2s ease";
-            setTimeout(() => el.remove(), 200);
-        }, 2600);
+    /* ================================================================
+       FIX #1 (JS phần) — "Teleport" các modal ra làm con trực tiếp của
+       <body>. Nếu layout/base.html có ancestor nào dùng transform/filter
+       (ví dụ khi làm hiệu ứng slide sidebar mobile), containing block của
+       position:fixed sẽ bị đổi theo ancestor đó thay vì viewport, khiến
+       modal bị lệch/cắt như trong ảnh chụp. Đưa modal ra ngoài <body>
+       đảm bảo modal luôn định vị theo toàn bộ viewport.
+       ================================================================ */
+    function portalModalsToBody() {
+        ['masterCatalogModal', 'projectModal', 'categoryModal', 'confirmDeleteModal']
+            .forEach(id => {
+                const el = document.getElementById(id);
+                if (el && el.parentElement !== document.body) {
+                    document.body.appendChild(el);
+                }
+            });
     }
+
+    /* showToast() is now shared globally via layout/base.html */
 
     function toggleSaveDisabled(inputId, btnId) {
         const val = document.getElementById(inputId).value.trim();
@@ -672,6 +665,9 @@
         if (!opt) return;
 
         openConfirmDeleteModal(`Bạn có chắc muốn xóa project "${opt.text}"?`, () => {
+            // FIX #2 phụ: xóa cache của project bị xóa để không còn dữ liệu rác
+            delete categoryCache[valKey];
+
             const form = document.createElement('form');
             form.method = 'POST';
             form.action = `/projects/${valKey}/delete`;
@@ -741,6 +737,11 @@
             select.appendChild(opt);
             showToast("Đã thêm file con mới", "success");
         }
+
+        // FIX #2 phụ: dữ liệu category của project hiện tại vừa thay đổi,
+        // xóa cache để lần load kế tiếp (hoặc khi mở lại catalog) lấy đúng dữ liệu mới
+        delete categoryCache[projectSelectEl().value];
+
         closeCategoryModal();
         if (!document.getElementById("masterCatalogModal").classList.contains("hidden")) {
             renderCatalogCategoriesFiltered();
@@ -753,6 +754,9 @@
         if (!opt) return;
 
         openConfirmDeleteModal(`Bạn có chắc muốn xóa file con "${opt.textContent}"?`, () => {
+            // FIX #2 phụ: xóa cache của project hiện tại
+            delete categoryCache[projectSelectEl().value];
+
             const form = document.createElement('form');
             form.method = 'POST';
             form.action = `/manager/project-categories/${valKey}/delete`;
@@ -779,8 +783,24 @@
         document.getElementById("confirmDeleteModal").classList.add("hidden");
     }
 
+    /* ================================================================
+       FIX #2 — Cache dữ liệu category theo từng project + không xóa
+       trắng <select> khi đang tải + hủy request cũ khi đổi project
+       liên tục. Giúp việc chuyển project qua lại mượt hơn, không còn
+       cảm giác "load load" liên tục mỗi lần đổi qua lại project cũ.
+       ================================================================ */
+    const categoryCache = {};          // projectId -> [{id, label, code}, ...]
+    let categoryFetchController = null; // để hủy fetch cũ khi đổi project nhanh
+
+    function projectSelectEl() {
+        return document.getElementById("project_key");
+    }
+
     /* ---------------- Page init ---------------- */
     document.addEventListener("DOMContentLoaded", function () {
+        // Thoát khỏi mọi ancestor có transform/filter gây lệch modal
+        portalModalsToBody();
+
         const projectSelect = document.getElementById("project_key");
         const categorySelect = document.getElementById("category_key");
         const fileInput = document.getElementById("uploaded_files");
@@ -791,49 +811,100 @@
         const descriptionInput = document.getElementById("description");
         const locationInput = document.getElementById("location");
 
-        function loadCategories() {
-            const projectId = projectSelect.value;
-            categorySelect.innerHTML = '<option value="">Đang tải file con...</option>';
-            categorySelect.disabled = true;
-            spinner.classList.remove("hidden");
+        function renderCategoryOptions(list) {
+            categorySelect.innerHTML = "";
+            if (!list || list.length === 0) {
+                categorySelect.innerHTML = '<option value="">Không có file con nào</option>';
+            } else {
+                list.forEach(cat => {
+                    const opt = document.createElement("option");
+                    opt.value = cat.id;
+                    opt.textContent = cat.code ? `${cat.label} - Mã: ${cat.code}` : cat.label;
+                    opt.dataset.code = cat.code || "";
+                    categorySelect.appendChild(opt);
+                });
+                categorySelect.selectedIndex = 0;
+            }
+            categorySelect.disabled = false;
+            categorySelect.classList.remove("category-select-loading");
+            spinner.classList.add("hidden");
+            refreshCatalogCategoriesIfOpen();
+            updateDocumentCodePreview();
+        }
 
-            if (!projectId) {
-                categorySelect.innerHTML = '<option value="">Vui lòng chọn project trước...</option>';
-                spinner.classList.add("hidden");
+        function updateDocumentCodePreview() {
+            const box = document.getElementById("codePreviewBox");
+            const text = document.getElementById("codePreviewText");
+            if (!box || !text) return;
+
+            const projectId = projectSelect.value;
+            const categoryKey = categorySelect.value;
+
+            if (!projectId || !categoryKey) {
+                box.classList.add("hidden");
                 return;
             }
 
-            fetch("/project-categories/" + projectId, {
+            fetch("/document-code-preview?project_id=" + encodeURIComponent(projectId) + "&category_key=" + encodeURIComponent(categoryKey), {
                 method: "GET",
                 headers: { "Accept": "application/json" }
             })
                 .then(res => res.json())
                 .then(data => {
-                    categorySelect.innerHTML = "";
-                    if (!data.success || !data.categories || data.categories.length === 0) {
-                        categorySelect.innerHTML = '<option value="">Không có file con nào</option>';
-                        categorySelect.disabled = false;
-                        spinner.classList.add("hidden");
-                        return;
+                    if (data.success && data.preview_code) {
+                        text.textContent = data.preview_code;
+                        box.classList.remove("hidden");
+                    } else {
+                        box.classList.add("hidden");
                     }
-
-                    data.categories.forEach(cat => {
-                        const opt = document.createElement("option");
-                        opt.value = cat.id;
-                        opt.textContent = cat.code ? `${cat.label} - Mã: ${cat.code}` : cat.label;
-                        opt.dataset.code = cat.code || "";
-                        categorySelect.appendChild(opt);
-                    });
-
-                    categorySelect.disabled = false;
-                    if (categorySelect.options.length > 0) {
-                        categorySelect.selectedIndex = 0;
-                    }
-                    spinner.classList.add("hidden");
-                    refreshCatalogCategoriesIfOpen();
                 })
-                .catch(() => {
+                .catch(() => box.classList.add("hidden"));
+        }
+
+        function loadCategories() {
+            const projectId = projectSelect.value;
+
+            if (!projectId) {
+                categorySelect.innerHTML = '<option value="">Vui lòng chọn project trước...</option>';
+                spinner.classList.add("hidden");
+                categorySelect.classList.remove("category-select-loading");
+                updateDocumentCodePreview();
+                return;
+            }
+
+            // Đã có cache của project này -> hiển thị ngay, không loading, không giật
+            if (categoryCache[projectId]) {
+                renderCategoryOptions(categoryCache[projectId]);
+                return;
+            }
+
+            // Hủy request trước đó nếu người dùng đổi project liên tục
+            if (categoryFetchController) {
+                categoryFetchController.abort();
+            }
+            categoryFetchController = new AbortController();
+
+            // Chỉ làm mờ nhẹ + hiện spinner, KHÔNG xóa trắng nội dung <select> hiện tại
+            categorySelect.classList.add("category-select-loading");
+            categorySelect.disabled = true;
+            spinner.classList.remove("hidden");
+
+            fetch("/project-categories/" + projectId, {
+                method: "GET",
+                headers: { "Accept": "application/json" },
+                signal: categoryFetchController.signal
+            })
+                .then(res => res.json())
+                .then(data => {
+                    const list = (data.success && data.categories) ? data.categories : [];
+                    categoryCache[projectId] = list;
+                    renderCategoryOptions(list);
+                })
+                .catch(err => {
+                    if (err.name === "AbortError") return; // bị hủy do đổi sang project khác, bỏ qua
                     categorySelect.innerHTML = '<option value="">Không thể tải danh sách file con</option>';
+                    categorySelect.disabled = false;
+                    categorySelect.classList.remove("category-select-loading");
                     spinner.classList.add("hidden");
                     showToast("Không thể tải danh sách file con", "danger");
                     refreshCatalogCategoriesIfOpen();
@@ -852,6 +923,10 @@
         if (projectSelect) {
             projectSelect.addEventListener("change", loadCategories);
             loadCategories();
+        }
+
+        if (categorySelect) {
+            categorySelect.addEventListener("change", updateDocumentCodePreview);
         }
 
         if (fileInput && selectedFileText) {
@@ -901,5 +976,146 @@
         });
         refreshSubmitState();
     });
+
+    // ============================================================
+    // PAGE-SPECIFIC TRANSLATION FIX
+    // Manager Upload page
+    // ============================================================
+
+    (function () {
+        const PAGE_TRANSLATIONS = {
+            vi: {
+                pageHeading: "QUẢN LÝ UPLOAD HỒ SƠ",
+                managerLabel: "Quản lý:",
+                backButton: "Quay lại",
+                cardTitle: "Upload hồ sơ",
+                cardSubtitle: "Hồ sơ do quản lý upload sẽ được đưa thẳng vào kho chính thức.",
+                manageCatalogBtn: "Quản lý danh mục",
+                step1Heading: "Chọn vị trí lưu trữ",
+                projectLabel: "Project",
+                addProjectBtn: "Thêm project mới",
+                categoryLabel: "Loại hồ sơ (File con)",
+                addCategoryBtn: "Thêm loại hồ sơ mới",
+                codePreviewLabel: "Mã hồ sơ dự kiến:",
+                codePreviewNote: "(có thể thay đổi tại thời điểm tải lên)",
+                step2Heading: "Chọn tệp",
+                dragDropText: "Kéo thả tệp vào đây, hoặc bấm để chọn",
+                supportedFormats: "Hỗ trợ nhiều tệp • PDF, DOCX, XLSX, JPG",
+                chooseFileBtn: "Chọn tệp",
+                noFileSelected: "Không có tệp nào được chọn",
+                step3Heading: "Thông tin mô tả",
+                descriptionLabel: "Mô tả",
+                requiredNote: "Bắt buộc nhập. Tối đa 50 ký tự.",
+                locationLabel: "Vị trí",
+                submitBtn: "Upload và duyệt ngay",
+                catalogModalTitle: "Quản lý kho Project & Danh mục",
+                catalogModalSubtitle: "Tìm kiếm, thêm, sửa, xóa project và loại hồ sơ.",
+                totalProjectsLabel: "Tổng project",
+                totalCategoriesLabel: "Loại hồ sơ (project đang chọn)",
+                activeProjectLabel: "Project đang chọn",
+                projectsHeading: "Projects",
+                addBtn: "Thêm",
+                categoriesOfLabel: "Loại hồ sơ của:",
+                addCategoryModalBtn: "Thêm loại hồ sơ",
+                categoryNameHeader: "Tên loại hồ sơ",
+                codeHeader: "Mã",
+                actionHeader: "Thao tác",
+                closeBtn: "Đóng",
+                projectNameFieldLabel: "Tên Project",
+                cancelBtn: "Hủy",
+                saveBtn: "Lưu lại",
+                categoryNameFieldLabel: "Tên file con",
+                categoryCodeFieldLabel: "Mã file con (Tùy chọn)",
+                confirmDeleteTitle: "Xác nhận xóa",
+                deleteConfirmBtn: "Xóa"
+            },
+            en: {
+                pageHeading: "MANAGER DOCUMENT UPLOAD",
+                managerLabel: "Manager:",
+                backButton: "Back",
+                cardTitle: "Upload document",
+                cardSubtitle: "Documents uploaded by a manager go straight into the official archive.",
+                manageCatalogBtn: "Manage catalog",
+                step1Heading: "Select storage location",
+                projectLabel: "Project",
+                addProjectBtn: "Add new project",
+                categoryLabel: "Document type (sub-file)",
+                addCategoryBtn: "Add new document type",
+                codePreviewLabel: "Expected document code:",
+                codePreviewNote: "(may change at the time of upload)",
+                step2Heading: "Select file",
+                dragDropText: "Drag and drop a file here, or click to select",
+                supportedFormats: "Supports multiple files • PDF, DOCX, XLSX, JPG",
+                chooseFileBtn: "Choose file",
+                noFileSelected: "No file selected",
+                step3Heading: "Description details",
+                descriptionLabel: "Description",
+                requiredNote: "Required. Maximum 50 characters.",
+                locationLabel: "Location",
+                submitBtn: "Upload and approve now",
+                catalogModalTitle: "Manage Project & Category catalog",
+                catalogModalSubtitle: "Search, add, edit, and delete projects and document types.",
+                totalProjectsLabel: "Total projects",
+                totalCategoriesLabel: "Document types (selected project)",
+                activeProjectLabel: "Selected project",
+                projectsHeading: "Projects",
+                addBtn: "Add",
+                categoriesOfLabel: "Document types of:",
+                addCategoryModalBtn: "Add document type",
+                categoryNameHeader: "Document type name",
+                codeHeader: "Code",
+                actionHeader: "Action",
+                closeBtn: "Close",
+                projectNameFieldLabel: "Project name",
+                cancelBtn: "Cancel",
+                saveBtn: "Save",
+                categoryNameFieldLabel: "Sub-file name",
+                categoryCodeFieldLabel: "Sub-file code (optional)",
+                confirmDeleteTitle: "Confirm deletion",
+                deleteConfirmBtn: "Delete"
+            }
+        };
+
+        function getPageLanguage() {
+            const savedLanguage = localStorage.getItem("appLanguage");
+            if (savedLanguage === "en" || savedLanguage === "vi") {
+                return savedLanguage;
+            }
+            return "vi";
+        }
+
+        function applyPageTranslations() {
+            const currentLanguage = getPageLanguage();
+
+            document.querySelectorAll("[data-i18n-key]").forEach(function (element) {
+                const key = element.getAttribute("data-i18n-key");
+
+                if (
+                    PAGE_TRANSLATIONS[currentLanguage] &&
+                    PAGE_TRANSLATIONS[currentLanguage][key]
+                ) {
+                    element.textContent = PAGE_TRANSLATIONS[currentLanguage][key];
+                }
+            });
+        }
+
+        window.applyPageTranslationsFunc = applyPageTranslations;
+
+        document.addEventListener("DOMContentLoaded", function () {
+            setTimeout(applyPageTranslations, 50);
+
+            const languageButton = document.getElementById("languageToggle");
+
+            if (languageButton) {
+                languageButton.addEventListener("click", function () {
+                    setTimeout(applyPageTranslations, 100);
+                });
+            }
+        });
+
+        window.addEventListener("load", function () {
+            setTimeout(applyPageTranslations, 50);
+        });
+    })();
 </script>
 {% endblock %}

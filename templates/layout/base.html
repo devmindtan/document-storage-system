@@ -47,6 +47,53 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #94a3b8;
         }
+
+        /* ---- Toast (shared, dùng chung cho mọi trang) ---- */
+        #toastHost {
+            position: fixed;
+            top: 5rem;
+            right: 1rem;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .toast-item {
+            min-width: 260px;
+            max-width: 340px;
+            background: #0f172a;
+            color: #fff;
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, .2);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            animation: toast-in .2s ease-out;
+        }
+
+        .toast-item.success {
+            background: #166534;
+        }
+
+        .toast-item.danger {
+            background: #b91c1c;
+        }
+
+        @keyframes toast-in {
+            from {
+                opacity: 0;
+                transform: translateY(-8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
     </style>
     {% block extra_style %}{% endblock %}
 </head>
@@ -55,6 +102,8 @@
     class="{% block body_class %}bg-slate-50{% endblock %} text-slate-800 font-sans {% if user %}h-screen overflow-hidden flex{% else %}min-h-screen{% endif %} relative">
 
     {% if user %}
+    <div id="toastHost"></div>
+
     <div id="sidebarBackdrop" class="fixed inset-0 bg-slate-900/50 z-40 hidden transition-opacity lg:hidden"
         onclick="toggleSidebar()"></div>
 
@@ -240,6 +289,31 @@
                 backdrop.classList.remove('hidden'); backdrop.classList.add('block');
             }
         }
+    </script>
+
+    <script>
+        function showToast(message, type = 'success') {
+            const host = document.getElementById("toastHost");
+            if (!host) return;
+            const el = document.createElement("div");
+            el.className = `toast-item ${type}`;
+            const icon = type === 'danger' ? 'ti-circle-x' : (type === 'info' ? 'ti-info-circle' : 'ti-circle-check');
+            el.innerHTML = `<i class="ti ${icon} text-base"></i><span>${message}</span>`;
+            host.appendChild(el);
+            setTimeout(() => {
+                el.style.opacity = "0";
+                el.style.transition = "opacity .2s ease";
+                setTimeout(() => el.remove(), 200);
+            }, 2600);
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll("[data-toast-text]").forEach(function (el) {
+                const message = el.getAttribute("data-toast-text");
+                const kind = el.getAttribute("data-toast-kind") === "error" ? "danger" : "success";
+                if (message) showToast(message, kind);
+            });
+        });
     </script>
 
     <script>

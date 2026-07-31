@@ -7,29 +7,29 @@
 {% block content %}
 <div class="space-y-6">
     <p class="text-sm text-slate-500">
-        Quản lý: <span class="font-semibold text-slate-700">{{ user['full_name'] }}</span>
+        <span data-i18n-key="managerLabel">Quản lý:</span> <span class="font-semibold text-slate-700">{{ user['full_name'] }}</span>
     </p>
 
     <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
         <form action="/manager/audit-logs" method="get" class="flex flex-col md:flex-row gap-4">
             <div class="flex-1">
-                <label for="action" class="block text-xs font-medium text-slate-500 mb-1">Loại hoạt động</label>
+                <label for="action" class="block text-xs font-medium text-slate-500 mb-1" data-i18n-key="actionTypeLabel">Loại hoạt động</label>
                 <select id="action" name="action" class="w-full border border-slate-200 text-slate-700 py-2.5 px-4 rounded-lg text-sm outline-none focus:ring-2 focus:ring-brand-500 bg-white">
-                    <option value="">Tất cả hoạt động</option>
-                    <option value="UPLOAD" {% if selected_action == 'UPLOAD' %}selected{% endif %}>Upload hồ sơ</option>
-                    <option value="MANAGER_UPLOAD" {% if selected_action == 'MANAGER_UPLOAD' %}selected{% endif %}>Quản lý upload</option>
-                    <option value="APPROVE" {% if selected_action == 'APPROVE' %}selected{% endif %}>Duyệt hồ sơ</option>
-                    <option value="REJECT" {% if selected_action == 'REJECT' %}selected{% endif %}>Từ chối hồ sơ</option>
-                    <option value="DOWNLOAD" {% if selected_action == 'DOWNLOAD' %}selected{% endif %}>Download hồ sơ</option>
+                    <option value="" data-i18n-key="allActionsOption">Tất cả hoạt động</option>
+                    <option value="UPLOAD" data-i18n-key="uploadActionOption" {% if selected_action == 'UPLOAD' %}selected{% endif %}>Upload hồ sơ</option>
+                    <option value="MANAGER_UPLOAD" data-i18n-key="managerUploadActionOption" {% if selected_action == 'MANAGER_UPLOAD' %}selected{% endif %}>Quản lý upload</option>
+                    <option value="APPROVE" data-i18n-key="approveActionOption" {% if selected_action == 'APPROVE' %}selected{% endif %}>Duyệt hồ sơ</option>
+                    <option value="REJECT" data-i18n-key="rejectActionOption" {% if selected_action == 'REJECT' %}selected{% endif %}>Từ chối hồ sơ</option>
+                    <option value="DOWNLOAD" data-i18n-key="downloadActionOption" {% if selected_action == 'DOWNLOAD' %}selected{% endif %}>Download hồ sơ</option>
                 </select>
             </div>
 
             <div class="flex gap-2 md:items-end">
                 <button type="submit" class="bg-brand-900 hover:bg-brand-800 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
-                    <i class="ti ti-filter"></i> Lọc nhật ký
+                    <i class="ti ti-filter"></i> <span data-i18n-key="filterLogsButton">Lọc nhật ký</span>
                 </button>
                 <a href="/manager/audit-logs" class="border border-slate-200 text-slate-600 hover:bg-slate-50 px-5 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
-                    Xóa bộ lọc
+                    <span data-i18n-key="clearFilterLink">Xóa bộ lọc</span>
                 </a>
             </div>
         </form>
@@ -41,13 +41,13 @@
                 <table class="w-full text-left text-sm text-slate-600 whitespace-nowrap">
                     <thead class="bg-slate-50 border-b border-slate-200 text-slate-700 uppercase font-semibold text-xs">
                         <tr>
-                            <th class="px-6 py-4">ID</th>
-                            <th class="px-6 py-4">Thời gian</th>
-                            <th class="px-6 py-4">Người dùng</th>
+                            <th class="px-6 py-4" data-i18n-key="idHeader">ID</th>
+                            <th class="px-6 py-4" data-i18n-key="timeHeader">Thời gian</th>
+                            <th class="px-6 py-4" data-i18n-key="userHeader">Người dùng</th>
                             <th class="px-6 py-4">Username</th>
-                            <th class="px-6 py-4">Hành động</th>
-                            <th class="px-6 py-4">Mã hồ sơ</th>
-                            <th class="px-6 py-4">Chi tiết</th>
+                            <th class="px-6 py-4" data-i18n-key="actionHeader">Hành động</th>
+                            <th class="px-6 py-4" data-i18n-key="documentCodeHeader">Mã hồ sơ</th>
+                            <th class="px-6 py-4" data-i18n-key="detailsHeader">Chi tiết</th>
                         </tr>
                     </thead>
 
@@ -61,15 +61,15 @@
 
                                 <td class="px-6 py-4">
                                     {% if log['action'] == 'UPLOAD' %}
-                                        <span class="bg-brand-100 text-brand-800 px-2.5 py-1 rounded text-xs font-bold">Đã upload</span>
+                                        <span class="bg-brand-100 text-brand-800 px-2.5 py-1 rounded text-xs font-bold" data-i18n-key="uploadedPill">Đã upload</span>
                                     {% elif log['action'] == 'MANAGER_UPLOAD' %}
-                                        <span class="bg-brand-100 text-brand-800 px-2.5 py-1 rounded text-xs font-bold">Quản lý upload</span>
+                                        <span class="bg-brand-100 text-brand-800 px-2.5 py-1 rounded text-xs font-bold" data-i18n-key="managerUploadPill">Quản lý upload</span>
                                     {% elif log['action'] == 'APPROVE' %}
-                                        <span class="bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded text-xs font-bold">Đã duyệt</span>
+                                        <span class="bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded text-xs font-bold" data-i18n-key="approvedPill">Đã duyệt</span>
                                     {% elif log['action'] == 'REJECT' %}
-                                        <span class="bg-rose-100 text-rose-700 px-2.5 py-1 rounded text-xs font-bold">Đã từ chối</span>
+                                        <span class="bg-rose-100 text-rose-700 px-2.5 py-1 rounded text-xs font-bold" data-i18n-key="rejectedPill">Đã từ chối</span>
                                     {% elif log['action'] == 'DOWNLOAD' %}
-                                        <span class="bg-slate-100 text-slate-600 px-2.5 py-1 rounded text-xs font-bold">Đã download</span>
+                                        <span class="bg-slate-100 text-slate-600 px-2.5 py-1 rounded text-xs font-bold" data-i18n-key="downloadedPill">Đã download</span>
                                     {% else %}
                                         <span class="bg-slate-100 text-slate-600 px-2.5 py-1 rounded text-xs font-bold">{{ log['action'] }}</span>
                                     {% endif %}
@@ -86,8 +86,96 @@
 
     {% else %}
         <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-10 text-center text-slate-500">
-            Chưa có hoạt động nào được ghi nhận.
+            <span data-i18n-key="noLogs">Chưa có hoạt động nào được ghi nhận.</span>
         </div>
     {% endif %}
 </div>
+
+<script>
+    (function () {
+        const PAGE_TRANSLATIONS = {
+            vi: {
+                managerLabel: "Quản lý:",
+                actionTypeLabel: "Loại hoạt động",
+                allActionsOption: "Tất cả hoạt động",
+                uploadActionOption: "Upload hồ sơ",
+                managerUploadActionOption: "Quản lý upload",
+                approveActionOption: "Duyệt hồ sơ",
+                rejectActionOption: "Từ chối hồ sơ",
+                downloadActionOption: "Download hồ sơ",
+                filterLogsButton: "Lọc nhật ký",
+                clearFilterLink: "Xóa bộ lọc",
+                idHeader: "ID",
+                timeHeader: "Thời gian",
+                userHeader: "Người dùng",
+                actionHeader: "Hành động",
+                documentCodeHeader: "Mã hồ sơ",
+                detailsHeader: "Chi tiết",
+                uploadedPill: "Đã upload",
+                managerUploadPill: "Quản lý upload",
+                approvedPill: "Đã duyệt",
+                rejectedPill: "Đã từ chối",
+                downloadedPill: "Đã download",
+                noLogs: "Chưa có hoạt động nào được ghi nhận."
+            },
+            en: {
+                managerLabel: "Manager:",
+                actionTypeLabel: "Action type",
+                allActionsOption: "All actions",
+                uploadActionOption: "Upload document",
+                managerUploadActionOption: "Manager upload",
+                approveActionOption: "Approve document",
+                rejectActionOption: "Reject document",
+                downloadActionOption: "Download document",
+                filterLogsButton: "Filter logs",
+                clearFilterLink: "Clear filter",
+                idHeader: "ID",
+                timeHeader: "Time",
+                userHeader: "User",
+                actionHeader: "Action",
+                documentCodeHeader: "Document code",
+                detailsHeader: "Details",
+                uploadedPill: "Uploaded",
+                managerUploadPill: "Manager upload",
+                approvedPill: "Approved",
+                rejectedPill: "Rejected",
+                downloadedPill: "Downloaded",
+                noLogs: "No activity has been recorded yet."
+            }
+        };
+
+        function getPageLanguage() {
+            const savedLanguage = localStorage.getItem("appLanguage");
+            if (savedLanguage === "en" || savedLanguage === "vi") {
+                return savedLanguage;
+            }
+            return "vi";
+        }
+
+        function applyPageTranslations() {
+            const currentLanguage = getPageLanguage();
+            const dict = PAGE_TRANSLATIONS[currentLanguage];
+            if (!dict) return;
+
+            document.querySelectorAll("[data-i18n-key]").forEach(function (element) {
+                const key = element.getAttribute("data-i18n-key");
+                if (dict[key]) {
+                    element.textContent = dict[key];
+                }
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            applyPageTranslations();
+
+            const languageButton = document.getElementById("languageToggle");
+
+            if (languageButton) {
+                languageButton.addEventListener("click", function () {
+                    setTimeout(applyPageTranslations, 100);
+                });
+            }
+        });
+    })();
+</script>
 {% endblock %}

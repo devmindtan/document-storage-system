@@ -7,9 +7,9 @@
 {% block content %}
 <div class="space-y-6">
     <div class="flex items-center justify-between">
-        <p class="text-sm text-slate-500">Admin: <strong class="text-slate-800 font-semibold">{{ user['full_name'] }}</strong></p>
+        <p class="text-sm text-slate-500"><span data-i18n-key="adminLabel">Admin:</span> <strong class="text-slate-800 font-semibold">{{ user['full_name'] }}</strong></p>
         <a href="/admin" class="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600 transition-colors">
-            <i class="ti ti-arrow-left"></i> Quay lại
+            <i class="ti ti-arrow-left"></i> <span data-i18n-key="backButton">Quay lại</span>
         </a>
     </div>
 
@@ -19,11 +19,11 @@
             <table class="w-full text-left text-sm text-slate-600 whitespace-nowrap">
                 <thead class="bg-slate-50 border-b border-slate-200 text-slate-700 uppercase font-semibold text-xs">
                     <tr>
-                        <th class="px-6 py-4">Tên người dùng</th>
-                        <th class="px-6 py-4">Tài khoản</th>
-                        <th class="px-6 py-4">Phân quyền</th>
-                        <th class="px-6 py-4">Trạng thái</th>
-                        <th class="px-6 py-4 text-right">Thao tác</th>
+                        <th class="px-6 py-4" data-i18n-key="userNameHeader">Tên người dùng</th>
+                        <th class="px-6 py-4" data-i18n-key="accountHeader">Tài khoản</th>
+                        <th class="px-6 py-4" data-i18n-key="roleHeader">Phân quyền</th>
+                        <th class="px-6 py-4" data-i18n-key="statusHeader">Trạng thái</th>
+                        <th class="px-6 py-4 text-right" data-i18n-key="actionHeader">Thao tác</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
@@ -42,28 +42,28 @@
                         </td>
                         <td class="px-6 py-4">
                             {% if account['approval_status'] == 'PENDING' %}
-                                <span class="flex items-center gap-1.5 text-amber-600 text-xs font-medium"><span class="w-2 h-2 rounded-full bg-amber-500"></span> Chờ duyệt</span>
+                                <span class="flex items-center gap-1.5 text-amber-600 text-xs font-medium"><span class="w-2 h-2 rounded-full bg-amber-500"></span> <span data-i18n-key="pendingStatus">Chờ duyệt</span></span>
                             {% elif account['approval_status'] == 'REJECTED' %}
-                                <span class="flex items-center gap-1.5 text-rose-600 text-xs font-medium"><span class="w-2 h-2 rounded-full bg-rose-500"></span> Đã từ chối</span>
+                                <span class="flex items-center gap-1.5 text-rose-600 text-xs font-medium"><span class="w-2 h-2 rounded-full bg-rose-500"></span> <span data-i18n-key="rejectedStatus">Đã từ chối</span></span>
                             {% elif account['is_active'] %}
-                                <span class="flex items-center gap-1.5 text-emerald-600 text-xs font-medium"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> Đang hoạt động</span>
+                                <span class="flex items-center gap-1.5 text-emerald-600 text-xs font-medium"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> <span data-i18n-key="activeStatus">Đang hoạt động</span></span>
                             {% else %}
-                                <span class="flex items-center gap-1.5 text-slate-400 text-xs font-medium"><span class="w-2 h-2 rounded-full bg-slate-300"></span> Đã khóa</span>
+                                <span class="flex items-center gap-1.5 text-slate-400 text-xs font-medium"><span class="w-2 h-2 rounded-full bg-slate-300"></span> <span data-i18n-key="lockedStatus">Đã khóa</span></span>
                             {% endif %}
                         </td>
                         <td class="px-6 py-4 text-right">
                             {% if account['id'] == user['id'] %}
-                                <span class="text-xs text-slate-400 italic">Tài khoản admin hiện tại</span>
+                                <span class="text-xs text-slate-400 italic" data-i18n-key="currentAdminAccount">Tài khoản admin hiện tại</span>
                             {% elif account['is_admin'] %}
-                                <span class="text-xs text-slate-400 italic">Admin</span>
+                                <span class="text-xs text-slate-400 italic" data-i18n-key="adminText">Admin</span>
                             {% elif account['role'] == 'EMPLOYEE' %}
                                 <form action="/admin/users/{{ account['id'] }}/promote-manager" method="post">
                                     <button type="submit" class="px-3 py-1.5 bg-emerald-100 text-emerald-700 hover:bg-emerald-200 rounded text-xs font-semibold inline-flex items-center gap-1 transition-colors">
-                                        <i class="ti ti-arrow-up-circle"></i> Chuyển thành quản lý
+                                        <i class="ti ti-arrow-up-circle"></i> <span data-i18n-key="promoteButton">Chuyển thành quản lý</span>
                                     </button>
                                 </form>
                             {% else %}
-                                <span class="text-xs text-slate-400 italic">Đã là quản lý</span>
+                                <span class="text-xs text-slate-400 italic" data-i18n-key="alreadyManager">Đã là quản lý</span>
                             {% endif %}
                         </td>
                     </tr>
@@ -74,8 +74,86 @@
     </div>
     {% else %}
     <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm text-sm text-slate-500 text-center">
-        Chưa có tài khoản nào.
+        <span data-i18n-key="noAccounts">Chưa có tài khoản nào.</span>
     </div>
     {% endif %}
 </div>
+
+<script>
+    (function () {
+        const PAGE_TRANSLATIONS = {
+            vi: {
+                adminLabel: "Admin:",
+                backButton: "Quay lại",
+                userNameHeader: "Tên người dùng",
+                accountHeader: "Tài khoản",
+                roleHeader: "Phân quyền",
+                statusHeader: "Trạng thái",
+                actionHeader: "Thao tác",
+                pendingStatus: "Chờ duyệt",
+                rejectedStatus: "Đã từ chối",
+                activeStatus: "Đang hoạt động",
+                lockedStatus: "Đã khóa",
+                currentAdminAccount: "Tài khoản admin hiện tại",
+                adminText: "Admin",
+                promoteButton: "Chuyển thành quản lý",
+                alreadyManager: "Đã là quản lý",
+                noAccounts: "Chưa có tài khoản nào."
+            },
+            en: {
+                adminLabel: "Admin:",
+                backButton: "Back",
+                userNameHeader: "User name",
+                accountHeader: "Account",
+                roleHeader: "Role",
+                statusHeader: "Status",
+                actionHeader: "Action",
+                pendingStatus: "Pending",
+                rejectedStatus: "Rejected",
+                activeStatus: "Active",
+                lockedStatus: "Locked",
+                currentAdminAccount: "Current admin account",
+                adminText: "Admin",
+                promoteButton: "Promote to manager",
+                alreadyManager: "Already a manager",
+                noAccounts: "No accounts yet."
+            }
+        };
+
+        function getPageLanguage() {
+            const savedLanguage = localStorage.getItem("appLanguage");
+            if (savedLanguage === "en" || savedLanguage === "vi") {
+                return savedLanguage;
+            }
+            return "vi";
+        }
+
+        function applyPageTranslations() {
+            const currentLanguage = getPageLanguage();
+
+            document.querySelectorAll("[data-i18n-key]").forEach(function (element) {
+                const key = element.getAttribute("data-i18n-key");
+
+                if (
+                    PAGE_TRANSLATIONS[currentLanguage] &&
+                    PAGE_TRANSLATIONS[currentLanguage][key]
+                ) {
+                    element.textContent = PAGE_TRANSLATIONS[currentLanguage][key];
+                }
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            applyPageTranslations();
+
+            const languageButton = document.getElementById("languageToggle");
+
+            if (languageButton) {
+                languageButton.addEventListener("click", function () {
+                    setTimeout(applyPageTranslations, 100);
+                });
+            }
+        });
+    })();
+</script>
 {% endblock %}

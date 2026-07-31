@@ -1,7 +1,7 @@
 {% extends "layout/base.html" %}
 
 {% block title %}Gửi hồ sơ chờ duyệt{% endblock %}
-{% block page_title %}GỬI HỒ SƠ CHỜ DUYỆT{% endblock %}
+{% block page_title %}<span data-i18n-key="pageHeading">GỬI HỒ SƠ CHỜ DUYỆT</span>{% endblock %}
 {% block active_nav %}upload{% endblock %}
 {% block extra_style %}
 <style>
@@ -31,12 +31,12 @@
 <div class="dashboard-box max-w-4xl mx-auto space-y-6">
     <div class="top-bar flex flex-wrap items-center justify-between gap-3">
         <p class="text-sm text-slate-500">
-            Nhân viên: <strong class="text-slate-800 font-semibold">{{ user['full_name'] }}</strong>
+            <span data-i18n-key="employeeLabel">Nhân viên:</span> <strong class="text-slate-800 font-semibold">{{ user['full_name'] }}</strong>
         </p>
 
         <a class="back-link inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600 transition-colors"
             href="/employee">
-            <i class="ti ti-arrow-left"></i> Quay lại
+            <i class="ti ti-arrow-left"></i> <span data-i18n-key="backButton">Quay lại</span>
         </a>
     </div>
 
@@ -49,8 +49,8 @@
                 <i class="ti ti-cloud-upload text-xl"></i>
             </div>
             <div>
-                <h2 class="text-lg font-semibold text-slate-800">Gửi hồ sơ mới</h2>
-                <p class="text-sm text-slate-500">Điền thông tin, quản lý danh mục và đính kèm tệp cần trình quản lý
+                <h2 class="text-lg font-semibold text-slate-800" data-i18n-key="cardTitle">Gửi hồ sơ mới</h2>
+                <p class="text-sm text-slate-500" data-i18n-key="cardSubtitle">Điền thông tin, quản lý danh mục và đính kèm tệp cần trình quản lý
                     duyệt.</p>
             </div>
         </div>
@@ -59,23 +59,25 @@
             <div class="flex items-center gap-2">
                 <span
                     class="w-6 h-6 rounded-full bg-brand-900 text-white text-xs font-bold flex items-center justify-center shrink-0">1</span>
-                <h3 class="form-step-heading text-sm font-semibold text-slate-800 uppercase tracking-wide">Chọn vị trí
+                <h3 class="form-step-heading text-sm font-semibold text-slate-800 uppercase tracking-wide"
+                    data-i18n-key="step1Heading">Chọn vị trí
                     lưu & Quản lý danh mục</h3>
             </div>
 
             <div>
                 <div class="flex items-center justify-between mb-1.5">
-                    <label for="project_key" class="block text-sm font-medium text-slate-700">Project</label>
+                    <label for="project_key" class="block text-sm font-medium text-slate-700"
+                        data-i18n-key="projectLabel">Project</label>
 
                     <div id="projectActionButtons" class="hidden items-center gap-2">
                         <button type="button" onclick="openEditProjectModal()"
                             class="text-xs font-semibold text-brand-600 hover:text-brand-800 inline-flex items-center gap-1">
-                            <i class="ti ti-edit"></i> Sửa tên
+                            <i class="ti ti-edit"></i> <span data-i18n-key="editNameBtn">Sửa tên</span>
                         </button>
                         <span class="text-slate-300">|</span>
                         <button type="button" onclick="openDeleteProjectModal()"
                             class="text-xs font-semibold text-rose-500 hover:text-rose-700 inline-flex items-center gap-1">
-                            <i class="ti ti-trash"></i> Xóa
+                            <i class="ti ti-trash"></i> <span data-i18n-key="deleteBtn">Xóa</span>
                         </button>
                     </div>
                 </div>
@@ -100,29 +102,30 @@
                 <div id="newProjectBox"
                     class="conditional-input-box mt-3 p-3.5 border border-dashed border-brand-200 rounded-lg bg-brand-50/40">
                     <label for="new_project_name" class="block text-sm font-medium text-slate-700 mb-1.5">
-                        Tên project mới <span class="required-star">*</span>
+                        <span data-i18n-key="newProjectNameLabel">Tên project mới</span> <span class="required-star">*</span>
                     </label>
                     <input id="new_project_name" type="text" name="new_project_name" maxlength="50"
                         placeholder="Nhập tên project mới" value="{{ new_project_name_value or '' }}"
                         class="w-full border border-slate-300 rounded-lg px-3.5 py-2 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
-                    <p class="note-text text-xs text-slate-500 mt-1.5">Project mới sẽ được gửi kèm hồ sơ và chờ quản lý
+                    <p class="note-text text-xs text-slate-500 mt-1.5" data-i18n-key="newProjectNote">Project mới sẽ được gửi kèm hồ sơ và chờ quản lý
                         duyệt một lần.</p>
                 </div>
             </div>
 
             <div>
                 <div class="flex items-center justify-between mb-1.5">
-                    <label for="category_key" class="block text-sm font-medium text-slate-700">Loại hồ sơ</label>
+                    <label for="category_key" class="block text-sm font-medium text-slate-700"
+                        data-i18n-key="categoryLabel">Loại hồ sơ</label>
 
                     <div id="categoryActionButtons" class="hidden items-center gap-2">
                         <button type="button" onclick="openEditCategoryModal()"
                             class="text-xs font-semibold text-brand-600 hover:text-brand-800 inline-flex items-center gap-1">
-                            <i class="ti ti-edit"></i> Sửa tên
+                            <i class="ti ti-edit"></i> <span data-i18n-key="editNameBtn">Sửa tên</span>
                         </button>
                         <span class="text-slate-300">|</span>
                         <button type="button" onclick="openDeleteCategoryModal()"
                             class="text-xs font-semibold text-rose-500 hover:text-rose-700 inline-flex items-center gap-1">
-                            <i class="ti ti-trash"></i> Xóa
+                            <i class="ti ti-trash"></i> <span data-i18n-key="deleteBtn">Xóa</span>
                         </button>
                     </div>
                 </div>
@@ -137,7 +140,7 @@
                     class="conditional-input-box mt-3 p-3.5 border border-dashed border-brand-200 rounded-lg bg-brand-50/40 space-y-3">
                     <div>
                         <label for="new_category_name" class="block text-sm font-medium text-slate-700 mb-1.5">
-                            Tên file con mới <span class="required-star">*</span>
+                            <span data-i18n-key="newCategoryNameLabel">Tên file con mới</span> <span class="required-star">*</span>
                         </label>
                         <input id="new_category_name" type="text" name="new_category_name" maxlength="50"
                             placeholder="Nhập tên file con mới" value="{{ new_category_name_value or '' }}"
@@ -145,25 +148,32 @@
                     </div>
 
                     <div>
-                        <label for="new_category_code" class="block text-sm font-medium text-slate-700 mb-1.5">Mã file
+                        <label for="new_category_code" class="block text-sm font-medium text-slate-700 mb-1.5"
+                            data-i18n-key="categoryCodeLabel">Mã file
                             con</label>
                         <input id="new_category_code" type="text" name="new_category_code" maxlength="10"
                             placeholder="Ví dụ: IR, QC, LEG" value="{{ new_category_code_value or '' }}"
                             class="w-full border border-slate-300 rounded-lg px-3.5 py-2 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
                     </div>
 
-                    <p class="note-text text-xs text-slate-500">Nếu để trống mã file con, hệ thống sẽ tự tạo mã.</p>
+                    <p class="note-text text-xs text-slate-500" data-i18n-key="categoryCodeNote">Nếu để trống mã file con, hệ thống sẽ tự tạo mã.</p>
+                </div>
+
+                <div id="codePreviewBox" class="hidden mt-3 px-3.5 py-2.5 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-500">
+                    <span data-i18n-key="codePreviewLabel">Mã hồ sơ dự kiến:</span> <span id="codePreviewText" class="font-mono font-semibold text-slate-700"></span>
+                    <span class="text-slate-400" data-i18n-key="codePreviewNote">(có thể thay đổi tại thời điểm tải lên)</span>
                 </div>
             </div>
 
             <div class="flex items-center gap-2 pt-2">
                 <span
                     class="w-6 h-6 rounded-full bg-brand-900 text-white text-xs font-bold flex items-center justify-center shrink-0">2</span>
-                <h3 class="form-step-heading text-sm font-semibold text-slate-800 uppercase tracking-wide">Chọn tệp</h3>
+                <h3 class="form-step-heading text-sm font-semibold text-slate-800 uppercase tracking-wide"
+                    data-i18n-key="step2Heading">Chọn tệp</h3>
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1.5">Chọn file</label>
+                <label class="block text-sm font-medium text-slate-700 mb-1.5" data-i18n-key="chooseFileFieldLabel">Chọn file</label>
                 <div
                     class="custom-file-upload border-2 border-dashed border-slate-300 rounded-xl bg-slate-50 hover:bg-brand-50 transition-colors flex flex-col items-center justify-center p-8 text-center cursor-pointer">
                     <input id="uploaded_files" class="real-file-input hidden" type="file" name="uploaded_files" multiple
@@ -174,9 +184,10 @@
                     <label
                         class="custom-file-button cursor-pointer text-sm font-semibold text-brand-600 hover:text-brand-800 underline underline-offset-2"
                         for="uploaded_files">
-                        Chọn tệp
+                        <span data-i18n-key="chooseFileBtn">Chọn tệp</span>
                     </label>
-                    <span class="selected-file-text text-xs text-slate-500 mt-2" id="selectedFileText">Không có tệp nào
+                    <span class="selected-file-text text-xs text-slate-500 mt-2" id="selectedFileText"
+                        data-i18n-key="noFileSelected">Không có tệp nào
                         được chọn</span>
                 </div>
             </div>
@@ -184,30 +195,31 @@
             <div class="flex items-center gap-2 pt-2">
                 <span
                     class="w-6 h-6 rounded-full bg-brand-900 text-white text-xs font-bold flex items-center justify-center shrink-0">3</span>
-                <h3 class="form-step-heading text-sm font-semibold text-slate-800 uppercase tracking-wide">Thông tin mô
+                <h3 class="form-step-heading text-sm font-semibold text-slate-800 uppercase tracking-wide"
+                    data-i18n-key="step3Heading">Thông tin mô
                     tả</h3>
             </div>
 
             <label for="description" class="block text-sm font-medium text-slate-700 mb-1.5">
-                Mô tả <span class="required-star">*</span>
+                <span data-i18n-key="descriptionLabel">Mô tả</span> <span class="required-star">*</span>
             </label>
             <input id="description" type="text" name="description" maxlength="50" required
                 placeholder="Nhập mô tả hồ sơ, tối đa 50 ký tự" value="{{ description_value or '' }}"
                 class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
-            <p class="note-text text-xs text-slate-500">Bắt buộc nhập. Tối đa 50 ký tự.</p>
+            <p class="note-text text-xs text-slate-500" data-i18n-key="requiredNote">Bắt buộc nhập. Tối đa 50 ký tự.</p>
 
             <label for="location" class="block text-sm font-medium text-slate-700 mb-1.5">
-                Vị trí <span class="required-star">*</span>
+                <span data-i18n-key="locationLabel">Vị trí</span> <span class="required-star">*</span>
             </label>
             <input id="location" type="text" name="location" maxlength="50" required
                 placeholder="Nhập vị trí hồ sơ, tối đa 50 ký tự" value="{{ location_value }}"
                 class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
-            <p class="note-text text-xs text-slate-500">Bắt buộc nhập. Tối đa 50 ký tự.</p>
+            <p class="note-text text-xs text-slate-500" data-i18n-key="requiredNote">Bắt buộc nhập. Tối đa 50 ký tự.</p>
 
             <div class="pt-4 border-t border-slate-200 flex justify-end">
                 <button type="submit"
                     class="primary-upload-button inline-flex items-center gap-2 px-5 py-2.5 bg-brand-900 text-white rounded-lg text-sm font-medium hover:bg-brand-800 transition-colors shadow-sm">
-                    <i class="ti ti-send"></i> Gửi hồ sơ cho quản lý duyệt
+                    <i class="ti ti-send"></i> <span data-i18n-key="submitBtn">Gửi hồ sơ cho quản lý duyệt</span>
                 </button>
             </div>
         </form>
@@ -227,7 +239,7 @@
         </div>
 
         <div class="flex justify-end gap-2 pt-2">
-            <button type="button" onclick="closeActionModal()"
+            <button type="button" onclick="closeActionModal()" data-i18n-key="cancelBtn"
                 class="px-4 py-2 border border-slate-200 text-slate-600 rounded-xl text-sm font-semibold hover:bg-slate-50">Hủy</button>
             <button type="button" id="modalConfirmBtn"
                 class="px-4 py-2 bg-brand-900 text-white rounded-xl text-sm font-semibold hover:bg-brand-800">Xác
@@ -387,6 +399,36 @@
             newCategoryBox.classList.toggle("is-visible", isNewCategory);
             setRequired(newCategoryNameInput, isNewCategory);
             updateActionButtonsVisibility();
+            updateDocumentCodePreview();
+        }
+
+        function updateDocumentCodePreview() {
+            const box = document.getElementById("codePreviewBox");
+            const text = document.getElementById("codePreviewText");
+            if (!box || !text) return;
+
+            const projectId = projectSelect.value;
+            const categoryKey = categorySelect.value;
+
+            if (!projectId || projectId === NEW_PROJECT_KEY || !categoryKey || categoryKey === NEW_CATEGORY_KEY) {
+                box.classList.add("hidden");
+                return;
+            }
+
+            fetch("/document-code-preview?project_id=" + encodeURIComponent(projectId) + "&category_key=" + encodeURIComponent(categoryKey), {
+                method: "GET",
+                headers: { "Accept": "application/json" }
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success && data.preview_code) {
+                        text.textContent = data.preview_code;
+                        box.classList.remove("hidden");
+                    } else {
+                        box.classList.add("hidden");
+                    }
+                })
+                .catch(() => box.classList.add("hidden"));
         }
 
         function loadDefaultCategoriesForNewProject(selectedCategoryKey) {
@@ -484,5 +526,114 @@
             updateCategoryDropdown();
         }
     });
+
+    // ============================================================
+    // PAGE-SPECIFIC TRANSLATION FIX
+    // Employee Upload page
+    // ============================================================
+
+    (function () {
+        const PAGE_TRANSLATIONS = {
+            vi: {
+                pageHeading: "GỬI HỒ SƠ CHỜ DUYỆT",
+                employeeLabel: "Nhân viên:",
+                backButton: "Quay lại",
+                cardTitle: "Gửi hồ sơ mới",
+                cardSubtitle: "Điền thông tin, quản lý danh mục và đính kèm tệp cần trình quản lý duyệt.",
+                step1Heading: "Chọn vị trí lưu & Quản lý danh mục",
+                projectLabel: "Project",
+                editNameBtn: "Sửa tên",
+                deleteBtn: "Xóa",
+                newProjectNameLabel: "Tên project mới",
+                newProjectNote: "Project mới sẽ được gửi kèm hồ sơ và chờ quản lý duyệt một lần.",
+                categoryLabel: "Loại hồ sơ",
+                newCategoryNameLabel: "Tên file con mới",
+                categoryCodeLabel: "Mã file con",
+                categoryCodeNote: "Nếu để trống mã file con, hệ thống sẽ tự tạo mã.",
+                codePreviewLabel: "Mã hồ sơ dự kiến:",
+                codePreviewNote: "(có thể thay đổi tại thời điểm tải lên)",
+                step2Heading: "Chọn tệp",
+                chooseFileFieldLabel: "Chọn file",
+                chooseFileBtn: "Chọn tệp",
+                noFileSelected: "Không có tệp nào được chọn",
+                step3Heading: "Thông tin mô tả",
+                descriptionLabel: "Mô tả",
+                requiredNote: "Bắt buộc nhập. Tối đa 50 ký tự.",
+                locationLabel: "Vị trí",
+                submitBtn: "Gửi hồ sơ cho quản lý duyệt",
+                cancelBtn: "Hủy"
+            },
+            en: {
+                pageHeading: "SUBMIT DOCUMENT FOR APPROVAL",
+                employeeLabel: "Employee:",
+                backButton: "Back",
+                cardTitle: "Submit new document",
+                cardSubtitle: "Fill in the details, manage the catalog and attach the file to send to your manager for approval.",
+                step1Heading: "Select storage location & manage catalog",
+                projectLabel: "Project",
+                editNameBtn: "Edit name",
+                deleteBtn: "Remove",
+                newProjectNameLabel: "New project name",
+                newProjectNote: "The new project will be submitted together with the document and await manager approval once.",
+                categoryLabel: "Document type",
+                newCategoryNameLabel: "New sub-file name",
+                categoryCodeLabel: "Sub-file code",
+                categoryCodeNote: "If left blank, the system will auto-generate the code.",
+                codePreviewLabel: "Expected document code:",
+                codePreviewNote: "(may change at the time of upload)",
+                step2Heading: "Select file",
+                chooseFileFieldLabel: "Select file",
+                chooseFileBtn: "Choose file",
+                noFileSelected: "No file selected",
+                step3Heading: "Description details",
+                descriptionLabel: "Description",
+                requiredNote: "Required. Maximum 50 characters.",
+                locationLabel: "Location",
+                submitBtn: "Submit document for approval",
+                cancelBtn: "Cancel"
+            }
+        };
+
+        function getPageLanguage() {
+            const savedLanguage = localStorage.getItem("appLanguage");
+            if (savedLanguage === "en" || savedLanguage === "vi") {
+                return savedLanguage;
+            }
+            return "vi";
+        }
+
+        function applyPageTranslations() {
+            const currentLanguage = getPageLanguage();
+
+            document.querySelectorAll("[data-i18n-key]").forEach(function (element) {
+                const key = element.getAttribute("data-i18n-key");
+
+                if (
+                    PAGE_TRANSLATIONS[currentLanguage] &&
+                    PAGE_TRANSLATIONS[currentLanguage][key]
+                ) {
+                    element.textContent = PAGE_TRANSLATIONS[currentLanguage][key];
+                }
+            });
+        }
+
+        window.applyPageTranslationsFunc = applyPageTranslations;
+
+        document.addEventListener("DOMContentLoaded", function () {
+            setTimeout(applyPageTranslations, 50);
+
+            const languageButton = document.getElementById("languageToggle");
+
+            if (languageButton) {
+                languageButton.addEventListener("click", function () {
+                    setTimeout(applyPageTranslations, 100);
+                });
+            }
+        });
+
+        window.addEventListener("load", function () {
+            setTimeout(applyPageTranslations, 50);
+        });
+    })();
 </script>
 {% endblock %}

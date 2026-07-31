@@ -13,8 +13,9 @@
         </div>
 
         <div class="relative z-10">
-            <h2 class="text-xl md:text-2xl font-bold tracking-tight text-white">Xin chào, {{ user.full_name }} 👋</h2>
-            <p class="text-slate-400 text-sm mt-1.5 max-w-xl leading-relaxed">
+            <h2 class="text-xl md:text-2xl font-bold tracking-tight text-white">
+                <span data-i18n-key="welcomeGreeting">Xin chào,</span> {{ user.full_name }} 👋</h2>
+            <p class="text-slate-400 text-sm mt-1.5 max-w-xl leading-relaxed" data-i18n-key="managerWelcomeText">
                 Chào mừng bạn quay lại. Hệ thống kho lưu trữ hồ sơ của Amata Documentation đã sẵn sàng xử lý các công
                 việc
                 hôm nay.
@@ -24,12 +25,12 @@
     </div>
 
     <div>
-        <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4">Số liệu tổng quan</h3>
+        <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4" data-i18n-key="statsOverviewHeading">Số liệu tổng quan</h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             <div
                 class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between group hover:border-amber-300 transition-all duration-300">
                 <div class="space-y-1">
-                    <p class="text-sm font-medium text-slate-500">Hồ sơ chờ duyệt</p>
+                    <p class="text-sm font-medium text-slate-500" data-i18n-key="pendingDocsLabel">Hồ sơ chờ duyệt</p>
                     <h3 class="text-2xl font-bold text-slate-800 tracking-tight">{{ pending_count|default(0) }}</h3>
                 </div>
                 <div
@@ -41,7 +42,7 @@
             <div
                 class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between group hover:border-emerald-300 transition-all duration-300">
                 <div class="space-y-1">
-                    <p class="text-sm font-medium text-slate-500">Đã phê duyệt</p>
+                    <p class="text-sm font-medium text-slate-500" data-i18n-key="approvedDocsLabel">Đã phê duyệt</p>
                     <h3 class="text-2xl font-bold text-slate-800 tracking-tight">{{ approved_count|default(0) }}</h3>
                 </div>
                 <div
@@ -53,7 +54,7 @@
             <div
                 class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between group hover:border-brand-300 transition-all duration-300">
                 <div class="space-y-1">
-                    <p class="text-sm font-medium text-slate-500">Yêu cầu dự án</p>
+                    <p class="text-sm font-medium text-slate-500" data-i18n-key="projectRequestsLabel">Yêu cầu dự án</p>
                     <h3 class="text-2xl font-bold text-slate-800 tracking-tight">{{ project_requests_count|default(0) }}
                     </h3>
                 </div>
@@ -66,7 +67,7 @@
             <div
                 class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between group hover:border-blue-300 transition-all duration-300">
                 <div class="space-y-1">
-                    <p class="text-sm font-medium text-slate-500">Tổng kho tài liệu</p>
+                    <p class="text-sm font-medium text-slate-500" data-i18n-key="totalArchiveLabel">Tổng kho tài liệu</p>
                     <h3 class="text-2xl font-bold text-slate-800 tracking-tight">{{ total_count|default(0) }}</h3>
                 </div>
                 <div
@@ -80,7 +81,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
 
         <div class="lg:col-span-2 space-y-4">
-            <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider">Lối tắt tác vụ</h3>
+            <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider" data-i18n-key="quickShortcutsHeading">Lối tắt tác vụ</h3>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
                 <a href="/manager/upload"
@@ -90,9 +91,9 @@
                         <i class="ti ti-cloud-upload text-xl"></i>
                     </div>
                     <div>
-                        <h4 class="font-semibold text-slate-800 group-hover:text-brand-900 transition-colors">Gửi hồ sơ
+                        <h4 class="font-semibold text-slate-800 group-hover:text-brand-900 transition-colors" data-i18n-key="submitNewDocTitle">Gửi hồ sơ
                             mới</h4>
-                        <p class="text-xs text-slate-500 mt-0.5 line-clamp-1">Tải hồ sơ trực tiếp vào kho lưu trữ.</p>
+                        <p class="text-xs text-slate-500 mt-0.5 line-clamp-1" data-i18n-key="submitNewDocDesc">Tải hồ sơ trực tiếp vào kho lưu trữ.</p>
                     </div>
                 </a>
 
@@ -103,9 +104,9 @@
                         <i class="ti ti-clock-shield text-xl"></i>
                     </div>
                     <div>
-                        <h4 class="font-semibold text-slate-800 group-hover:text-brand-900 transition-colors">Chờ phê
+                        <h4 class="font-semibold text-slate-800 group-hover:text-brand-900 transition-colors" data-i18n-key="pendingApprovalTitle">Chờ phê
                             duyệt</h4>
-                        <p class="text-xs text-slate-500 mt-0.5 line-clamp-1">Xem, duyệt hoặc từ chối các hồ sơ đang
+                        <p class="text-xs text-slate-500 mt-0.5 line-clamp-1" data-i18n-key="pendingApprovalDesc">Xem, duyệt hoặc từ chối các hồ sơ đang
                             đợi.</p>
                     </div>
                 </a>
@@ -117,9 +118,9 @@
                         <i class="ti ti-file-text text-xl"></i>
                     </div>
                     <div>
-                        <h4 class="font-semibold text-slate-800 group-hover:text-brand-900 transition-colors">Hồ sơ của
+                        <h4 class="font-semibold text-slate-800 group-hover:text-brand-900 transition-colors" data-i18n-key="myDocsTitle">Hồ sơ của
                             tôi</h4>
-                        <p class="text-xs text-slate-500 mt-0.5 line-clamp-1">Xem và quản lý các tài liệu bạn đã tải
+                        <p class="text-xs text-slate-500 mt-0.5 line-clamp-1" data-i18n-key="myDocsDesc">Xem và quản lý các tài liệu bạn đã tải
                             lên.</p>
                     </div>
                 </a>
@@ -131,9 +132,9 @@
                         <i class="ti ti-archive text-xl"></i>
                     </div>
                     <div>
-                        <h4 class="font-semibold text-slate-800 group-hover:text-brand-900 transition-colors">Kho hồ sơ
+                        <h4 class="font-semibold text-slate-800 group-hover:text-brand-900 transition-colors" data-i18n-key="approvedArchiveTitle">Kho hồ sơ
                             đã duyệt</h4>
-                        <p class="text-xs text-slate-500 mt-0.5 line-clamp-1">Tra cứu nhanh và tải xuống tài liệu chính
+                        <p class="text-xs text-slate-500 mt-0.5 line-clamp-1" data-i18n-key="approvedArchiveDesc">Tra cứu nhanh và tải xuống tài liệu chính
                             thức.</p>
                     </div>
                 </a>
@@ -145,9 +146,9 @@
                         <i class="ti ti-briefcase text-xl"></i>
                     </div>
                     <div>
-                        <h4 class="font-semibold text-slate-800 group-hover:text-brand-900 transition-colors">Yêu cầu dự
+                        <h4 class="font-semibold text-slate-800 group-hover:text-brand-900 transition-colors" data-i18n-key="projectRequestsTitle">Yêu cầu dự
                             án</h4>
-                        <p class="text-xs text-slate-500 mt-0.5 line-clamp-1">Theo dõi các yêu cầu dự án / danh mục mới.
+                        <p class="text-xs text-slate-500 mt-0.5 line-clamp-1" data-i18n-key="projectRequestsDesc">Theo dõi các yêu cầu dự án / danh mục mới.
                         </p>
                     </div>
                 </a>
@@ -159,9 +160,9 @@
                         <i class="ti ti-chart-bar text-xl"></i>
                     </div>
                     <div>
-                        <h4 class="font-semibold text-slate-800 group-hover:text-brand-900 transition-colors">Thống kê
+                        <h4 class="font-semibold text-slate-800 group-hover:text-brand-900 transition-colors" data-i18n-key="statisticsTitle">Thống kê
                         </h4>
-                        <p class="text-xs text-slate-500 mt-0.5 line-clamp-1">Biểu đồ tần suất tải lên và báo cáo nhân
+                        <p class="text-xs text-slate-500 mt-0.5 line-clamp-1" data-i18n-key="managerStatisticsDesc">Biểu đồ tần suất tải lên và báo cáo nhân
                             sự.</p>
                     </div>
                 </a>
@@ -171,9 +172,9 @@
 
         <div class="space-y-4">
             <div class="flex items-center justify-between">
-                <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider">Hồ sơ chờ duyệt mới nhất</h3>
+                <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider" data-i18n-key="latestPendingHeading">Hồ sơ chờ duyệt mới nhất</h3>
                 <a href="/manager/pending"
-                    class="text-xs font-semibold text-brand-600 hover:text-brand-700 transition-colors">Xem tất cả</a>
+                    class="text-xs font-semibold text-brand-600 hover:text-brand-700 transition-colors" data-i18n-key="viewAllBtn">Xem tất cả</a>
             </div>
 
             <div
@@ -183,11 +184,12 @@
                 <div class="p-4 hover:bg-slate-50 transition-colors flex items-center justify-between gap-3">
                     <div class="min-w-0">
                         <p class="text-sm font-medium text-slate-800 truncate" title="{{ doc.name }}">{{ doc.name }}</p>
-                        <span class="text-xs text-slate-400 block mt-0.5">{{ doc.created_at }} • Bởi {{ doc.uploader
+                        <span class="text-xs text-slate-400 block mt-0.5">{{ doc.created_at }} • <span data-i18n-key="byLabel">Bởi</span> {{ doc.uploader
                             }}</span>
                     </div>
                     <a href="/manager/pending/{{ doc.id }}"
-                        class="px-2.5 py-1.5 rounded-lg text-xs font-medium bg-slate-100 hover:bg-brand-900 hover:text-white text-slate-700 shrink-0 transition-all">
+                        class="px-2.5 py-1.5 rounded-lg text-xs font-medium bg-slate-100 hover:bg-brand-900 hover:text-white text-slate-700 shrink-0 transition-all"
+                        data-i18n-key="processBtn">
                         Xử lý
                     </a>
                 </div>
@@ -195,7 +197,7 @@
                 {% else %}
                 <div class="p-6 text-center text-slate-400 space-y-2">
                     <i class="ti ti-circle-check text-3xl text-emerald-500 block"></i>
-                    <p class="text-xs">Tuyệt vời! Không có hồ sơ nào đang chờ duyệt.</p>
+                    <p class="text-xs" data-i18n-key="noPendingDocs">Tuyệt vời! Không có hồ sơ nào đang chờ duyệt.</p>
                 </div>
                 {% endif %}
             </div>
@@ -221,4 +223,97 @@
         }
     }
 </style>
+{% endblock %}
+
+{% block extra_script %}
+<script>
+    // ============================================================
+    // PAGE-SPECIFIC TRANSLATION FIX
+    // Manager Dashboard page
+    // ============================================================
+    (function () {
+        const PAGE_TRANSLATIONS = {
+            vi: {
+                welcomeGreeting: "Xin chào,",
+                managerWelcomeText: "Chào mừng bạn quay lại. Hệ thống kho lưu trữ hồ sơ của Amata Documentation đã sẵn sàng xử lý các công việc hôm nay.",
+                statsOverviewHeading: "Số liệu tổng quan",
+                pendingDocsLabel: "Hồ sơ chờ duyệt",
+                approvedDocsLabel: "Đã phê duyệt",
+                projectRequestsLabel: "Yêu cầu dự án",
+                totalArchiveLabel: "Tổng kho tài liệu",
+                quickShortcutsHeading: "Lối tắt tác vụ",
+                submitNewDocTitle: "Gửi hồ sơ mới",
+                submitNewDocDesc: "Tải hồ sơ trực tiếp vào kho lưu trữ.",
+                pendingApprovalTitle: "Chờ phê duyệt",
+                pendingApprovalDesc: "Xem, duyệt hoặc từ chối các hồ sơ đang đợi.",
+                myDocsTitle: "Hồ sơ của tôi",
+                myDocsDesc: "Xem và quản lý các tài liệu bạn đã tải lên.",
+                approvedArchiveTitle: "Kho hồ sơ đã duyệt",
+                approvedArchiveDesc: "Tra cứu nhanh và tải xuống tài liệu chính thức.",
+                projectRequestsTitle: "Yêu cầu dự án",
+                projectRequestsDesc: "Theo dõi các yêu cầu dự án / danh mục mới.",
+                statisticsTitle: "Thống kê",
+                managerStatisticsDesc: "Biểu đồ tần suất tải lên và báo cáo nhân sự.",
+                latestPendingHeading: "Hồ sơ chờ duyệt mới nhất",
+                viewAllBtn: "Xem tất cả",
+                byLabel: "Bởi",
+                processBtn: "Xử lý",
+                noPendingDocs: "Tuyệt vời! Không có hồ sơ nào đang chờ duyệt."
+            },
+            en: {
+                welcomeGreeting: "Hello,",
+                managerWelcomeText: "Welcome back. The Amata Documentation archive system is ready to handle today's work.",
+                statsOverviewHeading: "Overview Stats",
+                pendingDocsLabel: "Pending Approval",
+                approvedDocsLabel: "Approved",
+                projectRequestsLabel: "Project Requests",
+                totalArchiveLabel: "Total Archive",
+                quickShortcutsHeading: "Quick Shortcuts",
+                submitNewDocTitle: "Submit New Document",
+                submitNewDocDesc: "Upload a document directly into the archive.",
+                pendingApprovalTitle: "Pending Approval",
+                pendingApprovalDesc: "View, approve or reject documents awaiting review.",
+                myDocsTitle: "My Documents",
+                myDocsDesc: "View and manage the documents you have uploaded.",
+                approvedArchiveTitle: "Approved Archive",
+                approvedArchiveDesc: "Quickly look up and download official documents.",
+                projectRequestsTitle: "Project Requests",
+                projectRequestsDesc: "Track new project / category requests.",
+                statisticsTitle: "Statistics",
+                managerStatisticsDesc: "Upload frequency charts and staff reports.",
+                latestPendingHeading: "Latest Pending Documents",
+                viewAllBtn: "View all",
+                byLabel: "By",
+                processBtn: "Process",
+                noPendingDocs: "Great! No documents are currently pending approval."
+            }
+        };
+
+        function getPageLanguage() {
+            const savedLanguage = localStorage.getItem("appLanguage");
+            return (savedLanguage === "en" || savedLanguage === "vi") ? savedLanguage : "vi";
+        }
+
+        function applyPageTranslations() {
+            const currentLanguage = getPageLanguage();
+            document.querySelectorAll("[data-i18n-key]").forEach(function (element) {
+                const key = element.getAttribute("data-i18n-key");
+                if (PAGE_TRANSLATIONS[currentLanguage] && PAGE_TRANSLATIONS[currentLanguage][key]) {
+                    element.textContent = PAGE_TRANSLATIONS[currentLanguage][key];
+                }
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            applyPageTranslations();
+
+            const languageButton = document.getElementById("languageToggle");
+            if (languageButton) {
+                languageButton.addEventListener("click", function () {
+                    setTimeout(applyPageTranslations, 100);
+                });
+            }
+        });
+    })();
+</script>
 {% endblock %}
