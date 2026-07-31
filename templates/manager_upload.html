@@ -127,6 +127,33 @@
         opacity: 0.55;
         pointer-events: none;
     }
+
+    /* Hiệu ứng mở mượt cho các modal (backdrop + panel), tự chạy lại mỗi
+       lần bỏ class "hidden" vì CSS animation restart khi phần tử được
+       hiển thị lại trong render tree — không cần sửa JS. */
+    #masterCatalogModal:not(.hidden),
+    #projectModal:not(.hidden),
+    #categoryModal:not(.hidden),
+    #confirmDeleteModal:not(.hidden) {
+        animation: modalBackdropIn .18s ease-out;
+    }
+
+    #masterCatalogModal:not(.hidden) > div,
+    #projectModal:not(.hidden) > div,
+    #categoryModal:not(.hidden) > div,
+    #confirmDeleteModal:not(.hidden) > div {
+        animation: modalPanelIn .18s ease-out;
+    }
+
+    @keyframes modalBackdropIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes modalPanelIn {
+        from { opacity: 0; transform: scale(0.96) translateY(8px); }
+        to { opacity: 1; transform: scale(1) translateY(0); }
+    }
 </style>
 {% endblock %}
 
@@ -760,6 +787,11 @@
             const form = document.createElement('form');
             form.method = 'POST';
             form.action = `/manager/project-categories/${valKey}/delete`;
+            const projectKeyInput = document.createElement('input');
+            projectKeyInput.type = 'hidden';
+            projectKeyInput.name = 'project_key';
+            projectKeyInput.value = projectSelectEl().value;
+            form.appendChild(projectKeyInput);
             document.body.appendChild(form);
             form.submit();
         });

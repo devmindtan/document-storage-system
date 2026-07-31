@@ -574,7 +574,7 @@
             document.documentElement.lang = lang;
             document.title = text.pageTitle;
 
-            if (button) button.textContent = lang === "vi" ? "EN" : "VI";
+            if (button) (button.querySelector("span") || button).textContent = lang === "vi" ? "EN" : "VI";
 
             document.querySelectorAll("[data-i18n-key]").forEach(el => {
                 const key = el.getAttribute("data-i18n-key");
@@ -594,8 +594,12 @@
             const toggle = document.getElementById("languageToggle");
             if (toggle) {
                 toggle.addEventListener("click", function () {
-                    const next = getLanguage() === "vi" ? "en" : "vi";
-                    applyApprovedLanguage(next);
+                    // Chờ script chrome dùng chung (layout/base.html) ghi xong
+                    // localStorage rồi mới đọc lại, tránh 2 script cùng tự đảo
+                    // ngôn ngữ độc lập và triệt tiêu lẫn nhau trong 1 lần click.
+                    setTimeout(function () {
+                        applyApprovedLanguage(getLanguage());
+                    }, 100);
                 });
             }
         });

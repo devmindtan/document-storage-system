@@ -282,7 +282,7 @@
             document.title = text.pageTitle;
 
             if (button) {
-                button.textContent = language === "vi" ? "EN" : "VI";
+                (button.querySelector("span") || button).textContent = language === "vi" ? "EN" : "VI";
             }
 
             document.querySelectorAll("[data-i18n-key]").forEach(function (element) {
@@ -299,11 +299,14 @@
             const button = document.getElementById("languageToggle");
             if (!button) return;
 
-            button.onclick = function () {
-                const currentLanguage = getLanguage();
-                const nextLanguage = currentLanguage === "vi" ? "en" : "vi";
-                applyStatisticsLanguage(nextLanguage);
-            };
+            button.addEventListener("click", function () {
+                // Chờ script chrome dùng chung (layout/base.html) ghi xong
+                // localStorage rồi mới đọc lại, tránh 2 script cùng tự đảo
+                // ngôn ngữ độc lập và triệt tiêu lẫn nhau trong 1 lần click.
+                setTimeout(function () {
+                    applyStatisticsLanguage(getLanguage());
+                }, 100);
+            });
         }
 
         document.addEventListener("DOMContentLoaded", function () {

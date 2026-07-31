@@ -158,7 +158,7 @@
         const languageButton = document.getElementById("languageToggle");
 
         if (languageButton) {
-            languageButton.textContent = language === "vi" ? "EN" : "VI";
+            (languageButton.querySelector("span") || languageButton).textContent = language === "vi" ? "EN" : "VI";
         }
 
         document.documentElement.lang = language;
@@ -221,24 +221,17 @@
         if (languageButton && !languageButton.dataset.pageTranslationBound) {
             languageButton.dataset.pageTranslationBound = "1";
 
-            languageButton.addEventListener("click", function (event) {
-                event.preventDefault();
-                event.stopImmediatePropagation();
-
-                const currentLanguage = getCurrentLanguageSafe();
-                const nextLanguage = currentLanguage === "vi" ? "en" : "vi";
-
-                if (typeof window.applyLanguage === "function") {
-                    try {
-                        window.applyLanguage(nextLanguage);
-                    } catch (error) {
-                        console.warn("Global language.js error:", error);
-                        setPageLanguage(nextLanguage);
-                    }
-                } else {
-                    setPageLanguage(nextLanguage);
-                }
-            }, true);
+            languageButton.addEventListener("click", function () {
+                // Chờ script chrome dùng chung (layout/base.html) ghi xong
+                // localStorage rồi mới đọc lại, tránh 2 script cùng tự đảo
+                // ngôn ngữ độc lập và triệt tiêu lẫn nhau trong 1 lần click.
+                // Không dùng preventDefault/stopImmediatePropagation nữa vì
+                // nó chặn luôn script chrome dùng chung, khiến sidebar/tiêu
+                // đề không đổi ngôn ngữ theo.
+                setTimeout(function () {
+                    setPageLanguage(getCurrentLanguageSafe());
+                }, 100);
+            });
         }
     });
 })();

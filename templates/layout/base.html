@@ -6,6 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Document Storage System{% endblock %}</title>
 
+    <style>
+        /* Chuyển trang mượt hơn (native, không cần JS): trình duyệt hỗ trợ
+           View Transitions sẽ tự crossfade khi chuyển trang thường (a href,
+           form GET/POST); trình duyệt không hỗ trợ vẫn chuyển trang y như
+           trước, không lỗi, không cần fallback. */
+        @view-transition {
+            navigation: auto;
+        }
+    </style>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
@@ -170,7 +180,7 @@
                 <div class="absolute inset-0 bg-gradient-to-t from-black/[0.03] to-transparent pointer-events-none">
                 </div>
                 <i class="ti ti-plus text-lg relative z-10"></i>
-                <span class="relative z-10 tracking-wide">Gửi hồ sơ mới</span>
+                <span class="relative z-10 tracking-wide" data-i18n="upload">Gửi hồ sơ mới</span>
             </a>
         </div>
 
@@ -329,7 +339,7 @@
                 },
                 en: {
                     'section.workspace': 'Document Workspace', 'section.admin': 'Administration',
-                    dashboard: 'Overview', upload: 'Submit New Document', pending: 'Pending Approval',
+                    dashboard: 'Overview', upload: 'Upload New Document', pending: 'Pending Approval',
                     my_documents: 'My Documents', approved: 'Approved Archive', project_requests: 'Project Requests',
                     statistics: 'Statistics', admin_dashboard: 'Admin Dashboard', admin_users: 'Permissions',
                     manager_users: 'Account Approval', create_manager: 'Create Manager Account',
@@ -353,7 +363,10 @@
                     if (dict[key] !== undefined) el.setAttribute('title', dict[key]);
                 });
                 const toggle = document.getElementById('languageToggle');
-                if (toggle) toggle.textContent = language === 'vi' ? 'EN' : 'VI';
+                if (toggle) {
+                    const label = toggle.querySelector('span') || toggle;
+                    label.textContent = language === 'vi' ? 'EN' : 'VI';
+                }
             }
 
             document.addEventListener('DOMContentLoaded', function () {

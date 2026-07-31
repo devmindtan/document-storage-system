@@ -280,7 +280,7 @@
         function setPageLanguage(language) {
             const languageButton = document.getElementById("languageToggle");
             if (languageButton) {
-                languageButton.textContent = language === "vi" ? "EN" : "VI";
+                (languageButton.querySelector("span") || languageButton).textContent = language === "vi" ? "EN" : "VI";
             }
             document.documentElement.lang = language;
             const translations = PAGE_TRANSLATIONS[language] || PAGE_TRANSLATIONS.vi;
@@ -328,17 +328,14 @@
             const languageButton = document.getElementById("languageToggle");
             if (languageButton && !languageButton.dataset.pageTranslationBound) {
                 languageButton.dataset.pageTranslationBound = "1";
-                languageButton.addEventListener("click", function (event) {
-                    event.preventDefault();
-                    event.stopImmediatePropagation();
-                    const nextLanguage = getCurrentLanguageSafe() === "vi" ? "en" : "vi";
-                    if (typeof window.applyLanguage === "function") {
-                        try { window.applyLanguage(nextLanguage); }
-                        catch (error) { setPageLanguage(nextLanguage); }
-                    } else {
-                        setPageLanguage(nextLanguage);
-                    }
-                }, true);
+                languageButton.addEventListener("click", function () {
+                    // Chờ script chrome dùng chung (layout/base.html) ghi xong
+                    // localStorage rồi mới đọc lại, tránh 2 script cùng tự đảo
+                    // ngôn ngữ độc lập và triệt tiêu lẫn nhau trong 1 lần click.
+                    setTimeout(function () {
+                        setPageLanguage(getCurrentLanguageSafe());
+                    }, 100);
+                });
             }
         });
     })();

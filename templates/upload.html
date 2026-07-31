@@ -31,7 +31,8 @@
 <div class="dashboard-box max-w-4xl mx-auto space-y-6">
     <div class="top-bar flex flex-wrap items-center justify-between gap-3">
         <p class="text-sm text-slate-500">
-            <span data-i18n-key="employeeLabel">Nhân viên:</span> <strong class="text-slate-800 font-semibold">{{ user['full_name'] }}</strong>
+            <span data-i18n-key="employeeLabel">Nhân viên:</span> <strong class="text-slate-800 font-semibold">{{
+                user['full_name'] }}</strong>
         </p>
 
         <a class="back-link inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600 transition-colors"
@@ -50,7 +51,8 @@
             </div>
             <div>
                 <h2 class="text-lg font-semibold text-slate-800" data-i18n-key="cardTitle">Gửi hồ sơ mới</h2>
-                <p class="text-sm text-slate-500" data-i18n-key="cardSubtitle">Điền thông tin, quản lý danh mục và đính kèm tệp cần trình quản lý
+                <p class="text-sm text-slate-500" data-i18n-key="cardSubtitle">Điền thông tin, quản lý danh mục và đính
+                    kèm tệp cần trình quản lý
                     duyệt.</p>
             </div>
         </div>
@@ -102,12 +104,14 @@
                 <div id="newProjectBox"
                     class="conditional-input-box mt-3 p-3.5 border border-dashed border-brand-200 rounded-lg bg-brand-50/40">
                     <label for="new_project_name" class="block text-sm font-medium text-slate-700 mb-1.5">
-                        <span data-i18n-key="newProjectNameLabel">Tên project mới</span> <span class="required-star">*</span>
+                        <span data-i18n-key="newProjectNameLabel">Tên project mới</span> <span
+                            class="required-star">*</span>
                     </label>
                     <input id="new_project_name" type="text" name="new_project_name" maxlength="50"
                         placeholder="Nhập tên project mới" value="{{ new_project_name_value or '' }}"
                         class="w-full border border-slate-300 rounded-lg px-3.5 py-2 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
-                    <p class="note-text text-xs text-slate-500 mt-1.5" data-i18n-key="newProjectNote">Project mới sẽ được gửi kèm hồ sơ và chờ quản lý
+                    <p class="note-text text-xs text-slate-500 mt-1.5" data-i18n-key="newProjectNote">Project mới sẽ
+                        được gửi kèm hồ sơ và chờ quản lý
                         duyệt một lần.</p>
                 </div>
             </div>
@@ -140,7 +144,8 @@
                     class="conditional-input-box mt-3 p-3.5 border border-dashed border-brand-200 rounded-lg bg-brand-50/40 space-y-3">
                     <div>
                         <label for="new_category_name" class="block text-sm font-medium text-slate-700 mb-1.5">
-                            <span data-i18n-key="newCategoryNameLabel">Tên file con mới</span> <span class="required-star">*</span>
+                            <span data-i18n-key="newCategoryNameLabel">Tên file con mới</span> <span
+                                class="required-star">*</span>
                         </label>
                         <input id="new_category_name" type="text" name="new_category_name" maxlength="50"
                             placeholder="Nhập tên file con mới" value="{{ new_category_name_value or '' }}"
@@ -156,12 +161,16 @@
                             class="w-full border border-slate-300 rounded-lg px-3.5 py-2 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
                     </div>
 
-                    <p class="note-text text-xs text-slate-500" data-i18n-key="categoryCodeNote">Nếu để trống mã file con, hệ thống sẽ tự tạo mã.</p>
+                    <p class="note-text text-xs text-slate-500" data-i18n-key="categoryCodeNote">Nếu để trống mã file
+                        con, hệ thống sẽ tự tạo mã.</p>
                 </div>
 
-                <div id="codePreviewBox" class="hidden mt-3 px-3.5 py-2.5 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-500">
-                    <span data-i18n-key="codePreviewLabel">Mã hồ sơ dự kiến:</span> <span id="codePreviewText" class="font-mono font-semibold text-slate-700"></span>
-                    <span class="text-slate-400" data-i18n-key="codePreviewNote">(có thể thay đổi tại thời điểm tải lên)</span>
+                <div id="codePreviewBox"
+                    class="hidden mt-3 px-3.5 py-2.5 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-500">
+                    <span data-i18n-key="codePreviewLabel">Mã hồ sơ dự kiến:</span> <span id="codePreviewText"
+                        class="font-mono font-semibold text-slate-700"></span>
+                    <span class="text-slate-400" data-i18n-key="codePreviewNote">(có thể thay đổi tại thời điểm tải
+                        lên)</span>
                 </div>
             </div>
 
@@ -173,7 +182,8 @@
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1.5" data-i18n-key="chooseFileFieldLabel">Chọn file</label>
+                <label class="block text-sm font-medium text-slate-700 mb-1.5" data-i18n-key="chooseFileFieldLabel">Chọn
+                    file</label>
                 <div
                     class="custom-file-upload border-2 border-dashed border-slate-300 rounded-xl bg-slate-50 hover:bg-brand-50 transition-colors flex flex-col items-center justify-center p-8 text-center cursor-pointer">
                     <input id="uploaded_files" class="real-file-input hidden" type="file" name="uploaded_files" multiple
@@ -567,7 +577,7 @@
                 pageHeading: "SUBMIT DOCUMENT FOR APPROVAL",
                 employeeLabel: "Employee:",
                 backButton: "Back",
-                cardTitle: "Submit new document",
+                cardTitle: "Upload new document",
                 cardSubtitle: "Fill in the details, manage the catalog and attach the file to send to your manager for approval.",
                 step1Heading: "Select storage location & manage catalog",
                 projectLabel: "Project",

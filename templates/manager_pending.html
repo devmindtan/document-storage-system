@@ -214,7 +214,7 @@
         document.title = text.pageTitle;
 
         if (languageButton) {
-            languageButton.textContent = language === "vi" ? "EN" : "VI";
+            (languageButton.querySelector("span") || languageButton).textContent = language === "vi" ? "EN" : "VI";
         }
 
         document.querySelectorAll("[data-i18n-key]").forEach(function (element) {
@@ -274,12 +274,14 @@
         const languageButton = document.getElementById("languageToggle");
 
         if (languageButton) {
-            languageButton.onclick = function () {
-                const currentLanguage = getPageLanguage();
-                const nextLanguage = currentLanguage === "vi" ? "en" : "vi";
-
-                applyManagerPendingLanguage(nextLanguage);
-            };
+            languageButton.addEventListener("click", function () {
+                // Chờ script chrome dùng chung (layout/base.html) ghi xong
+                // localStorage rồi mới đọc lại, tránh 2 script cùng tự đảo
+                // ngôn ngữ độc lập và triệt tiêu lẫn nhau trong 1 lần click.
+                setTimeout(function () {
+                    applyManagerPendingLanguage(getPageLanguage());
+                }, 100);
+            });
         }
     });
 })();
