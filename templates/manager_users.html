@@ -1,145 +1,89 @@
 {% extends "layout/base.html" %}
 
 {% block title %}Quản lý tài khoản{% endblock %}
-{% block body_class %}app-page{% endblock %}
+{% block page_title %}Duyệt tài khoản{% endblock %}
+{% block active_nav %}manager_users{% endblock %}
 
 {% block content %}
-<div class="dashboard-box">
-
-        <div class="top-bar">
-            <div>
-                <h1>QUẢN LÝ TÀI KHOẢN</h1>
-                <p>
-                    Quản lý:
-                    <strong>{{ user['full_name'] }}</strong>
-                </p>
-            </div>
-
-            <a class="back-link" href="/manager">
-                Quay lại
-            </a>
-        </div>
-
-        <hr>
-
-        {% if users %}
-            <table class="document-table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Username</th>
-                        <th>Họ tên</th>
-                        <th>Vai trò</th>
-                        <th>Ngày tạo</th>
-                        <th>Trạng thái</th>
-                        <th>Thao tác</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    {% for account in users %}
+<div class="space-y-6">
+    {% if users %}
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm text-slate-600 whitespace-nowrap">
+                    <thead class="bg-slate-50 border-b border-slate-200 text-slate-700 uppercase font-semibold text-xs">
                         <tr>
-                            <td>{{ account['id'] }}</td>
-                            <td>{{ account['username'] }}</td>
-                            <td>{{ account['full_name'] }}</td>
-
-                            <td>
-                                {% if account['role'] == 'MANAGER' %}
-                                    Quản lý
+                            <th class="px-6 py-4">Tên người dùng</th>
+                            <th class="px-6 py-4">Tài khoản</th>
+                            <th class="px-6 py-4">Phân quyền</th>
+                            <th class="px-6 py-4">Ngày tạo</th>
+                            <th class="px-6 py-4">Trạng thái</th>
+                            <th class="px-6 py-4 text-right">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        {% for u in users %}
+                        <tr class="hover:bg-slate-50 transition-colors">
+                            <td class="px-6 py-4 font-medium text-slate-800">{{ u.full_name }}</td>
+                            <td class="px-6 py-4">{{ u.username }}</td>
+                            <td class="px-6 py-4">
+                                {% if u.role == 'MANAGER' %}
+                                    <span class="bg-blue-100 text-blue-700 px-2.5 py-1 rounded text-xs font-bold">MANAGER</span>
                                 {% else %}
-                                    Nhân viên
+                                    <span class="bg-slate-100 text-slate-600 px-2.5 py-1 rounded text-xs font-bold">EMPLOYEE</span>
                                 {% endif %}
                             </td>
-
-                            <td>{{ account['created_at'] }}</td>
-
-                            <td>
-    {% if account['approval_status'] == 'PENDING' %}
-        <span class="status-pending">
-            Chờ duyệt
-        </span>
-    {% elif account['approval_status'] == 'REJECTED' %}
-        <span class="status-locked">
-            Đã từ chối
-        </span>
-    {% else %}
-        {% if account['is_active'] %}
-            <span class="status-active">
-                Đang hoạt động
-            </span>
-        {% else %}
-            <span class="status-locked">
-                Đã khóa
-            </span>
-        {% endif %}
-    {% endif %}
-</td>
-
-                          <td class="user-action-cell">
-    {% if account['id'] == user['id'] %}
-        <span class="self-account">
-            Tài khoản hiện tại
-        </span>
-
-    {% elif account['approval_status'] == 'PENDING' %}
-    <div class="user-account-actions">
-        <form
-            action="/manager/users/{{ account['id'] }}/approve"
-            method="post"
-        >
-            <button
-                class="approve-button user-account-button"
-                type="submit"
-            >
-                Duyệt tài khoản
-            </button>
-        </form>
-
-        <form
-            action="/manager/users/{{ account['id'] }}/reject"
-            method="post"
-        >
-            <button
-                class="reject-button user-account-button"
-                type="submit"
-            >
-                Từ chối
-            </button>
-        </form>
-    </div>
-    {% else %}
-        <form
-            action="/manager/users/{{ account['id'] }}/toggle-status"
-            method="post"
-        >
-            {% if account['is_active'] %}
-    <button
-        class="reject-button user-account-button"
-        type="submit"
-    >
-        Khóa tài khoản
-    </button>
-{% else %}
-    <button
-        class="approve-button user-account-button"
-        type="submit"
-    >
-        Mở khóa
-    </button>
-{% endif %}
-        </form>
-    {% endif %}
-</td>
+                            <td class="px-6 py-4">{{ u.created_at }}</td>
+                            <td class="px-6 py-4">
+                                {% if u.approval_status == 'PENDING' %}
+                                    <span class="flex items-center gap-1.5 text-amber-600 text-xs font-medium"><span class="w-2 h-2 rounded-full bg-amber-500"></span> Chờ duyệt</span>
+                                {% elif u.approval_status == 'REJECTED' %}
+                                    <span class="flex items-center gap-1.5 text-rose-600 text-xs font-medium"><span class="w-2 h-2 rounded-full bg-rose-500"></span> Đã từ chối</span>
+                                {% elif u.is_active %}
+                                    <span class="flex items-center gap-1.5 text-emerald-600 text-xs font-medium"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> Đang hoạt động</span>
+                                {% else %}
+                                    <span class="flex items-center gap-1.5 text-slate-400 text-xs font-medium"><span class="w-2 h-2 rounded-full bg-slate-300"></span> Đã khóa</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                {% if u.id == user.id %}
+                                    <span class="text-xs text-slate-400 italic">Tài khoản hiện tại</span>
+                                {% elif u.approval_status == 'PENDING' %}
+                                    <div class="flex items-center justify-end gap-2">
+                                        <form method="post" action="/manager/users/{{ u.id }}/approve">
+                                            <button type="submit" class="px-3 py-1.5 bg-emerald-100 text-emerald-700 hover:bg-emerald-200 rounded text-xs font-semibold inline-flex items-center gap-1 transition-colors">
+                                                <i class="ti ti-check"></i> Duyệt tài khoản
+                                            </button>
+                                        </form>
+                                        <form method="post" action="/manager/users/{{ u.id }}/reject">
+                                            <button type="submit" class="px-3 py-1.5 bg-rose-100 text-rose-700 hover:bg-rose-200 rounded text-xs font-semibold inline-flex items-center gap-1 transition-colors">
+                                                <i class="ti ti-x"></i> Từ chối
+                                            </button>
+                                        </form>
+                                    </div>
+                                {% else %}
+                                    <form method="post" action="/manager/users/{{ u.id }}/toggle-status">
+                                        {% if u.is_active %}
+                                            <button type="submit" class="text-slate-400 hover:text-rose-500 p-1.5 bg-white border border-slate-200 rounded shadow-sm" title="Khóa tài khoản">
+                                                <i class="ti ti-lock text-lg"></i>
+                                            </button>
+                                        {% else %}
+                                            <button type="submit" class="text-slate-400 hover:text-emerald-500 p-1.5 bg-white border border-slate-200 rounded shadow-sm" title="Mở khóa">
+                                                <i class="ti ti-lock-open text-lg"></i>
+                                            </button>
+                                        {% endif %}
+                                    </form>
+                                {% endif %}
+                            </td>
                         </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-
-        {% else %}
-            <p class="empty-message">
-                Chưa có tài khoản nào trong hệ thống.
-            </p>
-        {% endif %}
-    </div>
-
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% else %}
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm text-sm text-slate-500 text-center">
+            Chưa có tài khoản nào trong hệ thống.
+        </div>
+    {% endif %}
+</div>
 {% endblock %}

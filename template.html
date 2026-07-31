@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ thống Quản lý Hồ sơ - Thiết kế mới Tailwind</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f5fa',
+                            100: '#e1ebf4',
+                            500: '#3b82f6',
+                            800: '#1b4d78',
+                            900: '#0a2540',
+                            accent: '#c9852a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        .nav-item.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-left-width: 4px;
+            border-left-color: #c9852a;
+        }
+
+        /* Modal Animation */
+        .modal-enter { opacity: 0; transform: scale(0.95); }
+        .modal-enter-active { opacity: 1; transform: scale(1); transition: all 0.2s ease-out; }
+        .modal-exit { opacity: 1; transform: scale(1); }
+        .modal-exit-active { opacity: 0; transform: scale(0.95); transition: all 0.2s ease-in; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans h-screen overflow-hidden flex relative">
+
+    <!-- Lớp phủ cho Mobile Sidebar -->
+    <div id="sidebarBackdrop" class="fixed inset-0 bg-slate-900/50 z-40 hidden transition-opacity lg:hidden" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar / Thanh điều hướng -->
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-brand-900 text-slate-300 flex flex-col transition-transform duration-300 transform -translate-x-full lg:translate-x-0 lg:static lg:flex-shrink-0">
+        <!-- Logo Area -->
+        <div class="h-16 flex items-center px-6 bg-brand-900 border-b border-white/10 shrink-0 gap-3">
+            <div class="w-8 h-8 rounded bg-white text-brand-900 flex items-center justify-center font-bold text-xl">
+                A
+            </div>
+            <span class="text-white font-bold tracking-wide">Document Sys</span>
+            <button class="lg:hidden ml-auto text-white" onclick="toggleSidebar()">
+                <i class="ti ti-x text-2xl"></i>
+            </button>
+        </div>
+
+        <!-- Navigation Menu -->
+        <div class="flex-1 overflow-y-auto py-6 px-3 space-y-1">
+            <div class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 mt-4">Nghiệp vụ hồ sơ</div>
+            
+            <a href="#" onclick="navigate('dashboard', this)" class="nav-item active flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 hover:text-white transition-colors border-l-4 border-transparent">
+                <i class="ti ti-smart-home text-xl"></i>
+                <span class="font-medium">Tổng quan</span>
+            </a>
+            
+            <a href="#" onclick="navigate('upload', this)" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 hover:text-white transition-colors border-l-4 border-transparent">
+                <i class="ti ti-cloud-upload text-xl"></i>
+                <span class="font-medium">Gửi hồ sơ mới</span>
+            </a>
+
+            <a href="#" onclick="navigate('pending', this)" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 hover:text-white transition-colors border-l-4 border-transparent">
+                <i class="ti ti-clock-shield text-xl"></i>
+                <span class="font-medium">Chờ phê duyệt</span>
+                <span class="ml-auto bg-amber-500 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow-sm">12</span>
+            </a>
+
+            <a href="#" onclick="navigate('list', this)" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 hover:text-white transition-colors border-l-4 border-transparent">
+                <i class="ti ti-archive text-xl"></i>
+                <span class="font-medium">Kho hồ sơ đã duyệt</span>
+            </a>
+
+            <div class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 mt-6">Quản trị hệ thống</div>
+            
+            <a href="#" onclick="navigate('users', this)" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 hover:text-white transition-colors border-l-4 border-transparent">
+                <i class="ti ti-users text-xl"></i>
+                <span class="font-medium">Tài khoản User</span>
+            </a>
+            
+            <a href="#" onclick="navigate('settings', this)" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 hover:text-white transition-colors border-l-4 border-transparent">
+                <i class="ti ti-settings text-xl"></i>
+                <span class="font-medium">Cấu hình & Nhật ký</span>
+            </a>
+        </div>
+
+        <!-- User Profile Area -->
+        <div class="p-4 border-t border-white/10 shrink-0">
+            <div class="flex items-center gap-3 bg-black/20 p-2.5 rounded-xl">
+                <img src="https://ui-avatars.com/api/?name=Manager+User&background=c9852a&color=fff" alt="User" class="w-9 h-9 rounded-full shadow-sm">
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-semibold text-white truncate">Trần Văn Quản Lý</p>
+                    <p class="text-xs text-slate-400 truncate">Manager</p>
+                </div>
+                <button class="text-slate-400 hover:text-white px-1" title="Đăng xuất">
+                    <i class="ti ti-logout text-lg"></i>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content Wrapper -->
+    <main class="flex-1 flex flex-col min-w-0 bg-slate-50 relative z-0">
+        
+        <!-- Header -->
+        <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 sm:px-6 shrink-0 shadow-sm z-10">
+            <div class="flex items-center gap-4">
+                <button class="lg:hidden text-slate-500 hover:text-slate-700" onclick="toggleSidebar()">
+                    <i class="ti ti-menu-2 text-2xl"></i>
+                </button>
+                <h1 id="pageTitle" class="text-xl font-semibold text-slate-800">Tổng quan hệ thống</h1>
+            </div>
+            
+            <div class="flex items-center gap-3">
+                <div class="relative">
+                    <i class="ti ti-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" placeholder="Tra cứu nhanh hồ sơ..." class="pl-9 pr-4 py-2 w-64 bg-slate-100 border-transparent rounded-full text-sm focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all hidden md:block outline-none">
+                </div>
+                <button class="w-9 h-9 flex items-center justify-center rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors relative">
+                    <i class="ti ti-bell text-xl"></i>
+                    <span class="absolute top-1 right-1 w-2.5 h-2.5 bg-rose-500 rounded-full border-2 border-white"></span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Dynamic Page Content -->
+        <div class="flex-1 overflow-auto p-4 sm:p-6 lg:p-8">
+            
+            <!-- TRANG 1: DASHBOARD (TỔNG QUAN) -->
+            <section id="page-dashboard" class="page-section max-w-7xl mx-auto space-y-6">
+                <!-- KPI Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow">
+                        <div class="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0"><i class="ti ti-files text-2xl"></i></div>
+                        <div><p class="text-sm font-medium text-slate-500">Tổng hồ sơ</p><h3 class="text-2xl font-bold text-slate-800">1,248</h3></div>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow">
+                        <div class="w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0"><i class="ti ti-check text-2xl"></i></div>
+                        <div><p class="text-sm font-medium text-slate-500">Đã phê duyệt</p><h3 class="text-2xl font-bold text-slate-800">982</h3></div>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow">
+                        <div class="w-12 h-12 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center shrink-0"><i class="ti ti-clock text-2xl"></i></div>
+                        <div><p class="text-sm font-medium text-slate-500">Chờ xử lý</p><h3 class="text-2xl font-bold text-slate-800">215</h3></div>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow">
+                        <div class="w-12 h-12 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center shrink-0"><i class="ti ti-x text-2xl"></i></div>
+                        <div><p class="text-sm font-medium text-slate-500">Bị từ chối</p><h3 class="text-2xl font-bold text-slate-800">51</h3></div>
+                    </div>
+                </div>
+                <!-- Charts Area -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm lg:col-span-2">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-lg font-semibold text-slate-800">Lưu lượng tải lên (12 tháng)</h2>
+                            <button class="text-slate-400 hover:text-slate-600"><i class="ti ti-dots"></i></button>
+                        </div>
+                        <div class="relative h-72 w-full"><canvas id="barChart"></canvas></div>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <h2 class="text-lg font-semibold text-slate-800 mb-4">Trạng thái hồ sơ</h2>
+                        <div class="relative h-64 w-full flex justify-center"><canvas id="doughnutChart"></canvas></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TRANG 2: KHO HỒ SƠ ĐÃ DUYỆT -->
+            <section id="page-list" class="page-section max-w-7xl mx-auto hidden flex-col h-full">
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row gap-4 mb-6 shrink-0">
+                    <div class="flex-1 relative">
+                        <i class="ti ti-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <input type="text" placeholder="Tìm tên file, mã hồ sơ..." class="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-brand-500 outline-none">
+                    </div>
+                    <div class="flex gap-2">
+                        <select class="border border-slate-200 text-slate-700 py-2.5 px-4 rounded-lg text-sm outline-none focus:ring-2 focus:ring-brand-500 bg-white min-w-[150px]">
+                            <option>Tất cả dự án</option><option>Dự án Alpha</option>
+                        </select>
+                        <button class="bg-brand-900 hover:bg-brand-800 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
+                            <i class="ti ti-filter"></i> Lọc
+                        </button>
+                    </div>
+                </div>
+                <!-- Data Table -->
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm flex-1 overflow-hidden flex flex-col">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm text-slate-600 whitespace-nowrap">
+                            <thead class="bg-slate-50 border-b border-slate-200 text-slate-700 uppercase font-semibold text-xs">
+                                <tr>
+                                    <th class="px-6 py-4">Mã HS</th>
+                                    <th class="px-6 py-4">Tên Tài liệu</th>
+                                    <th class="px-6 py-4">Dự án</th>
+                                    <th class="px-6 py-4">Người duyệt</th>
+                                    <th class="px-6 py-4">Ngày duyệt</th>
+                                    <th class="px-6 py-4 text-right">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                <tr class="hover:bg-slate-50 transition-colors">
+                                    <td class="px-6 py-4 font-mono text-brand-500 font-medium cursor-pointer" onclick="openModal()">HS-2026-001</td>
+                                    <td class="px-6 py-4 font-medium text-slate-800 flex items-center gap-2"><i class="ti ti-file-type-pdf text-rose-500 text-lg"></i> Ban_ve_ky_thuat_v2.pdf</td>
+                                    <td class="px-6 py-4"><span class="bg-slate-100 text-slate-600 px-2.5 py-1 rounded-md text-xs">Dự án Alpha</span></td>
+                                    <td class="px-6 py-4">Quản lý A</td>
+                                    <td class="px-6 py-4">12/10/2026</td>
+                                    <td class="px-6 py-4 text-right">
+                                        <button class="text-slate-400 hover:text-brand-500 p-1 bg-white border border-slate-200 rounded shadow-sm mx-1" title="Tải về"><i class="ti ti-download text-lg"></i></button>
+                                        <button class="text-slate-400 hover:text-rose-500 p-1 bg-white border border-slate-200 rounded shadow-sm mx-1" title="Xóa"><i class="ti ti-trash text-lg"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TRANG 3: TẢI LÊN HỒ SƠ -->
+            <section id="page-upload" class="page-section max-w-4xl mx-auto hidden">
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div class="p-6 border-b border-slate-200 bg-slate-50/50">
+                        <h2 class="text-lg font-semibold text-slate-800">Tải lên hồ sơ mới</h2>
+                        <p class="text-sm text-slate-500 mt-1">Điền đầy đủ metadata và chọn tệp tin cần trình duyệt.</p>
+                    </div>
+                    <form class="p-6 space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Dự án áp dụng <span class="text-rose-500">*</span></label>
+                                    <select class="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm outline-none bg-white"><option>Dự án Alpha</option></select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Mô tả / Ghi chú</label>
+                                    <textarea rows="4" class="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm outline-none resize-none" placeholder="Nhập ghi chú..."></textarea>
+                                </div>
+                            </div>
+                            <div class="flex flex-col">
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Tệp đính kèm <span class="text-rose-500">*</span></label>
+                                <div class="flex-1 border-2 border-dashed border-slate-300 rounded-xl bg-slate-50 hover:bg-brand-50 transition-colors flex flex-col items-center justify-center p-8 text-center cursor-pointer group">
+                                    <div class="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-sm mb-3 group-hover:text-brand-500"><i class="ti ti-cloud-upload text-2xl"></i></div>
+                                    <h4 class="text-slate-800 font-medium mb-1">Kéo thả tệp vào đây</h4>
+                                    <span class="bg-slate-200 text-slate-600 text-xs px-3 py-1 rounded-full mt-2">Tối đa 50MB</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pt-4 border-t border-slate-200 flex justify-end gap-3">
+                            <button type="button" class="px-5 py-2.5 bg-brand-900 text-white rounded-lg text-sm font-medium hover:bg-brand-800 transition-colors shadow-sm flex items-center gap-2"><i class="ti ti-send"></i> Gửi phê duyệt</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- TRANG 4: HỒ SƠ CHỜ PHÊ DUYỆT (Dành cho Manager) -->
+            <section id="page-pending" class="page-section max-w-7xl mx-auto hidden flex-col h-full">
+                <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 flex items-start gap-3">
+                    <i class="ti ti-alert-circle text-amber-600 text-xl mt-0.5"></i>
+                    <div>
+                        <h3 class="text-amber-800 font-semibold text-sm">Chú ý</h3>
+                        <p class="text-amber-700 text-sm mt-1">Bạn có 12 hồ sơ đang chờ xem xét. Vui lòng phê duyệt kịp thời để không ảnh hưởng tiến độ dự án.</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm flex-1 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm text-slate-600 whitespace-nowrap">
+                            <thead class="bg-slate-50 border-b border-slate-200 text-slate-700 uppercase font-semibold text-xs">
+                                <tr>
+                                    <th class="px-6 py-4">Tài liệu</th>
+                                    <th class="px-6 py-4">Dự án</th>
+                                    <th class="px-6 py-4">Người gửi</th>
+                                    <th class="px-6 py-4">Thời gian gửi</th>
+                                    <th class="px-6 py-4 text-center">Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                <tr class="hover:bg-slate-50">
+                                    <td class="px-6 py-4">
+                                        <p class="font-medium text-slate-800">Quy_dinh_an_toan_lao_dong.docx</p>
+                                        <p class="text-xs text-slate-500 mt-0.5">HS-2026-902</p>
+                                    </td>
+                                    <td class="px-6 py-4">Nội bộ Công ty</td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-bold">NV</div>
+                                            <span>Nguyễn Văn Nhân Viên</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4">2 giờ trước</td>
+                                    <td class="px-6 py-4 text-center">
+                                        <div class="flex items-center justify-center gap-2">
+                                            <button class="px-3 py-1.5 bg-emerald-100 text-emerald-700 hover:bg-emerald-200 rounded text-xs font-semibold flex items-center gap-1 transition-colors"><i class="ti ti-check"></i> Duyệt</button>
+                                            <button class="px-3 py-1.5 bg-rose-100 text-rose-700 hover:bg-rose-200 rounded text-xs font-semibold flex items-center gap-1 transition-colors"><i class="ti ti-x"></i> Từ chối</button>
+                                            <button class="p-1.5 text-slate-400 hover:text-brand-500 transition-colors" title="Xem chi tiết" onclick="openModal()"><i class="ti ti-external-link text-lg"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TRANG 5: QUẢN LÝ TÀI KHOẢN (Dành cho Admin) -->
+            <section id="page-users" class="page-section max-w-7xl mx-auto hidden flex-col h-full">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-lg font-semibold text-slate-800">Danh sách Người dùng</h2>
+                    <button class="bg-brand-500 hover:bg-brand-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 shadow-sm">
+                        <i class="ti ti-user-plus"></i> Thêm User Mới
+                    </button>
+                </div>
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm flex-1 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm text-slate-600 whitespace-nowrap">
+                            <thead class="bg-slate-50 border-b border-slate-200 text-slate-700 uppercase font-semibold text-xs">
+                                <tr>
+                                    <th class="px-6 py-4">Tên người dùng</th>
+                                    <th class="px-6 py-4">Email / Tài khoản</th>
+                                    <th class="px-6 py-4">Phân quyền (Role)</th>
+                                    <th class="px-6 py-4">Trạng thái</th>
+                                    <th class="px-6 py-4 text-right">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                <tr>
+                                    <td class="px-6 py-4 font-medium text-slate-800">Admin Tối Cao</td>
+                                    <td class="px-6 py-4">admin@amata.com</td>
+                                    <td class="px-6 py-4"><span class="bg-purple-100 text-purple-700 px-2.5 py-1 rounded text-xs font-bold">ADMIN</span></td>
+                                    <td class="px-6 py-4"><span class="flex items-center gap-1.5 text-emerald-600 text-xs font-medium"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> Hoạt động</span></td>
+                                    <td class="px-6 py-4 text-right"><button class="text-slate-400 hover:text-brand-500"><i class="ti ti-edit"></i></button></td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 font-medium text-slate-800">Trần Văn Quản Lý</td>
+                                    <td class="px-6 py-4">manager@amata.com</td>
+                                    <td class="px-6 py-4"><span class="bg-blue-100 text-blue-700 px-2.5 py-1 rounded text-xs font-bold">MANAGER</span></td>
+                                    <td class="px-6 py-4"><span class="flex items-center gap-1.5 text-emerald-600 text-xs font-medium"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> Hoạt động</span></td>
+                                    <td class="px-6 py-4 text-right"><button class="text-slate-400 hover:text-brand-500"><i class="ti ti-edit"></i></button></td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 font-medium text-slate-800 text-slate-400 line-through">Nguyễn Văn Nghỉ Việc</td>
+                                    <td class="px-6 py-4 text-slate-400">staff.old@amata.com</td>
+                                    <td class="px-6 py-4"><span class="bg-slate-100 text-slate-600 px-2.5 py-1 rounded text-xs font-bold">EMPLOYEE</span></td>
+                                    <td class="px-6 py-4"><span class="flex items-center gap-1.5 text-slate-400 text-xs font-medium"><span class="w-2 h-2 rounded-full bg-slate-300"></span> Đã khóa</span></td>
+                                    <td class="px-6 py-4 text-right"><button class="text-slate-400 hover:text-brand-500"><i class="ti ti-edit"></i></button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TRANG 6: CÀI ĐẶT & NHẬT KÝ -->
+            <section id="page-settings" class="page-section max-w-5xl mx-auto hidden space-y-6">
+                <!-- Config Card -->
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                    <h3 class="text-lg font-semibold text-slate-800 border-b border-slate-100 pb-4 mb-4">Cấu hình Hệ thống</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Dung lượng Tệp tối đa (MB)</label>
+                            <input type="number" value="50" class="w-full border border-slate-300 rounded-lg px-4 py-2 text-sm outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Đuôi tệp cho phép upload</label>
+                            <input type="text" value=".pdf, .docx, .xlsx, .dwg" class="w-full border border-slate-300 rounded-lg px-4 py-2 text-sm outline-none">
+                        </div>
+                    </div>
+                    <div class="mt-4 flex justify-end"><button class="bg-brand-900 text-white px-4 py-2 rounded-lg text-sm font-medium">Lưu cấu hình</button></div>
+                </div>
+
+                <!-- Audit Logs -->
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                    <h3 class="text-lg font-semibold text-slate-800 border-b border-slate-100 pb-4 mb-4">Nhật ký Hoạt động (Audit Logs)</h3>
+                    <div class="space-y-4">
+                        <div class="flex gap-4 text-sm">
+                            <div class="w-32 shrink-0 text-slate-500">10:45 31/10/2026</div>
+                            <div><span class="font-semibold text-brand-800">Admin</span> đã cấp lại mật khẩu cho <span class="font-medium text-slate-700">staff@amata.com</span></div>
+                        </div>
+                        <div class="flex gap-4 text-sm">
+                            <div class="w-32 shrink-0 text-slate-500">09:12 31/10/2026</div>
+                            <div><span class="font-semibold text-blue-600">Trần Văn Quản Lý</span> đã phê duyệt hồ sơ <span class="font-mono bg-slate-100 px-1 rounded">HS-2026-902</span></div>
+                        </div>
+                        <div class="flex gap-4 text-sm">
+                            <div class="w-32 shrink-0 text-slate-500">16:30 30/10/2026</div>
+                            <div>Hệ thống sao lưu cơ sở dữ liệu tự động thành công (Size: 45MB).</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Generic Modal System -->
+    <div id="systemModal" class="fixed inset-0 z-[100] hidden">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" onclick="closeModal()"></div>
+        <!-- Modal Content -->
+        <div class="absolute inset-0 flex items-center justify-center p-4">
+            <div id="modalPanel" class="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden flex flex-col transform transition-all modal-enter">
+                <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                    <h3 class="font-semibold text-slate-800 text-lg">Chi tiết Hồ sơ</h3>
+                    <button onclick="closeModal()" class="text-slate-400 hover:text-rose-500 transition-colors"><i class="ti ti-x text-xl"></i></button>
+                </div>
+                <div class="p-6 text-sm text-slate-600 space-y-3">
+                    <div class="flex"><span class="w-32 font-medium text-slate-500">Mã định danh:</span> <span class="font-mono text-brand-600 font-bold">HS-2026-001</span></div>
+                    <div class="flex"><span class="w-32 font-medium text-slate-500">Tên gốc:</span> <span class="font-medium text-slate-800">Ban_ve_ky_thuat_v2.pdf</span></div>
+                    <div class="flex"><span class="w-32 font-medium text-slate-500">Người trình:</span> <span>Nguyễn Văn Nhân Viên</span></div>
+                    <div class="flex"><span class="w-32 font-medium text-slate-500">Ghi chú:</span> <span class="flex-1 bg-slate-50 p-2 rounded border border-slate-100">Bản vẽ cập nhật thông số kỹ thuật đường ống theo yêu cầu CĐT ngày 28/10.</span></div>
+                </div>
+                <div class="px-6 py-4 border-t border-slate-100 bg-slate-50 flex justify-end gap-2">
+                    <button onclick="closeModal()" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-100 font-medium text-sm transition-colors">Đóng lại</button>
+                    <button class="px-4 py-2 bg-brand-900 text-white rounded-lg hover:bg-brand-800 font-medium text-sm flex items-center gap-1 shadow-sm transition-colors"><i class="ti ti-download"></i> Tải tài liệu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts Logic & Charts -->
+    <script>
+        // Điều khiển chuyển trang SPA
+        function navigate(pageId, element) {
+            // Cập nhật Active State cho Sidebar
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+
+            // Ẩn tất cả section
+            document.querySelectorAll('.page-section').forEach(el => el.classList.add('hidden'));
+            
+            // Hiển thị section được chọn
+            document.getElementById('page-' + pageId).classList.remove('hidden');
+
+            // Cập nhật Tiêu đề Header
+            const titles = {
+                'dashboard': 'Tổng quan hệ thống',
+                'list': 'Kho Hồ sơ đã duyệt',
+                'upload': 'Trình duyệt Hồ sơ Mới',
+                'pending': 'Phê duyệt Hồ sơ',
+                'users': 'Quản trị Tài khoản Hệ thống',
+                'settings': 'Cấu hình & Nhật ký Hoạt động'
+            };
+            document.getElementById('pageTitle').innerText = titles[pageId];
+
+            // Đóng sidebar trên mobile
+            if (window.innerWidth < 1024) {
+                toggleSidebar();
+            }
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const backdrop = document.getElementById('sidebarBackdrop');
+            sidebar.classList.toggle('-translate-x-full');
+            if(sidebar.classList.contains('-translate-x-full')) {
+                backdrop.classList.add('hidden'); backdrop.classList.remove('block');
+            } else {
+                backdrop.classList.remove('hidden'); backdrop.classList.add('block');
+            }
+        }
+
+        // Logic điều khiển Modal
+        const modal = document.getElementById('systemModal');
+        const modalPanel = document.getElementById('modalPanel');
+        function openModal() {
+            modal.classList.remove('hidden');
+            // Force reflow for animation
+            void modalPanel.offsetWidth;
+            modalPanel.classList.add('modal-enter-active');
+            modalPanel.classList.remove('modal-enter');
+        }
+        function closeModal() {
+            modalPanel.classList.remove('modal-enter-active');
+            modalPanel.classList.add('modal-enter');
+            setTimeout(() => { modal.classList.add('hidden'); }, 200);
+        }
+
+        // Khởi tạo Biểu đồ Chart.js
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctxBar = document.getElementById('barChart').getContext('2d');
+            new Chart(ctxBar, {
+                type: 'bar',
+                data: {
+                    labels: ['Thg 1', 'Thg 2', 'Thg 3', 'Thg 4', 'Thg 5', 'Thg 6', 'Thg 7', 'Thg 8', 'Thg 9', 'Thg 10', 'Thg 11', 'Thg 12'],
+                    datasets: [{
+                        label: 'Số hồ sơ',
+                        data: [45, 60, 80, 55, 90, 110, 105, 95, 130, 150, 140, 175],
+                        backgroundColor: '#1b4d78', borderRadius: 4, barThickness: 'flex', maxBarThickness: 32
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' }, border: { dash: [4, 4] } }, x: { grid: { display: false } } } }
+            });
+
+            const ctxDoughnut = document.getElementById('doughnutChart').getContext('2d');
+            new Chart(ctxDoughnut, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Đã duyệt', 'Chờ xử lý', 'Từ chối'],
+                    datasets: [{ data: [982, 215, 51], backgroundColor: ['#10b981', '#f59e0b', '#f43f5e'], borderWidth: 0, hoverOffset: 4 }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { position: 'bottom', labels: { padding: 20, usePointStyle: true, pointStyle: 'circle' } } } }
+            });
+        });
+    </script>
+</body>
+</html>

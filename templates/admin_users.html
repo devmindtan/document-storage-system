@@ -6,122 +6,116 @@
 {% block content %}
 <div class="dashboard-box">
 
-        <div class="top-bar">
-            <div>
-                <h1>ADMIN QUẢN LÝ TÀI KHOẢN</h1>
-                <p>
-                    Admin:
-                    <strong>{{ user['full_name'] }}</strong>
-                </p>
-            </div>
-
-            <a class="back-link" href="/admin">
-                Quay lại
-            </a>
+    <div class="top-bar">
+        <div>
+            <h1>ADMIN QUẢN LÝ TÀI KHOẢN</h1>
+            <p>
+                Admin:
+                <strong>{{ user['full_name'] }}</strong>
+            </p>
         </div>
 
-        <hr>
-
-        {% if users %}
-            <table class="document-table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Username</th>
-                        <th>Họ tên</th>
-                        <th>Vai trò</th>
-                        <th>Admin</th>
-                        <th>Trạng thái</th>
-                        <th>Thao tác</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    {% for account in users %}
-                        <tr>
-                            <td>{{ account['id'] }}</td>
-                            <td>{{ account['username'] }}</td>
-                            <td>{{ account['full_name'] }}</td>
-
-                            <td>
-                                {% if account['role'] == 'MANAGER' %}
-                                    Quản lý
-                                {% else %}
-                                    Nhân viên
-                                {% endif %}
-                            </td>
-
-                            <td>
-                                {% if account['is_admin'] %}
-                                    <span class="status-active">Có</span>
-                                {% else %}
-                                    <span class="self-account">Không</span>
-                                {% endif %}
-                            </td>
-
-                            <td>
-                                {% if account['approval_status'] == 'PENDING' %}
-                                    <span class="status-pending">
-                                        Chờ duyệt
-                                    </span>
-                                {% elif account['approval_status'] == 'REJECTED' %}
-                                    <span class="status-locked">
-                                        Đã từ chối
-                                    </span>
-                                {% else %}
-                                    {% if account['is_active'] %}
-                                        <span class="status-active">
-                                            Đang hoạt động
-                                        </span>
-                                    {% else %}
-                                        <span class="status-locked">
-                                            Đã khóa
-                                        </span>
-                                    {% endif %}
-                                {% endif %}
-                            </td>
-
-                            <td>
-                                {% if account['id'] == user['id'] %}
-                                    <span class="self-account">
-                                        Tài khoản admin hiện tại
-                                    </span>
-
-                                {% elif account['is_admin'] %}
-                                    <span class="self-account">
-                                        Admin
-                                    </span>
-
-                                {% elif account['role'] == 'EMPLOYEE' %}
-                                    <form
-                                        action="/admin/users/{{ account['id'] }}/promote-manager"
-                                        method="post"
-                                    >
-                                        <button
-                                            class="approve-button"
-                                            type="submit"
-                                        >
-                                            Chuyển thành quản lý
-                                        </button>
-                                    </form>
-
-                                {% else %}
-                                    <span class="self-account">
-                                        Đã là quản lý
-                                    </span>
-                                {% endif %}
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-
-        {% else %}
-            <p class="empty-message">
-                Chưa có tài khoản nào.
-            </p>
-        {% endif %}
-
+        <a class="back-link" href="/admin">
+            Quay lại
+        </a>
     </div>
+
+    <hr>
+
+    {% if users %}
+    <table class="document-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Họ tên</th>
+                <th>Vai trò</th>
+                <th>Admin</th>
+                <th>Trạng thái</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for account in users %}
+            <tr>
+                <td>{{ account['id'] }}</td>
+                <td>{{ account['username'] }}</td>
+                <td>{{ account['full_name'] }}</td>
+
+                <td>
+                    {% if account['role'] == 'MANAGER' %}
+                    Quản lý
+                    {% else %}
+                    Nhân viên
+                    {% endif %}
+                </td>
+
+                <td>
+                    {% if account['is_admin'] %}
+                    <span class="status-active">Có</span>
+                    {% else %}
+                    <span class="self-account">Không</span>
+                    {% endif %}
+                </td>
+
+                <td>
+                    {% if account['approval_status'] == 'PENDING' %}
+                    <span class="status-pending">
+                        Chờ duyệt
+                    </span>
+                    {% elif account['approval_status'] == 'REJECTED' %}
+                    <span class="status-locked">
+                        Đã từ chối
+                    </span>
+                    {% else %}
+                    {% if account['is_active'] %}
+                    <span class="status-active">
+                        Đang hoạt động
+                    </span>
+                    {% else %}
+                    <span class="status-locked">
+                        Đã khóa
+                    </span>
+                    {% endif %}
+                    {% endif %}
+                </td>
+
+                <td>
+                    {% if account['id'] == user['id'] %}
+                    <span class="self-account">
+                        Tài khoản admin hiện tại
+                    </span>
+
+                    {% elif account['is_admin'] %}
+                    <span class="self-account">
+                        Admin
+                    </span>
+
+                    {% elif account['role'] == 'EMPLOYEE' %}
+                    <form action="/admin/users/{{ account['id'] }}/promote-manager" method="post">
+                        <button class="approve-button" type="submit">
+                            Chuyển thành quản lý
+                        </button>
+                    </form>
+
+                    {% else %}
+                    <span class="self-account">
+                        Đã là quản lý
+                    </span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% else %}
+    <p class="empty-message">
+        Chưa có tài khoản nào.
+    </p>
+    {% endif %}
+
+</div>
 
 {% endblock %}

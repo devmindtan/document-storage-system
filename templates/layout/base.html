@@ -2,39 +2,179 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Document Storage System{% endblock %}</title>
-    <link rel="stylesheet" href="/static/style.css?v=9000">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
+                    colors: {
+                        brand: {
+                            50: '#f0f5fa', 100: '#e1ebf4', 500: '#3b82f6',
+                            800: '#1b4d78', 900: '#0a2540', accent: '#c9852a'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .nav-item.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-left-width: 4px;
+            border-left-color: #c9852a;
+        }
+    </style>
     {% block extra_style %}{% endblock %}
 </head>
+<body class="{% block body_class %}bg-slate-50{% endblock %} text-slate-800 font-sans {% if user %}h-screen overflow-hidden flex{% else %}min-h-screen{% endif %} relative">
 
-<body class="{% block body_class %}app-page{% endblock %}">
-    <div class="logo-header">
-        <div class="header-logo-group">
-            <a class="corner-logo-link" href="/">
-                <img
-                    class="corner-logo akzo-logo"
-                    src="/static/images/AkzoNobel_RGB.png?v=31"
-                    alt="AkzoNobel"
-                >
+{% if user %}
+    <div id="sidebarBackdrop" class="fixed inset-0 bg-slate-900/50 z-40 hidden transition-opacity lg:hidden" onclick="toggleSidebar()"></div>
+
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-brand-900 text-slate-300 flex flex-col transition-transform duration-300 transform -translate-x-full lg:translate-x-0 lg:static lg:flex-shrink-0">
+        <div class="h-16 flex items-center px-4 bg-brand-900 border-b border-white/10 shrink-0 gap-2">
+            <a href="/" class="flex items-center gap-2 min-w-0 flex-1 bg-white rounded-md px-2 py-1.5">
+                <img src="/static/images/AkzoNobel_RGB.png" alt="AkzoNobel" class="h-6 w-auto object-contain">
+                <span class="w-px h-5 bg-slate-300 shrink-0"></span>
+                <img src="/static/images/amata_engineering_logo.png" alt="Amata Engineering" class="h-6 w-auto object-contain">
             </a>
-
-            <span class="logo-separator"></span>
-
-            <a class="engineering-logo-link" href="/">
-                <img
-                    class="engineering-logo"
-                    src="/static/images/amata_engineering_logo.png?v=1"
-                    alt="Amata Engineering"
-                >
-            </a>
+            <button class="lg:hidden text-white shrink-0" onclick="toggleSidebar()">
+                <i class="ti ti-x text-2xl"></i>
+            </button>
         </div>
 
-        <button class="language-toggle" id="languageToggle" type="button">
-            EN
-        </button>
-    </div>
+        <!-- {% block active_nav %}{% endblock %} -->
+        {% set active_nav = self.active_nav() %}
+        <div class="flex-1 overflow-y-auto py-6 px-3 space-y-1">
+            <div class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Nghiệp vụ hồ sơ</div>
 
-    {% block content %}{% endblock %}
+            {% if user.role == 'EMPLOYEE' %}
+            <a href="/employee" class="nav-item {{ 'active' if active_nav == 'dashboard' }} flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 hover:text-white transition-colors border-l-4 border-transparent">
+                <i class="ti ti-smart-home text-xl"></i><span class="font-medium">Tổng quan</span>
+            </a>
+            <a href="/employee/upload" class="nav-item {{ 'active' if active_nav == 'upload' }} flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 hover:text-white transition-colors border-l-4 border-transparent">
+                <i class="ti ti-cloud-upload text-xl"></i><span class="font-medium">Gửi hồ sơ mới</span>
+            </a>
+            <a href="/employee/my-documents" class="nav-item {{ 'active' if active_nav == 'my_documents' }} flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 hover:text-white transition-colors border-l-4 border-transparent">
+                <i class="ti ti-file-text text-xl"></i><span class="font-medium">Hồ sơ của tôi</span>
+            </a>
+            <a href="/documents/approved" class="nav-item {{ 'active' if active_nav == 'approved' }} flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 hover:text-white transition-colors border-l-4 border-transparent">
+                <i class="ti ti-archive text-xl"></i><span class="font-medium">Kho hồ sơ đã duyệt</span>
+            </a>
+            <a href="/statistics" class="nav-item {{ 'active' if active_nav == 'statistics' }} flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 hover:text-white transition-colors border-l-4 border-transparent">
+                <i class="ti ti-chart-bar text-xl"></i><span class="font-medium">Thống kê</span>
+            </a>
+            {% else %}
+            <a href="/manager" class="nav-item {{ 'active' if active_nav == 'dashboard' }} flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 hover:text-white transition-colors border-l-4 border-transparent">
+                <i class="ti ti-smart-home text-xl"></i><span class="font-medium">Tổng quan</span>
+            </a>
+            <a href="/manager/upload" class="nav-item {{ 'active' if active_nav == 'upload' }} flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 hover:text-white transition-colors border-l-4 border-transparent">
+                <i class="ti ti-cloud-upload text-xl"></i><span class="font-medium">Gửi hồ sơ mới</span>
+            </a>
+            <a href="/manager/pending" class="nav-item {{ 'active' if active_nav == 'pending' }} flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 hover:text-white transition-colors border-l-4 border-transparent">
+                <i class="ti ti-clock-shield text-xl"></i><span class="font-medium">Chờ phê duyệt</span>
+                {% if pending_count is defined and pending_count %}<span class="ml-auto bg-amber-500 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow-sm">{{ pending_count }}</span>{% endif %}
+            </a>
+            <a href="/manager/my-documents" class="nav-item {{ 'active' if active_nav == 'my_documents' }} flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 hover:text-white transition-colors border-l-4 border-transparent">
+                <i class="ti ti-file-text text-xl"></i><span class="font-medium">Hồ sơ của tôi</span>
+            </a>
+            <a href="/documents/approved" class="nav-item {{ 'active' if active_nav == 'approved' }} flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 hover:text-white transition-colors border-l-4 border-transparent">
+                <i class="ti ti-archive text-xl"></i><span class="font-medium">Kho hồ sơ đã duyệt</span>
+            </a>
+            <a href="/manager/project-requests" class="nav-item {{ 'active' if active_nav == 'project_requests' }} flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 hover:text-white transition-colors border-l-4 border-transparent">
+                <i class="ti ti-briefcase text-xl"></i><span class="font-medium">Yêu cầu dự án</span>
+            </a>
+            <a href="/statistics" class="nav-item {{ 'active' if active_nav == 'statistics' }} flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 hover:text-white transition-colors border-l-4 border-transparent">
+                <i class="ti ti-chart-bar text-xl"></i><span class="font-medium">Thống kê</span>
+            </a>
+            {% endif %}
+
+            {% if user.is_admin %}
+            <div class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 mt-6">Quản trị hệ thống</div>
+            <a href="/admin" class="nav-item {{ 'active' if active_nav == 'admin_dashboard' }} flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 hover:text-white transition-colors border-l-4 border-transparent">
+                <i class="ti ti-layout-dashboard text-xl"></i><span class="font-medium">Tổng quan Admin</span>
+            </a>
+            <a href="/admin/users" class="nav-item {{ 'active' if active_nav == 'admin_users' }} flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 hover:text-white transition-colors border-l-4 border-transparent">
+                <i class="ti ti-shield-check text-xl"></i><span class="font-medium">Quản lý phân quyền</span>
+            </a>
+            <a href="/manager/users" class="nav-item {{ 'active' if active_nav == 'manager_users' }} flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 hover:text-white transition-colors border-l-4 border-transparent">
+                <i class="ti ti-users text-xl"></i><span class="font-medium">Duyệt tài khoản</span>
+            </a>
+            <a href="/admin/create-manager" class="nav-item {{ 'active' if active_nav == 'create_manager' }} flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 hover:text-white transition-colors border-l-4 border-transparent">
+                <i class="ti ti-user-plus text-xl"></i><span class="font-medium">Tạo tài khoản Quản lý</span>
+            </a>
+            <a href="/manager/audit-logs" class="nav-item {{ 'active' if active_nav == 'audit_logs' }} flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 hover:text-white transition-colors border-l-4 border-transparent">
+                <i class="ti ti-history text-xl"></i><span class="font-medium">Nhật ký hoạt động</span>
+            </a>
+            {% endif %}
+        </div>
+
+        <div class="p-4 border-t border-white/10 shrink-0">
+            <div class="flex items-center gap-3 bg-black/20 p-2.5 rounded-xl">
+                <img src="https://ui-avatars.com/api/?name={{ (user.full_name or user.username) | urlencode }}&background=c9852a&color=fff" alt="{{ user.full_name }}" class="w-9 h-9 rounded-full shadow-sm">
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-semibold text-white truncate">{{ user.full_name or user.username }}</p>
+                    <p class="text-xs text-slate-400 truncate">{{ 'Admin' if user.is_admin else ('Quản lý' if user.role == 'MANAGER' else 'Nhân viên') }}</p>
+                </div>
+                <a href="/logout" class="text-slate-400 hover:text-white px-1" title="Đăng xuất">
+                    <i class="ti ti-logout text-lg"></i>
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col min-w-0 bg-slate-50 relative z-0">
+        <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 sm:px-6 shrink-0 shadow-sm z-10">
+            <div class="flex items-center gap-4 min-w-0">
+                <button class="lg:hidden text-slate-500 hover:text-slate-700" onclick="toggleSidebar()">
+                    <i class="ti ti-menu-2 text-2xl"></i>
+                </button>
+                <h1 class="text-xl font-semibold text-slate-800 truncate">{% block page_title %}{% endblock %}</h1>
+            </div>
+            <button id="languageToggle" type="button" class="w-9 h-9 flex items-center justify-center rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors text-xs font-bold shrink-0">
+                VI
+            </button>
+        </header>
+
+        <div class="flex-1 overflow-auto p-4 sm:p-6 lg:p-8">
+            <div class="max-w-7xl mx-auto">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const backdrop = document.getElementById('sidebarBackdrop');
+            sidebar.classList.toggle('-translate-x-full');
+            if (sidebar.classList.contains('-translate-x-full')) {
+                backdrop.classList.add('hidden'); backdrop.classList.remove('block');
+            } else {
+                backdrop.classList.remove('hidden'); backdrop.classList.add('block');
+            }
+        }
+    </script>
+{% else %}
+    <div class="min-h-screen w-full flex items-center justify-center p-4">
+        {{ self.content() }}
+    </div>
+{% endif %}
 
     {% block extra_script %}{% endblock %}
 </body>

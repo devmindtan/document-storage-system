@@ -1,86 +1,56 @@
 {% extends "layout/base.html" %}
 
 {% block title %}Phân quyền tài khoản{% endblock %}
-{% block body_class %}app-page{% endblock %}
+{% block page_title %}Phân quyền tài khoản{% endblock %}
+{% block active_nav %}manager_users{% endblock %}
 
 {% block content %}
-<div class="dashboard-box">
-
-        <div class="top-bar">
-            <div>
-                <h1>PHÂN QUYỀN TÀI KHOẢN</h1>
-                <p>
-                    Quản lý:
-                    <strong>{{ user['full_name'] }}</strong>
-                </p>
+<div class="space-y-6 max-w-2xl">
+    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+        <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">Thông tin tài khoản</h3>
+        <dl class="space-y-2 text-sm">
+            <div class="flex gap-2"><dt class="font-medium text-slate-500 w-24 shrink-0">Tài khoản</dt><dd class="text-slate-800">{{ target_user.username }}</dd></div>
+            <div class="flex gap-2"><dt class="font-medium text-slate-500 w-24 shrink-0">Họ tên</dt><dd class="text-slate-800">{{ target_user.full_name }}</dd></div>
+            <div class="flex gap-2">
+                <dt class="font-medium text-slate-500 w-24 shrink-0">Vai trò</dt>
+                <dd>
+                    {% if target_user.role == 'MANAGER' %}
+                        <span class="bg-blue-100 text-blue-700 px-2.5 py-1 rounded text-xs font-bold">MANAGER</span>
+                    {% else %}
+                        <span class="bg-slate-100 text-slate-600 px-2.5 py-1 rounded text-xs font-bold">EMPLOYEE</span>
+                    {% endif %}
+                </dd>
             </div>
-
-            <a class="back-link" href="/manager/users">
-                Quay lại
-            </a>
-        </div>
-
-        <hr>
-
-        <div class="info-box">
-            <p>
-                <strong>Tài khoản:</strong>
-                {{ target_user['username'] }}
-            </p>
-
-            <p>
-                <strong>Họ tên:</strong>
-                {{ target_user['full_name'] }}
-            </p>
-
-            <p>
-                <strong>Vai trò:</strong>
-                {% if target_user['role'] == 'MANAGER' %}
-                    Quản lý
-                {% else %}
-                    Nhân viên
-                {% endif %}
-            </p>
-        </div>
-
-        <hr>
-
-        <form
-            action="/manager/users/{{ target_user['id'] }}/permissions"
-            method="post"
-        >
-            <h3>Chọn loại hồ sơ được phép xem/download</h3>
-
-            {% for key, category in categories.items() %}
-                <div class="checkbox-row">
-                    <label>
-                        {% if category['label'] in selected_categories %}
-    <input
-        type="checkbox"
-        name="categories"
-        value="{{ category['label'] }}"
-        checked
-    >
-{% else %}
-    <input
-        type="checkbox"
-        name="categories"
-        value="{{ category['label'] }}"
-    >
-{% endif %}
-
-                        {{ category['label'] }}
-                    </label>
-                </div>
-            {% endfor %}
-
-            <br>
-
-            <button class="approve-button" type="submit">
-                Lưu phân quyền
-            </button>
-        </form>
-
+        </dl>
     </div>
 
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="p-6 border-b border-slate-200 bg-slate-50/50">
+            <h2 class="text-lg font-semibold text-slate-800">Chọn loại hồ sơ được phép xem/download</h2>
+        </div>
+
+        <form action="/manager/users/{{ target_user.id }}/permissions" method="post" class="p-6 space-y-4">
+            <div class="space-y-2">
+                {% for key, category in categories.items() %}
+                    <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer">
+                        {% if category.label in selected_categories %}
+                            <input type="checkbox" name="categories" value="{{ category.label }}" checked
+                                class="w-4 h-4 rounded border-slate-300 text-brand-500 focus:ring-brand-500">
+                        {% else %}
+                            <input type="checkbox" name="categories" value="{{ category.label }}"
+                                class="w-4 h-4 rounded border-slate-300 text-brand-500 focus:ring-brand-500">
+                        {% endif %}
+                        <span class="text-sm text-slate-700">{{ category.label }}</span>
+                    </label>
+                {% endfor %}
+            </div>
+
+            <div class="pt-4 border-t border-slate-200 flex justify-end">
+                <button type="submit" class="bg-brand-900 hover:bg-brand-800 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm inline-flex items-center gap-2">
+                    <i class="ti ti-shield-check"></i> Lưu phân quyền
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 {% endblock %}

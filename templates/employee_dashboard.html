@@ -1,145 +1,61 @@
 {% extends "layout/base.html" %}
 
 {% block title %}Trang nhân viên{% endblock %}
-{% block body_class %}app-page{% endblock %}
+{% block page_title %}Tổng quan{% endblock %}
+{% block active_nav %}dashboard{% endblock %}
 
 {% block content %}
-<div class="dashboard-box">
-        <div class="top-bar">
-            <div>
-                <h1 data-i18n="employeeDashboardTitle">TRANG NHÂN VIÊN</h1>
-                <p>
-                    <span data-i18n="employee">Nhân viên:</span>
-                    <strong>{{ user['full_name'] }}</strong>
-                </p>
-            </div>
-
-            <a class="logout-button" href="/logout" data-i18n="logout">
-                Đăng xuất
-            </a>
+<div class="space-y-6">
+    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div>
+            <h2 class="text-lg font-semibold text-slate-800">Xin chào, {{ user.full_name }}</h2>
+            <p class="text-sm text-slate-500 mt-1">Chào mừng quay lại hệ thống lưu trữ hồ sơ.</p>
         </div>
-
-        <hr>
-
-        <h2 data-i18n="functionTitle">Chức năng</h2>
-
-        <div class="menu-grid">
-            <a class="menu-card menu-link" href="/employee/upload">
-                <div class="menu-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M12 4l-4 4M12 4l4 4"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg></div>
-                <h3 data-i18n="uploadDocumentTitle">Gửi hồ sơ</h3>
-                <p data-i18n="uploadDocumentDesc">
-                    Upload hồ sơ mới để chờ quản lý duyệt.
-                </p>
-            </a>
-
-            <a class="menu-card menu-link" href="/employee/my-documents">
-                <div class="menu-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg></div>
-                <h3 data-i18n="myDocumentsTitle">Hồ sơ của tôi</h3>
-                <p data-i18n="myDocumentsDesc">
-                    Xem trạng thái các hồ sơ bạn đã gửi.
-                </p>
-            </a>
-
-            <a class="menu-card menu-link" href="/documents/approved">
-                <div class="menu-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12M12 16l-4-4M12 16l4-4"/><path d="M4 18v2a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-2"/></svg></div>
-                <h3 data-i18n="downloadDocumentsTitle">Download tài liệu</h3>
-                <p data-i18n="downloadDocumentsDesc">
-                    Tìm kiếm và tải hồ sơ đã được duyệt.
-                </p>
-            </a>
-            <a class="menu-card menu-link" href="/statistics">
-    <div class="menu-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M12 20V4M20 20v-7"/></svg></div>
-    <h3 data-i18n="uploadStatisticsTitle">Thống kê upload</h3>
-    <p data-i18n="uploadStatisticsDesc">Xem biểu đồ upload theo tháng và thống kê người upload.</p>
-</a>
+        <div class="w-14 h-14 rounded-full bg-brand-50 text-brand-800 flex items-center justify-center shrink-0">
+            <i class="ti ti-user text-2xl"></i>
         </div>
     </div>
 
-<script>
-(function () {
-    const TEXT = {
-        vi: {
-            employeeDashboardTitle: "TRANG NHÂN VIÊN",
-            employee: "Nhân viên:",
-            logout: "Đăng xuất",
-            functionTitle: "Chức năng",
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <a href="/employee/upload" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-brand-500/40 transition-all flex flex-col gap-3 group">
+            <div class="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center group-hover:bg-brand-900 group-hover:text-white transition-colors shrink-0">
+                <i class="ti ti-cloud-upload text-2xl"></i>
+            </div>
+            <div>
+                <h3 class="font-semibold text-slate-800">Gửi hồ sơ mới</h3>
+                <p class="text-sm text-slate-500 mt-1">Upload hồ sơ mới để chờ quản lý duyệt.</p>
+            </div>
+        </a>
 
-            uploadDocumentTitle: "Gửi hồ sơ",
-            uploadDocumentDesc: "Upload hồ sơ mới để chờ quản lý duyệt.",
+        <a href="/employee/my-documents" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-brand-500/40 transition-all flex flex-col gap-3 group">
+            <div class="w-12 h-12 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center group-hover:bg-brand-900 group-hover:text-white transition-colors shrink-0">
+                <i class="ti ti-file-text text-2xl"></i>
+            </div>
+            <div>
+                <h3 class="font-semibold text-slate-800">Hồ sơ của tôi</h3>
+                <p class="text-sm text-slate-500 mt-1">Xem trạng thái các hồ sơ bạn đã gửi.</p>
+            </div>
+        </a>
 
-            myDocumentsTitle: "Hồ sơ của tôi",
-            myDocumentsDesc: "Xem trạng thái các hồ sơ bạn đã gửi.",
+        <a href="/documents/approved" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-brand-500/40 transition-all flex flex-col gap-3 group">
+            <div class="w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:bg-brand-900 group-hover:text-white transition-colors shrink-0">
+                <i class="ti ti-archive text-2xl"></i>
+            </div>
+            <div>
+                <h3 class="font-semibold text-slate-800">Kho hồ sơ đã duyệt</h3>
+                <p class="text-sm text-slate-500 mt-1">Tìm kiếm và tải hồ sơ đã được duyệt.</p>
+            </div>
+        </a>
 
-            downloadDocumentsTitle: "Download tài liệu",
-            downloadDocumentsDesc: "Tìm kiếm và tải hồ sơ đã được duyệt.",
-
-            uploadStatisticsTitle: "Thống kê upload",
-            uploadStatisticsDesc: "Xem biểu đồ upload theo tháng và thống kê người upload."
-        },
-
-        en: {
-            employeeDashboardTitle: "EMPLOYEE DASHBOARD",
-            employee: "Employee:",
-            logout: "Log out",
-            functionTitle: "Functions",
-
-            uploadDocumentTitle: "Submit document",
-            uploadDocumentDesc: "Upload a new document for manager approval.",
-
-            myDocumentsTitle: "My document",
-            myDocumentsDesc: "View the status of documents you submitted.",
-
-            downloadDocumentsTitle: "Download document",
-            downloadDocumentsDesc: "Search and download approved documents.",
-
-            uploadStatisticsTitle: "Upload Statistics",
-            uploadStatisticsDesc: "View monthly upload charts and uploader summary."
-        }
-    };
-
-    function getLanguage() {
-        return localStorage.getItem("appLanguage") || "vi";
-    }
-
-    function setLanguage(language) {
-        localStorage.setItem("appLanguage", language);
-    }
-
-    function setTextByKey(key, value) {
-        document.querySelectorAll('[data-i18n="' + key + '"]').forEach(function (element) {
-            element.textContent = value;
-        });
-    }
-
-    function applyDashboardLanguage(language) {
-        const languageButton = document.getElementById("languageToggle");
-        const text = TEXT[language] || TEXT.vi;
-
-        document.documentElement.lang = language;
-
-        if (languageButton) {
-            languageButton.textContent = language === "vi" ? "EN" : "VI";
-        }
-
-        Object.keys(text).forEach(function (key) {
-            setTextByKey(key, text[key]);
-        });
-
-        setLanguage(language);
-    }
-
-    document.addEventListener("DOMContentLoaded", function () {
-        applyDashboardLanguage(getLanguage());
-
-        const languageButton = document.getElementById("languageToggle");
-
-        if (languageButton) {
-            languageButton.onclick = function () {
-                const nextLanguage = getLanguage() === "vi" ? "en" : "vi";
-                applyDashboardLanguage(nextLanguage);
-            };
-        }
-    });
-})();
-</script>
+        <a href="/statistics" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-brand-500/40 transition-all flex flex-col gap-3 group">
+            <div class="w-12 h-12 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center group-hover:bg-brand-900 group-hover:text-white transition-colors shrink-0">
+                <i class="ti ti-chart-bar text-2xl"></i>
+            </div>
+            <div>
+                <h3 class="font-semibold text-slate-800">Thống kê</h3>
+                <p class="text-sm text-slate-500 mt-1">Xem biểu đồ upload theo tháng và thống kê người upload.</p>
+            </div>
+        </a>
+    </div>
+</div>
 {% endblock %}

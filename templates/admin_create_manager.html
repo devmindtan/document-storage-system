@@ -1,81 +1,52 @@
 {% extends "layout/base.html" %}
 
 {% block title %}Tạo tài khoản quản lý{% endblock %}
-{% block body_class %}app-page{% endblock %}
+{% block page_title %}Tạo tài khoản Quản lý{% endblock %}
+{% block active_nav %}create_manager{% endblock %}
 
 {% block content %}
-<div class="dashboard-box">
+<div class="space-y-6 max-w-2xl">
+    {% import "layout/_macros.html" as macros %}
+    {{ macros.banner('error', error) }}
+    {{ macros.banner('success', success) }}
 
-        <div class="top-bar">
-            <div>
-                <h1>TẠO TÀI KHOẢN QUẢN LÝ</h1>
-                <p>
-                    Admin:
-                    <strong>{{ user['full_name'] }}</strong>
-                </p>
-            </div>
-
-            <a class="back-link" href="/admin">
-                Quay lại
-            </a>
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="p-6 border-b border-slate-200 bg-slate-50/50">
+            <h2 class="text-lg font-semibold text-slate-800">Tạo tài khoản quản lý mới</h2>
+            <p class="text-sm text-slate-500 mt-1">Tài khoản được tạo sẽ có quyền Quản lý ngay lập tức.</p>
         </div>
 
-        <hr>
+        <form action="/admin/create-manager" method="post" class="p-6 space-y-4">
+            <div>
+                <label for="username" class="block text-sm font-medium text-slate-700 mb-1">Username</label>
+                <input id="username" type="text" name="username" placeholder="Nhập username quản lý" required
+                    class="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-brand-500">
+            </div>
 
-        {% if error %}
-            <p class="error-message">
-                {{ error }}
-            </p>
-        {% endif %}
+            <div>
+                <label for="full_name" class="block text-sm font-medium text-slate-700 mb-1">Họ và tên</label>
+                <input id="full_name" type="text" name="full_name" placeholder="Nhập họ tên quản lý" required
+                    class="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-brand-500">
+            </div>
 
-        {% if success %}
-            <p class="success-message">
-                {{ success }}
-            </p>
-        {% endif %}
+            <div>
+                <label for="password" class="block text-sm font-medium text-slate-700 mb-1">Mật khẩu</label>
+                <input id="password" type="password" name="password" placeholder="Ít nhất 8 ký tự" required
+                    class="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-brand-500">
+            </div>
 
-        <form action="/admin/create-manager" method="post">
-            <label for="username">Username</label>
-            <input
-                id="username"
-                type="text"
-                name="username"
-                placeholder="Nhập username quản lý"
-                required
-            >
+            <div>
+                <label for="confirm_password" class="block text-sm font-medium text-slate-700 mb-1">Nhập lại mật khẩu</label>
+                <input id="confirm_password" type="password" name="confirm_password" placeholder="Nhập lại mật khẩu" required
+                    class="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-brand-500">
+            </div>
 
-            <label for="full_name">Họ và tên</label>
-            <input
-                id="full_name"
-                type="text"
-                name="full_name"
-                placeholder="Nhập họ tên quản lý"
-                required
-            >
-
-            <label for="password">Mật khẩu</label>
-            <input
-                id="password"
-                type="password"
-                name="password"
-                placeholder="Ít nhất 8 ký tự"
-                required
-            >
-
-            <label for="confirm_password">Nhập lại mật khẩu</label>
-            <input
-                id="confirm_password"
-                type="password"
-                name="confirm_password"
-                placeholder="Nhập lại mật khẩu"
-                required
-            >
-
-            <button type="submit">
-                Tạo tài khoản quản lý
-            </button>
+            <div class="pt-4 border-t border-slate-200 flex justify-end">
+                <button type="submit" class="bg-brand-900 hover:bg-brand-800 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm inline-flex items-center gap-2">
+                    <i class="ti ti-user-plus"></i> Tạo tài khoản quản lý
+                </button>
+            </div>
         </form>
-
     </div>
-
+</div>
 {% endblock %}

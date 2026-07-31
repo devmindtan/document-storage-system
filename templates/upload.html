@@ -1,241 +1,273 @@
 {% extends "layout/base.html" %}
 
 {% block title %}Gửi hồ sơ chờ duyệt{% endblock %}
-{% block body_class %}app-page{% endblock %}
+{% block page_title %}GỬI HỒ SƠ CHỜ DUYỆT{% endblock %}
+{% block active_nav %}upload{% endblock %}
 {% block extra_style %}
 <style>
-        .required-star {
-            color: #d00000 !important;
-            font-weight: bold !important;
-            margin-left: 4px !important;
-        }
+    .required-star {
+        color: #e11d48;
+        font-weight: bold;
+        margin-left: 4px;
+    }
 
-        .conditional-input-box {
-            display: none;
-            margin-top: 10px;
-            padding: 12px 14px;
-            border: 1px dashed #b7c5d6;
-            border-radius: 8px;
-            background: #f8fbff;
-        }
+    .conditional-input-box {
+        display: none;
+    }
 
-        .conditional-input-box.is-visible {
-            display: block;
-        }
-    </style>
+    .conditional-input-box.is-visible {
+        display: block;
+    }
+
+    .custom-file-upload.is-dragover {
+        background-color: #f0f5fa;
+        border-color: #3b82f6;
+    }
+</style>
 {% endblock %}
 
 {% block content %}
-<div class="dashboard-box">
-    <div class="top-bar">
-        <div>
-            <h1>GỬI HỒ SƠ CHỜ DUYỆT</h1>
-            <p>
-                Nhân viên:
-                <strong>{{ user["full_name"] }}</strong>
-            </p>
-        </div>
+{% import "layout/_macros.html" as macros %}
+<div class="dashboard-box max-w-4xl mx-auto">
+    <div class="top-bar flex flex-wrap items-center justify-between gap-3 mb-6">
+        <p class="text-sm text-slate-500">
+            Nhân viên: <strong class="text-slate-800 font-semibold">{{ user['full_name'] }}</strong>
+        </p>
 
-        <a class="back-link" href="/employee">
-            Quay lại
+        <a class="back-link inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600 transition-colors" href="/employee">
+            <i class="ti ti-arrow-left"></i> Quay lại
         </a>
     </div>
 
-    <hr>
+    {{ macros.banner('error', error) }}
+    {{ macros.banner('success', success) }}
 
-    {% if error %}
-        <p class="error-message">
-            {{ error }}
-        </p>
-    {% endif %}
-
-    {% if success %}
-        <p class="success-message">
-            {{ success }}
-        </p>
-    {% endif %}
-
-    <form
-        action="/employee/upload"
-        method="post"
-        enctype="multipart/form-data"
-    >
-        <h3 class="form-step-heading">1. Chọn vị trí lưu</h3>
-
-        <label for="project_key">Project</label>
-
-        <select id="project_key" name="project_key" required>
-            {% for key, project in projects.items() %}
-                {% if selected_project_key == key %}
-                    <option value="{{ key }}" selected>
-                        {{ project['label'] }}
-                    </option>
-                {% else %}
-                    <option value="{{ key }}">
-                        {{ project['label'] }}
-                    </option>
-                {% endif %}
-            {% endfor %}
-
-            {% if selected_project_key == '__new_project__' %}
-                <option value="__new_project__" selected>
-                    + Tạo project mới
-                </option>
-            {% else %}
-                <option value="__new_project__">
-                    + Tạo project mới
-                </option>
-            {% endif %}
-        </select>
-
-        <div id="newProjectBox" class="conditional-input-box">
-            <label for="new_project_name">
-                Tên project mới <span class="required-star">*</span>
-            </label>
-
-            <input
-                id="new_project_name"
-                type="text"
-                name="new_project_name"
-                maxlength="50"
-                placeholder="Nhập tên project mới"
-                value="{{ new_project_name_value or '' }}"
-            >
-
-            <p class="note-text">
-                Project mới sẽ được gửi kèm hồ sơ và chờ quản lý duyệt một lần.
-            </p>
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="p-6 border-b border-slate-200 bg-slate-50/50 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-brand-50 text-brand-500 flex items-center justify-center shrink-0">
+                <i class="ti ti-cloud-upload text-xl"></i>
+            </div>
+            <div>
+                <h2 class="text-lg font-semibold text-slate-800">Gửi hồ sơ mới</h2>
+                <p class="text-sm text-slate-500">Điền thông tin và đính kèm tệp cần trình quản lý duyệt.</p>
+            </div>
         </div>
 
-        <label for="category_key">Loại hồ sơ</label>
-
-        <select
-            id="category_key"
-            name="category_key"
-            required
-            data-selected-category-key="{{ selected_category_key }}"
+        <form
+            action="/employee/upload"
+            method="post"
+            enctype="multipart/form-data"
+            class="p-6 space-y-6"
         >
-            <option value="">Đang tải file con...</option>
-        </select>
+            <div class="flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-brand-900 text-white text-xs font-bold flex items-center justify-center shrink-0">1</span>
+                <h3 class="form-step-heading text-sm font-semibold text-slate-800 uppercase tracking-wide">Chọn vị trí lưu</h3>
+            </div>
 
-        <div id="newCategoryBox" class="conditional-input-box">
-            <label for="new_category_name">
-                Tên file con mới <span class="required-star">*</span>
+            <div>
+                <label for="project_key" class="block text-sm font-medium text-slate-700 mb-1.5">Project</label>
+
+                <select id="project_key" name="project_key" required class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-sm text-slate-800 bg-white outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
+                    {% for key, project in projects.items() %}
+                        {% if selected_project_key == key %}
+                            <option value="{{ key }}" selected>
+                                {{ project['label'] }}
+                            </option>
+                        {% else %}
+                            <option value="{{ key }}">
+                                {{ project['label'] }}
+                            </option>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if selected_project_key == new_project_key %}
+                        <option value="{{ new_project_key }}" selected>
+                            + Tạo project mới
+                        </option>
+                    {% else %}
+                        <option value="{{ new_project_key }}">
+                            + Tạo project mới
+                        </option>
+                    {% endif %}
+                </select>
+
+                <div id="newProjectBox" class="conditional-input-box mt-3 p-3.5 border border-dashed border-brand-200 rounded-lg bg-brand-50/40">
+                    <label for="new_project_name" class="block text-sm font-medium text-slate-700 mb-1.5">
+                        Tên project mới <span class="required-star">*</span>
+                    </label>
+
+                    <input
+                        id="new_project_name"
+                        type="text"
+                        name="new_project_name"
+                        maxlength="50"
+                        placeholder="Nhập tên project mới"
+                        value="{{ new_project_name_value or '' }}"
+                        class="w-full border border-slate-300 rounded-lg px-3.5 py-2 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors"
+                    >
+
+                    <p class="note-text text-xs text-slate-500 mt-1.5">
+                        Project mới sẽ được gửi kèm hồ sơ và chờ quản lý duyệt một lần.
+                    </p>
+                </div>
+            </div>
+
+            <div>
+                <label for="category_key" class="block text-sm font-medium text-slate-700 mb-1.5">Loại hồ sơ</label>
+
+                <select
+                    id="category_key"
+                    name="category_key"
+                    required
+                    data-selected-category-key="{{ selected_category_key }}"
+                    class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-sm text-slate-800 bg-white outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors"
+                >
+                    <option value="">Đang tải file con...</option>
+                </select>
+
+                <div id="newCategoryBox" class="conditional-input-box mt-3 p-3.5 border border-dashed border-brand-200 rounded-lg bg-brand-50/40 space-y-3">
+                    <div>
+                        <label for="new_category_name" class="block text-sm font-medium text-slate-700 mb-1.5">
+                            Tên file con mới <span class="required-star">*</span>
+                        </label>
+
+                        <input
+                            id="new_category_name"
+                            type="text"
+                            name="new_category_name"
+                            maxlength="50"
+                            placeholder="Nhập tên file con mới"
+                            value="{{ new_category_name_value or '' }}"
+                            class="w-full border border-slate-300 rounded-lg px-3.5 py-2 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors"
+                        >
+                    </div>
+
+                    <div>
+                        <label for="new_category_code" class="block text-sm font-medium text-slate-700 mb-1.5">
+                            Mã file con
+                        </label>
+
+                        <input
+                            id="new_category_code"
+                            type="text"
+                            name="new_category_code"
+                            maxlength="10"
+                            placeholder="Ví dụ: IR, QC, LEG"
+                            value="{{ new_category_code_value or '' }}"
+                            class="w-full border border-slate-300 rounded-lg px-3.5 py-2 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors"
+                        >
+                    </div>
+
+                    <p class="note-text text-xs text-slate-500">
+                        Nếu để trống mã file con, hệ thống sẽ tự tạo mã.
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 pt-2">
+                <span class="w-6 h-6 rounded-full bg-brand-900 text-white text-xs font-bold flex items-center justify-center shrink-0">2</span>
+                <h3 class="form-step-heading text-sm font-semibold text-slate-800 uppercase tracking-wide">Chọn tệp</h3>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-1.5">
+                    Chọn file
+                </label>
+
+                <div class="custom-file-upload border-2 border-dashed border-slate-300 rounded-xl bg-slate-50 hover:bg-brand-50 transition-colors flex flex-col items-center justify-center p-8 text-center cursor-pointer">
+                    <input
+                        id="uploaded_files"
+                        class="real-file-input hidden"
+                        type="file"
+                        name="uploaded_files"
+                        multiple
+                        required
+                    >
+
+                    <div class="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-sm mb-3">
+                        <i class="ti ti-cloud-upload text-2xl text-brand-500"></i>
+                    </div>
+
+                    <label
+                        class="custom-file-button cursor-pointer text-sm font-semibold text-brand-600 hover:text-brand-800 underline underline-offset-2"
+                        for="uploaded_files"
+                    >
+                        Chọn tệp
+                    </label>
+
+                    <span
+                        class="selected-file-text text-xs text-slate-500 mt-2"
+                        id="selectedFileText"
+                    >
+                        Không có tệp nào được chọn
+                    </span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 pt-2">
+                <span class="w-6 h-6 rounded-full bg-brand-900 text-white text-xs font-bold flex items-center justify-center shrink-0">3</span>
+                <h3 class="form-step-heading text-sm font-semibold text-slate-800 uppercase tracking-wide">Thông tin mô tả</h3>
+            </div>
+
+            <label for="description" class="block text-sm font-medium text-slate-700 mb-1.5">
+                Mô tả <span class="required-star">*</span>
             </label>
 
             <input
-                id="new_category_name"
+                id="description"
                 type="text"
-                name="new_category_name"
+                name="description"
                 maxlength="50"
-                placeholder="Nhập tên file con mới"
-                value="{{ new_category_name_value or '' }}"
-            >
-
-            <label for="new_category_code">
-                Mã file con
-            </label>
-
-            <input
-                id="new_category_code"
-                type="text"
-                name="new_category_code"
-                maxlength="10"
-                placeholder="Ví dụ: IR, QC, LEG"
-                value="{{ new_category_code_value or '' }}"
-            >
-
-            <p class="note-text">
-                Nếu để trống mã file con, hệ thống sẽ tự tạo mã.
-            </p>
-        </div>
-
-        <h3 class="form-step-heading">2. Chọn tệp</h3>
-
-        <label>
-            Chọn file
-        </label>
-
-        <div class="custom-file-upload">
-            <input
-                id="uploaded_files"
-                class="real-file-input"
-                type="file"
-                name="uploaded_files"
-                multiple
                 required
+                aria-required="true"
+                placeholder="Nhập mô tả hồ sơ, tối đa 50 ký tự"
+                value="{{ description_value or '' }}"
+                oninvalid="this.setCustomValidity('Vui lòng nhập mô tả hồ sơ.')"
+                oninput="this.setCustomValidity('')"
+                class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors"
             >
 
-            <label
-                class="custom-file-button"
-                for="uploaded_files"
-            >
-                Chọn tệp
+            <p class="note-text text-xs text-slate-500">
+                Bắt buộc nhập. Tối đa 50 ký tự.
+            </p>
+
+            <label for="location" class="block text-sm font-medium text-slate-700 mb-1.5">
+                Vị trí <span class="required-star">*</span>
             </label>
 
-            <span
-                class="selected-file-text"
-                id="selectedFileText"
+            <input
+                id="location"
+                type="text"
+                name="location"
+                maxlength="50"
+                required
+                aria-required="true"
+                placeholder="Nhập vị trí hồ sơ, tối đa 50 ký tự"
+                value="{{ location_value }}"
+                oninvalid="this.setCustomValidity('Vui lòng nhập vị trí hồ sơ.')"
+                oninput="this.setCustomValidity('')"
+                class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors"
             >
-                Không có tệp nào được chọn
-            </span>
-        </div>
 
-        <h3 class="form-step-heading">3. Thông tin mô tả</h3>
+            <p class="note-text text-xs text-slate-500">
+                Bắt buộc nhập. Tối đa 50 ký tự.
+            </p>
 
-        <label for="description">
-            Mô tả <span class="required-star">*</span>
-        </label>
+            <div class="pt-4 border-t border-slate-200 flex justify-end">
+                <button type="submit" class="primary-upload-button inline-flex items-center gap-2 px-5 py-2.5 bg-brand-900 text-white rounded-lg text-sm font-medium hover:bg-brand-800 transition-colors shadow-sm">
+                    <i class="ti ti-send"></i> Gửi hồ sơ cho quản lý duyệt
+                </button>
+            </div>
+        </form>
+    </div>
 
-        <input
-            id="description"
-            type="text"
-            name="description"
-            maxlength="50"
-            required
-            aria-required="true"
-            placeholder="Nhập mô tả hồ sơ, tối đa 50 ký tự"
-            value="{{ description_value or '' }}"
-            oninvalid="this.setCustomValidity('Vui lòng nhập mô tả hồ sơ.')"
-            oninput="this.setCustomValidity('')"
-        >
-
-        <p class="note-text">
-            Bắt buộc nhập. Tối đa 50 ký tự.
-        </p>
-
-        <label for="location">
-            Vị trí <span class="required-star">*</span>
-        </label>
-
-        <input
-            id="location"
-            type="text"
-            name="location"
-            maxlength="50"
-            required
-            aria-required="true"
-            placeholder="Nhập vị trí hồ sơ, tối đa 50 ký tự"
-            value="{{ location_value }}"
-            oninvalid="this.setCustomValidity('Vui lòng nhập vị trí hồ sơ.')"
-            oninput="this.setCustomValidity('')"
-        >
-
-        <p class="note-text">
-            Bắt buộc nhập. Tối đa 50 ký tự.
-        </p>
-
-        <button type="submit" class="primary-upload-button">
-      Gửi hồ sơ cho quản lý duyệt
-</button>
-    </form>
-
-    <p class="note-text">
+    <p class="note-text text-xs text-slate-500 mt-4">
         Nếu cần project mới hoặc file con mới, hãy chọn trực tiếp trong danh sách phía trên. Quản lý chỉ cần duyệt hồ sơ một lần.
     </p>
 </div>
+{% endblock %}
 
-
+{% block extra_script %}
 <script>
 (function () {
     const PAGE_TEXT = {

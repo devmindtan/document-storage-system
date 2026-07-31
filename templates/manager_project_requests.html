@@ -1,104 +1,87 @@
 {% extends "layout/base.html" %}
+{% import "layout/_macros.html" as macros %}
 
 {% block title %}Project chờ duyệt{% endblock %}
-{% block body_class %}app-page{% endblock %}
+{% block page_title %}<span data-i18n-key="pendingProjectsTitle">Project chờ duyệt</span>{% endblock %}
+{% block active_nav %}project_requests{% endblock %}
 
 {% block content %}
-    <div class="dashboard-box">
-        <div class="top-bar">
-            <div>
-                <h1 data-i18n-key="pendingProjectsTitle">PROJECT CHỜ DUYỆT</h1>
+<div class="space-y-6">
+    <p class="text-sm text-slate-500">
+        <span data-i18n-key="managerLabel">Quản lý:</span>
+        <span class="font-semibold text-slate-700">{{ user['full_name'] }}</span>
+    </p>
 
-                <p>
-    <span data-i18n-key="managerLabel">Quản lý:</span>
-    <strong>{{ user['full_name'] }}</strong>
-</p>
+    {{ macros.banner('success', message) }}
+    {{ macros.banner('error', error) }}
+
+    {% if project_requests %}
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm text-slate-600 whitespace-nowrap">
+                    <thead class="bg-slate-50 border-b border-slate-200 text-slate-700 uppercase font-semibold text-xs">
+                        <tr>
+                            <th class="px-6 py-4" data-i18n-key="tableId">ID</th>
+                            <th class="px-6 py-4" data-i18n-key="projectName">Tên project</th>
+                            <th class="px-6 py-4" data-i18n-key="requestedBy">Người yêu cầu</th>
+                            <th class="px-6 py-4" data-i18n-key="requestedAt">Ngày yêu cầu</th>
+                            <th class="px-6 py-4 text-right" data-i18n-key="action">Thao tác</th>
+                        </tr>
+                    </thead>
+
+                    <tbody class="divide-y divide-slate-100">
+                        {% for project in project_requests %}
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="px-6 py-4">{{ project['id'] }}</td>
+                                <td class="px-6 py-4 font-medium text-slate-800">
+                                    <span class="flex items-center gap-2"><i class="ti ti-briefcase text-slate-400 text-lg"></i> {{ project['label'] }}</span>
+                                </td>
+                                <td class="px-6 py-4">{{ project['requested_by'] or '-' }}</td>
+                                <td class="px-6 py-4">{{ project['requested_at'] }}</td>
+
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center justify-end gap-2 flex-wrap">
+                                        <form action="/manager/projects/{{ project['id'] }}/approve" method="post">
+                                            <button
+                                                type="submit"
+                                                class="px-3 py-1.5 bg-emerald-100 text-emerald-700 hover:bg-emerald-200 rounded text-xs font-semibold flex items-center gap-1 transition-colors"
+                                                data-i18n-key="approve"
+                                            >
+                                                <i class="ti ti-check"></i> Duyệt
+                                            </button>
+                                        </form>
+
+                                        <form action="/manager/projects/{{ project['id'] }}/reject" method="post" class="flex items-center gap-2">
+                                            <input
+                                                type="text"
+                                                name="rejection_reason"
+                                                placeholder="Lý do từ chối"
+                                                data-i18n-placeholder-key="rejectionReason"
+                                                class="border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs outline-none focus:ring-2 focus:ring-brand-500 w-36"
+                                            >
+                                            <button
+                                                type="submit"
+                                                class="px-3 py-1.5 bg-rose-100 text-rose-700 hover:bg-rose-200 rounded text-xs font-semibold flex items-center gap-1 transition-colors"
+                                                data-i18n-key="reject"
+                                            >
+                                                <i class="ti ti-x"></i> Từ chối
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
-
-            <a class="back-link" href="/manager" data-i18n-key="backButton">
-                Quay lại
-            </a>
         </div>
 
-        <hr>
-
-        {% if message %}
-            <p class="success-message">
-                {{ message }}
-            </p>
-        {% endif %}
-
-        {% if error %}
-            <p class="error-message">
-                {{ error }}
-            </p>
-        {% endif %}
-
-        {% if project_requests %}
-            <table class="document-table">
-                <thead>
-                    <tr>
-                        <th data-i18n-key="tableId">ID</th>
-                        <th data-i18n-key="projectName">Tên project</th>
-                        <th data-i18n-key="requestedBy">Người yêu cầu</th>
-                        <th data-i18n-key="requestedAt">Ngày yêu cầu</th>
-                        <th data-i18n-key="action">Thao tác</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    {% for project in project_requests %}
-                        <tr>
-                            <td>{{ project['id'] }}</td>
-                            <td>{{ project['label'] }}</td>
-                            <td>{{ project['requested_by'] or '-' }}</td>
-                            <td>{{ project['requested_at'] }}</td>
-
-                            <td class="review-cell">
-                                <div class="review-actions">
-                                    <form
-                                        action="/manager/projects/{{ project['id'] }}/approve"
-                                        method="post"
-                                    >
-                                        <button
-                                            class="approve-button action-small-button"
-                                            type="submit"
-                                         data-i18n-key="approve">
-                                            Duyệt
-                                        </button>
-                                    </form>
-
-                                    <form
-                                        action="/manager/projects/{{ project['id'] }}/reject"
-                                        method="post"
-                                    >
-                                        <input
-                                            type="text"
-                                            name="rejection_reason"
-                                            placeholder="Lý do từ chối" data-i18n-placeholder-key="rejectionReason"
-                                        >
-
-                                        <button
-                                            class="reject-button action-small-button"
-                                            type="submit"
-                                         data-i18n-key="reject">
-                                            Từ chối
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-
-        {% else %}
-            <p class="empty-message" data-i18n-key="noPendingProjects">
-                Hiện chưa có project nào đang chờ duyệt.
-            </p>
-        {% endif %}
-    </div>
-
+    {% else %}
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-10 text-center text-slate-500" data-i18n-key="noPendingProjects">
+            Hiện chưa có project nào đang chờ duyệt.
+        </div>
+    {% endif %}
+</div>
 
 <script>
 (function () {

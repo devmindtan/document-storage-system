@@ -1,235 +1,192 @@
 {% extends "layout/base.html" %}
 
 {% block title %}Kho hồ sơ đã được duyệt{% endblock %}
-{% block body_class %}app-page approved-documents-page{% endblock %}
+{% block page_title %}<span data-i18n-key="pageHeading">Kho hồ sơ đã được duyệt</span>{% endblock %}
+{% block active_nav %}approved{% endblock %}
 
 {% block content %}
-<div class="dashboard-box">
-        <div class="top-bar">
-            <div>
-                <h1>KHO HỒ SƠ ĐÃ ĐƯỢC DUYỆT</h1>
-                <p>
-                    Người dùng:
-                    <strong>{{ user['full_name'] }}</strong>
-                </p>
-            </div>
+<div class="space-y-6">
+    {% import "layout/_macros.html" as macros %}
+    {{ macros.banner('error', error) }}
 
-            {% if user['role'] == 'MANAGER' %}
-                <a class="back-link" href="/manager">
-                    Quay lại
-                </a>
-            {% else %}
-                <a class="back-link" href="/employee">
-                    Quay lại
-                </a>
-            {% endif %}
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-brand-50 text-brand-800 flex items-center justify-center shrink-0">
+                <i class="ti ti-briefcase text-2xl"></i>
+            </div>
+            <div>
+                <p class="text-sm font-medium text-slate-500" data-i18n-key="totalProjectsLabel">Tổng số project hiện có</p>
+                <h3 class="text-2xl font-bold text-slate-800">{{ total_project_count }}</h3>
+            </div>
         </div>
 
-                <hr>
-    <div class="document-summary-line">
-    <div class="summary-item">
-        <span data-i18n="totalProjectsLabel">
-            Tổng số project hiện có:
-        </span>
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                <i class="ti ti-files text-2xl"></i>
+            </div>
+            <div>
+                <p class="text-sm font-medium text-slate-500" data-i18n-key="totalUploadedDocumentsLabel">Tổng số tài liệu đã upload</p>
+                <h3 class="text-2xl font-bold text-slate-800">{{ total_uploaded_documents }}</h3>
+            </div>
+        </div>
 
-        <strong>{{ total_project_count }}</strong>
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                <i class="ti ti-check text-2xl"></i>
+            </div>
+            <div>
+                <p class="text-sm font-medium text-slate-500" data-i18n-key="totalApprovedDocumentsLabel">Tài liệu đã được duyệt</p>
+                <h3 class="text-2xl font-bold text-slate-800">{{ total_approved_documents }}</h3>
+            </div>
+        </div>
     </div>
 
-    <div class="summary-item">
-        <span data-i18n="totalUploadedDocumentsLabel">
-            Tổng số tài liệu đã upload:
-        </span>
-
-        <strong>{{ total_uploaded_documents }}</strong>
-    </div>
-
-    <div class="summary-item">
-        <span data-i18n="totalApprovedDocumentsLabel">
-            Tài liệu đã được duyệt:
-        </span>
-
-        <strong>{{ total_approved_documents }}</strong>
-    </div>
-        
-
-
-</div>
-
-<hr>
-
-       <form
-    id="approvedSearchForm"
-    class="search-form advanced-search-form"
-    action="/documents/approved"
-    method="get"
->
-            <div class="search-field">
-                <label for="keyword">Tên file</label>
-                <input
-                    id="keyword"
-                    type="text"
-                    name="keyword"
-                    placeholder="Nhập tên file..."
-                    value="{{ filters['keyword'] }}"
-                >
+    <form id="approvedSearchForm" class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm" action="/documents/approved" method="get">
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-3">
+            <div class="lg:col-span-2">
+                <label for="keyword" class="block text-xs font-medium text-slate-500 mb-1" data-i18n-key="keywordLabel">Tên file</label>
+                <div class="relative">
+                    <i class="ti ti-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                    <input
+                        id="keyword"
+                        type="text"
+                        name="keyword"
+                        value="{{ filters['keyword'] or '' }}"
+                        placeholder="Nhập tên file..."
+                        data-i18n-placeholder-key="keywordPlaceholder"
+                        class="w-full pl-9 pr-3 py-2 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-brand-500"
+                    >
+                </div>
             </div>
 
-            <div class="search-field">
-    <label for="project">Project</label>
+            <div>
+                <label for="project" class="block text-xs font-medium text-slate-500 mb-1" data-i18n-key="projectLabel">Project</label>
+                <select id="project" name="project" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none bg-white focus:ring-2 focus:ring-brand-500">
+                    <option value="" data-project-id="" data-i18n-key="allProjectsOption">Tất cả project</option>
 
-    <select id="project" name="project">
-        <option value="" data-project-id="">Tất cả project</option>
+                    {% for key, item in projects.items() %}
+                        <option value="{{ item['label'] }}" data-project-id="{{ key }}" {% if filters['project'] == item['label'] %}selected{% endif %}>
+                            {{ item['label'] }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
 
-        {% for key, item in projects.items() %}
-            {% if filters['project'] == item['label'] %}
-                <option value="{{ item['label'] }}" data-project-id="{{ key }}" selected>
-                    {{ item['label'] }}
-                </option>
-            {% else %}
-                <option value="{{ item['label'] }}" data-project-id="{{ key }}">
-                    {{ item['label'] }}
-                </option>
-            {% endif %}
-        {% endfor %}
-    </select>
-</div>
-            <div class="search-field">
-    <label for="category">Loại hồ sơ</label>
+            <div>
+                <label for="category" class="block text-xs font-medium text-slate-500 mb-1" data-i18n-key="categoryLabel">Loại hồ sơ</label>
+                <select id="category" name="category" data-selected-category="{{ filters['category'] or '' }}" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none bg-white focus:ring-2 focus:ring-brand-500">
+                    <option value="" data-i18n-key="allCategoriesOption">Tất cả loại</option>
 
-    <select id="category" name="category" data-selected-category="{{ filters['category'] }}">
-        <option value="">Tất cả loại</option>
+                    {% for key, item in categories.items() %}
+                        <option value="{{ item['label'] }}" data-project-id="{{ key }}" {% if filters['category'] == item['label'] %}selected{% endif %}>
+                            {{ item['label'] }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
 
-        {% for key, item in categories.items() %}
-            {% if filters['category'] == item['label'] %}
-                <option value="{{ item['label'] }}" data-project-id="{{ key }}" selected>
-                    {{ item['label'] }}
-                </option>
-            {% else %}
-                <option value="{{ item['label'] }}" data-project-id="{{ key }}">
-                    {{ item['label'] }}
-                </option>
-            {% endif %}
-        {% endfor %}
-    </select>
-</div>
-
-            <div class="search-field">
-                <label for="submitted_by">Người gửi</label>
+            <div>
+                <label for="submitted_by" class="block text-xs font-medium text-slate-500 mb-1" data-i18n-key="submittedByLabel">Người gửi</label>
                 <input
                     id="submitted_by"
                     type="text"
                     name="submitted_by"
+                    value="{{ filters['submitted_by'] or '' }}"
                     placeholder="Nhập tên người gửi..."
-                    value="{{ filters['submitted_by'] }}"
+                    data-i18n-placeholder-key="submittedByPlaceholder"
+                    class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-brand-500"
                 >
             </div>
 
-            <div class="search-field">
-                <label for="date_from">Từ ngày</label>
-                <input
-                    id="date_from"
-                    type="date"
-                    name="date_from"
-                    value="{{ filters['date_from'] }}"
-                >
+            <div class="grid grid-cols-2 gap-2">
+                <div>
+                    <label for="date_from" class="block text-xs font-medium text-slate-500 mb-1" data-i18n-key="dateFromLabel">Từ ngày</label>
+                    <input id="date_from" type="date" name="date_from" value="{{ filters['date_from'] or '' }}" class="w-full border border-slate-200 rounded-lg px-2 py-2 text-sm outline-none focus:ring-2 focus:ring-brand-500">
+                </div>
+                <div>
+                    <label for="date_to" class="block text-xs font-medium text-slate-500 mb-1" data-i18n-key="dateToLabel">Đến ngày</label>
+                    <input id="date_to" type="date" name="date_to" value="{{ filters['date_to'] or '' }}" class="w-full border border-slate-200 rounded-lg px-2 py-2 text-sm outline-none focus:ring-2 focus:ring-brand-500">
+                </div>
             </div>
+        </div>
 
-            <div class="search-field">
-                <label for="date_to">Đến ngày</label>
-                <input
-                    id="date_to"
-                    type="date"
-                    name="date_to"
-                    value="{{ filters['date_to'] }}"
-                >
-            </div>
+        <div class="flex justify-end gap-2 mt-3">
+            <a href="/documents/approved" class="px-4 py-2 border border-slate-200 text-slate-600 rounded-lg text-sm font-medium hover:bg-slate-50 transition-colors flex items-center gap-1.5">
+                <i class="ti ti-x"></i> <span data-i18n-key="resetButton">Xóa bộ lọc</span>
+            </a>
+            <button type="submit" class="px-4 py-2 bg-brand-900 hover:bg-brand-800 text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5">
+                <i class="ti ti-filter"></i> <span data-i18n-key="filterButton">Lọc</span>
+            </button>
+        </div>
+    </form>
 
-            <div class="search-buttons">
-    <a class="reset-button" href="/documents/approved">
-        Xóa bộ lọc
-    </a>
-</div>
-        </form>
-
-        <hr>
-
-        {% if error %}
-            <p class="error-message">
-                {{ error }}
-            </p>
-        {% endif %}
-
-        {% if documents %}
-            <table class="document-table">
-                <thead>
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm text-slate-600 whitespace-nowrap">
+                <thead class="bg-slate-50 border-b border-slate-200 text-slate-700 uppercase font-semibold text-xs">
                     <tr>
-    <th>ID</th>
-    <th>Tên file</th>
-    <th>Loại</th>
-    <th>Người gửi</th>
-    <th>Ngày duyệt</th>
-    <th>Người duyệt</th>
-    <th class="description-column">Mô tả</th>
-   <th class="location-column" data-i18n="locationLabel">Vị trí</th>
-   <th class="action-column">Thao tác</th>
-</tr>
+                        <th class="px-6 py-4" data-i18n-key="colId">ID</th>
+                        <th class="px-6 py-4" data-i18n-key="colFileName">Tên file</th>
+                        <th class="px-6 py-4" data-i18n-key="colType">Loại</th>
+                        <th class="px-6 py-4" data-i18n-key="colSubmittedBy">Người gửi</th>
+                        <th class="px-6 py-4" data-i18n-key="colReviewedAt">Ngày duyệt</th>
+                        <th class="px-6 py-4" data-i18n-key="colReviewedBy">Người duyệt</th>
+                        <th class="px-6 py-4" data-i18n-key="colDescription">Mô tả</th>
+                        <th class="px-6 py-4" data-i18n-key="colLocation">Vị trí</th>
+                        <th class="px-6 py-4" data-i18n-key="colAction">Thao tác</th>
+                    </tr>
                 </thead>
 
-                <tbody id="approvedDocumentsBody">
-                    {% for document in documents %}
-                        <tr>
-                            <td>{{ document['document_code'] or document['id'] }}</td>
-                            <td>{{ document['original_name'] }}</td>
-                            <td>{{ document['category'] }}</td>
-                            <td>{{ document['submitted_by'] }}</td>
-                            <td>{{ document['reviewed_at'] or '-' }}</td>
-                            <td>{{ document['reviewed_by'] or '-' }}</td>
-                            <td class="description-cell description-column">
-    {{ document['description'] or '-' }}
-</td>
-                            <td class="location-cell location-column">
-    {{ document['location'] or '-' }}
-</td>
-                           <td class="action-column">
-    <div class="document-action-buttons">
-        <a
-            class="download-button"
-            href="/documents/{{ document['id'] }}/download"
-            target="_blank"
-            rel="noopener"
-        >
-            Download
-        </a>
+                <tbody id="approvedDocumentsBody" class="divide-y divide-slate-100">
+                    {% if documents %}
+                        {% for document in documents %}
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="px-6 py-4 font-mono text-brand-500 font-medium">{{ document['document_code'] or document['id'] }}</td>
+                                <td class="px-6 py-4 font-medium text-slate-800">{{ document['original_name'] }}</td>
+                                <td class="px-6 py-4"><span class="bg-slate-100 text-slate-600 px-2.5 py-1 rounded-md text-xs">{{ document['category'] }}</span></td>
+                                <td class="px-6 py-4">{{ document['submitted_by'] }}</td>
+                                <td class="px-6 py-4">{{ document['reviewed_at'] or '-' }}</td>
+                                <td class="px-6 py-4">{{ document['reviewed_by'] or '-' }}</td>
+                                <td class="px-6 py-4 max-w-xs truncate" title="{{ document['description'] or '' }}">{{ document['description'] or '-' }}</td>
+                                <td class="px-6 py-4">{{ document['location'] or '-' }}</td>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-2">
+                                        <a
+                                            href="/documents/{{ document['id'] }}/download"
+                                            target="_blank"
+                                            rel="noopener"
+                                            class="text-slate-400 hover:text-brand-500 p-1.5 bg-white border border-slate-200 rounded-lg shadow-sm"
+                                            title="Tải về"
+                                        >
+                                            <i class="ti ti-download text-lg"></i>
+                                        </a>
 
-        {% if user['role'] == 'MANAGER' %}
-            <form
-                action="/documents/{{ document['id'] }}/delete"
-                method="post"
-                onsubmit="return confirm('Bạn có chắc muốn xóa hồ sơ này không?');"
-            >
-                <button
-                    class="delete-document-button"
-                    type="submit"
-                >
-                   Xóa hồ sơ
-                </button>
-            </form>
-        {% endif %}
-    </div>
-</td>
+                                        {% if user['role'] == 'MANAGER' %}
+                                            <form action="/documents/{{ document['id'] }}/delete" method="post" onsubmit="return confirm('Bạn có chắc muốn xóa hồ sơ này không?');">
+                                                <button type="submit" class="text-slate-400 hover:text-rose-500 p-1.5 bg-white border border-slate-200 rounded-lg shadow-sm" title="Xóa hồ sơ">
+                                                    <i class="ti ti-trash text-lg"></i>
+                                                </button>
+                                            </form>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="9" class="px-6 py-10 text-center text-slate-400" data-i18n-key="emptyMessage">
+                                Hiện chưa có hồ sơ nào được quản lý duyệt.
+                            </td>
                         </tr>
-                    {% endfor %}
+                    {% endif %}
                 </tbody>
             </table>
-
-        {% else %}
-            <p class="empty-message">
-                Hiện chưa có hồ sơ nào được quản lý duyệt.
-            </p>
-        {% endif %}
+        </div>
     </div>
+</div>
+{% endblock %}
 
-
+{% block extra_script %}
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     const searchForm = document.getElementById("approvedSearchForm");
@@ -253,26 +210,23 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function buildActionButtons(documentId, isManager) {
         let html = `
-            <div class="document-action-buttons">
+            <div class="flex items-center gap-2">
                 <a
-                    class="download-button"
                     href="/documents/${documentId}/download"
                     target="_blank"
                     rel="noopener"
+                    class="text-slate-400 hover:text-brand-500 p-1.5 bg-white border border-slate-200 rounded-lg shadow-sm"
+                    title="Tải về"
                 >
-                    Download
+                    <i class="ti ti-download text-lg"></i>
                 </a>
         `;
 
         if (isManager) {
             html += `
-                <form
-                    action="/documents/${documentId}/delete"
-                    method="post"
-                    onsubmit="return confirm('Bạn có chắc muốn xóa hồ sơ này không?');"
-                >
-                    <button class="delete-document-button" type="submit">
-                        Xóa hồ sơ
+                <form action="/documents/${documentId}/delete" method="post" onsubmit="return confirm('Bạn có chắc muốn xóa hồ sơ này không?');">
+                    <button type="submit" class="text-slate-400 hover:text-rose-500 p-1.5 bg-white border border-slate-200 rounded-lg shadow-sm" title="Xóa hồ sơ">
+                        <i class="ti ti-trash text-lg"></i>
                     </button>
                 </form>
             `;
@@ -286,7 +240,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!documents || documents.length === 0) {
             tableBody.innerHTML = `
                 <tr>
-                    <td colspan="9" style="text-align: center;">
+                    <td colspan="9" class="px-6 py-10 text-center text-slate-400">
                         Không tìm thấy tài liệu phù hợp.
                     </td>
                 </tr>
@@ -298,20 +252,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
         documents.forEach(function (doc) {
             html += `
-                <tr>
-                    <td>${escapeHtml(doc.document_code || doc.id || "-")}</td>
-                    <td>${escapeHtml(doc.original_name)}</td>
-                    <td>${escapeHtml(doc.category)}</td>
-                    <td>${escapeHtml(doc.submitted_by)}</td>
-                    <td>${escapeHtml(doc.reviewed_at || "-")}</td>
-                    <td>${escapeHtml(doc.reviewed_by || "-")}</td>
-                    <td class="description-cell description-column">
-                        ${escapeHtml(doc.description || "-")}
-                    </td>
-                    <td class="location-cell location-column">
-                        ${escapeHtml(doc.location || "-")}
-                    </td>
-                    <td class="action-column">
+                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="px-6 py-4 font-mono text-brand-500 font-medium">${escapeHtml(doc.document_code || doc.id || "-")}</td>
+                    <td class="px-6 py-4 font-medium text-slate-800">${escapeHtml(doc.original_name)}</td>
+                    <td class="px-6 py-4"><span class="bg-slate-100 text-slate-600 px-2.5 py-1 rounded-md text-xs">${escapeHtml(doc.category)}</span></td>
+                    <td class="px-6 py-4">${escapeHtml(doc.submitted_by)}</td>
+                    <td class="px-6 py-4">${escapeHtml(doc.reviewed_at || "-")}</td>
+                    <td class="px-6 py-4">${escapeHtml(doc.reviewed_by || "-")}</td>
+                    <td class="px-6 py-4 max-w-xs truncate" title="${escapeHtml(doc.description || "")}">${escapeHtml(doc.description || "-")}</td>
+                    <td class="px-6 py-4">${escapeHtml(doc.location || "-")}</td>
+                    <td class="px-6 py-4">
                         ${buildActionButtons(doc.id, isManager)}
                     </td>
                 </tr>
@@ -319,12 +269,9 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         tableBody.innerHTML = html;
-        if (window.applyApprovedLanguage) {
-    window.applyApprovedLanguage(localStorage.getItem("appLanguage") || "vi");
-}
 
-        if (typeof applyLanguage === "function") {
-            applyLanguage(localStorage.getItem("appLanguage") || "vi");
+        if (window.applyApprovedLanguage) {
+            window.applyApprovedLanguage(localStorage.getItem("appLanguage") || "vi");
         }
     }
 
@@ -339,9 +286,9 @@ document.addEventListener("DOMContentLoaded", function () {
         activeController = new AbortController();
 
         tableBody.innerHTML = `
-            <tr class="skeleton-row"><td colspan="9"><div class="skeleton-bar"></div></td></tr>
-            <tr class="skeleton-row"><td colspan="9"><div class="skeleton-bar"></div></td></tr>
-            <tr class="skeleton-row"><td colspan="9"><div class="skeleton-bar"></div></td></tr>
+            <tr class="animate-pulse"><td colspan="9" class="px-6 py-4"><div class="h-4 bg-slate-100 rounded"></div></td></tr>
+            <tr class="animate-pulse"><td colspan="9" class="px-6 py-4"><div class="h-4 bg-slate-100 rounded"></div></td></tr>
+            <tr class="animate-pulse"><td colspan="9" class="px-6 py-4"><div class="h-4 bg-slate-100 rounded"></div></td></tr>
         `;
 
         fetch("/documents/approved/live-search?" + params.toString(), {
@@ -368,7 +315,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             tableBody.innerHTML = `
                 <tr>
-                    <td colspan="9" style="text-align: center; color: red;">
+                    <td colspan="9" class="px-6 py-10 text-center text-rose-500">
                         Có lỗi khi tìm kiếm dữ liệu.
                     </td>
                 </tr>
@@ -455,55 +402,67 @@ document.addEventListener("DOMContentLoaded", function () {
 
 <script>
 (function () {
-    const VI_TO_EN = {
-        "KHO HỒ SƠ ĐÃ ĐƯỢC DUYỆT": "APPROVED DOCUMENT STORAGE",
-        "Người dùng:": "User:",
-        "Quay lại": "Back",
+    const PAGE_TEXT = {
+        vi: {
+            pageTitle: "Kho hồ sơ đã được duyệt",
+            pageHeading: "Kho hồ sơ đã được duyệt",
+            totalProjectsLabel: "Tổng số project hiện có",
+            totalUploadedDocumentsLabel: "Tổng số tài liệu đã upload",
+            totalApprovedDocumentsLabel: "Tài liệu đã được duyệt",
+            keywordLabel: "Tên file",
+            keywordPlaceholder: "Nhập tên file...",
+            projectLabel: "Project",
+            allProjectsOption: "Tất cả project",
+            categoryLabel: "Loại hồ sơ",
+            allCategoriesOption: "Tất cả loại",
+            submittedByLabel: "Người gửi",
+            submittedByPlaceholder: "Nhập tên người gửi...",
+            dateFromLabel: "Từ ngày",
+            dateToLabel: "Đến ngày",
+            resetButton: "Xóa bộ lọc",
+            filterButton: "Lọc",
+            colId: "ID",
+            colFileName: "Tên file",
+            colType: "Loại",
+            colSubmittedBy: "Người gửi",
+            colReviewedAt: "Ngày duyệt",
+            colReviewedBy: "Người duyệt",
+            colDescription: "Mô tả",
+            colLocation: "Vị trí",
+            colAction: "Thao tác",
+            emptyMessage: "Hiện chưa có hồ sơ nào được quản lý duyệt."
+        },
 
-        "Tổng số project hiện có:": "Total existing projects:",
-        "Tổng số tài liệu đã upload:": "Total uploaded documents:",
-        "Tài liệu đã được duyệt:": "Approved documents:",
-
-        "Tên file": "File name",
-        "Loại hồ sơ": "Document type",
-        "Người gửi": "Submitted by",
-        "Từ ngày": "From date",
-        "Đến ngày": "To date",
-        "Tất cả project": "All projects",
-        "Tất cả loại": "All types",
-        "Xóa bộ lọc": "Clear filters",
-
-        "Loại": "Type",
-        "Ngày duyệt": "Approved date",
-        "Người duyệt": "Approved by",
-        "Mô tả": "Description",
-        "Vị trí": "Location",
-        "Thao tác": "Action",
-        "Xóa hồ sơ": "Delete",
-
-        "Hiện chưa có hồ sơ nào được quản lý duyệt.": "There are no approved documents yet.",
-        "Không tìm thấy tài liệu phù hợp.": "No matching documents found.",
-        "Đang tìm kiếm...": "Searching...",
-        "Có lỗi khi tìm kiếm dữ liệu.": "An error occurred while searching data."
+        en: {
+            pageTitle: "Approved document storage",
+            pageHeading: "Approved document storage",
+            totalProjectsLabel: "Total existing projects",
+            totalUploadedDocumentsLabel: "Total uploaded documents",
+            totalApprovedDocumentsLabel: "Approved documents",
+            keywordLabel: "File name",
+            keywordPlaceholder: "Enter file name...",
+            projectLabel: "Project",
+            allProjectsOption: "All projects",
+            categoryLabel: "Document type",
+            allCategoriesOption: "All types",
+            submittedByLabel: "Submitted by",
+            submittedByPlaceholder: "Enter submitter name...",
+            dateFromLabel: "From date",
+            dateToLabel: "To date",
+            resetButton: "Clear filters",
+            filterButton: "Filter",
+            colId: "ID",
+            colFileName: "File name",
+            colType: "Type",
+            colSubmittedBy: "Submitted by",
+            colReviewedAt: "Approved date",
+            colReviewedBy: "Approved by",
+            colDescription: "Description",
+            colLocation: "Location",
+            colAction: "Action",
+            emptyMessage: "There are no approved documents yet."
+        }
     };
-
-    const PLACEHOLDER_VI_TO_EN = {
-        "Nhập tên file...": "Enter file name...",
-        "Nhập tên người gửi...": "Enter submitter name..."
-    };
-
-    function reverseMap(map) {
-        const result = {};
-
-        Object.keys(map).forEach(function (key) {
-            result[map[key]] = key;
-        });
-
-        return result;
-    }
-
-    const EN_TO_VI = reverseMap(VI_TO_EN);
-    const PLACEHOLDER_EN_TO_VI = reverseMap(PLACEHOLDER_VI_TO_EN);
 
     function getLanguage() {
         return localStorage.getItem("appLanguage") || "vi";
@@ -513,102 +472,32 @@ document.addEventListener("DOMContentLoaded", function () {
         localStorage.setItem("appLanguage", language);
     }
 
-    function normalizeText(value) {
-        return String(value || "").replace(/\s+/g, " ").trim();
-    }
-
-    function translateTextNodes(language) {
-        const map = language === "en" ? VI_TO_EN : EN_TO_VI;
-
-        const walker = document.createTreeWalker(
-            document.body,
-            NodeFilter.SHOW_TEXT,
-            {
-                acceptNode: function (node) {
-                    const parent = node.parentElement;
-
-                    if (!parent) {
-                        return NodeFilter.FILTER_REJECT;
-                    }
-
-                    const tagName = parent.tagName.toLowerCase();
-
-                    if (
-                        tagName === "script" ||
-                        tagName === "style" ||
-                        tagName === "textarea"
-                    ) {
-                        return NodeFilter.FILTER_REJECT;
-                    }
-
-                    if (!normalizeText(node.nodeValue)) {
-                        return NodeFilter.FILTER_REJECT;
-                    }
-
-                    return NodeFilter.FILTER_ACCEPT;
-                }
-            }
-        );
-
-        const nodes = [];
-
-        while (walker.nextNode()) {
-            nodes.push(walker.currentNode);
-        }
-
-        nodes.forEach(function (node) {
-            let originalText = node.nodeValue;
-            let text = normalizeText(originalText);
-
-            Object.keys(map).forEach(function (key) {
-                if (text.includes(key)) {
-                    text = text.replaceAll(key, map[key]);
-                }
-            });
-
-            const leading = originalText.match(/^\s*/)[0];
-            const trailing = originalText.match(/\s*$/)[0];
-
-            node.nodeValue = leading + text + trailing;
-        });
-    }
-
-    function translatePlaceholders(language) {
-        const map = language === "en" ? PLACEHOLDER_VI_TO_EN : PLACEHOLDER_EN_TO_VI;
-
-        document.querySelectorAll("input[placeholder]").forEach(function (input) {
-            const currentPlaceholder = normalizeText(input.getAttribute("placeholder"));
-
-            if (map[currentPlaceholder]) {
-                input.setAttribute("placeholder", map[currentPlaceholder]);
-            }
-        });
-    }
-
-    function translateOptions(language) {
-        const map = language === "en" ? VI_TO_EN : EN_TO_VI;
-
-        document.querySelectorAll("option").forEach(function (option) {
-            const text = normalizeText(option.textContent);
-
-            if (map[text]) {
-                option.textContent = map[text];
-            }
-        });
-    }
-
     function applyApprovedLanguage(language) {
         const button = document.getElementById("languageToggle");
+        const text = PAGE_TEXT[language] || PAGE_TEXT.vi;
 
         document.documentElement.lang = language;
+        document.title = text.pageTitle;
 
         if (button) {
             button.textContent = language === "vi" ? "EN" : "VI";
         }
 
-        translateTextNodes(language);
-        translatePlaceholders(language);
-        translateOptions(language);
+        document.querySelectorAll("[data-i18n-key]").forEach(function (element) {
+            const key = element.getAttribute("data-i18n-key");
+
+            if (text[key]) {
+                element.textContent = text[key];
+            }
+        });
+
+        document.querySelectorAll("[data-i18n-placeholder-key]").forEach(function (element) {
+            const key = element.getAttribute("data-i18n-placeholder-key");
+
+            if (text[key]) {
+                element.setAttribute("placeholder", text[key]);
+            }
+        });
 
         setLanguage(language);
     }
@@ -629,11 +518,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     document.addEventListener("DOMContentLoaded", function () {
-        applyApprovedLanguage(getLanguage());
-        bindApprovedLanguageButton();
-    });
-
-    window.addEventListener("load", function () {
         applyApprovedLanguage(getLanguage());
         bindApprovedLanguageButton();
     });

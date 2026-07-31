@@ -1,61 +1,81 @@
 {% extends "layout/base.html" %}
 
 {% block title %}Trang Admin{% endblock %}
-{% block body_class %}app-page{% endblock %}
+{% block page_title %}Tổng quan Admin{% endblock %}
+{% block active_nav %}admin_dashboard{% endblock %}
 
 {% block content %}
-<div class="dashboard-box">
-        <div class="top-bar">
-            <div>
-                <h1 data-i18n="adminDashboardTitle">TRANG ADMIN</h1>
-                <p>
-                    <span data-i18n="admin">Admin:</span>
-                    <strong>{{ user['full_name'] }}</strong>
-                </p>
-            </div>
-
-            <div class="top-action-buttons">
-    <a class="admin-back-button" href="/manager">
-        Vào trang quản lý
-    </a>
-
-    <a class="logout-button" href="/logout">
-        Đăng xuất
-    </a>
-</div>
+<div class="space-y-6">
+    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div>
+            <h2 class="text-lg font-semibold text-slate-800">Xin chào, {{ user.full_name }}</h2>
+            <p class="text-sm text-slate-500 mt-1">Bảng điều khiển quản trị hệ thống.</p>
         </div>
-
-        <hr>
-
-        <div class="menu-grid">
-
-    <a class="menu-card menu-link" href="/admin/users">
-        <div class="menu-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 5 3.5 7.5 8 9 4.5-1.5 8-4 8-9V6l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg></div>
-        <h3>Quản lý quyền tài khoản</h3>
-        <p>Tạo quản lý mới hoặc chuyển nhân viên thành quản lý.</p>
-    </a>
-
-    <a class="menu-card menu-link" href="/admin/create-manager">
-        <div class="menu-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M17 8h4M19 6v4"/></svg></div>
-        <h3>Tạo tài khoản quản lý</h3>
-        <p>Tạo trực tiếp tài khoản quản lý mới.</p>
-    </a>
-
-    <a class="menu-card menu-link" href="/manager/users">
-        <div class="menu-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.5"/><path d="M15 20c.3-2.4 1.8-4.2 4-4.6"/></svg></div>
-        <h3>Quản lý tài khoản</h3>
-        <p>Xem danh sách, khóa hoặc mở lại tài khoản người dùng.</p>
-    </a>
-
-    <a class="menu-card menu-link" href="/manager/audit-logs">
-        <div class="menu-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
-        <h3>Nhật ký hoạt động</h3>
-        <p>Xem lịch sử upload, duyệt, từ chối và download hồ sơ.</p>
-    </a>
-
-            
-</div>
+        <div class="w-14 h-14 rounded-full bg-brand-50 text-brand-800 flex items-center justify-center shrink-0">
+            <i class="ti ti-shield-check text-2xl"></i>
+        </div>
     </div>
 
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <a href="/admin/users"
+            class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-brand-500/40 transition-all flex flex-col gap-3 group">
+            <div
+                class="w-12 h-12 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center group-hover:bg-brand-900 group-hover:text-white transition-colors shrink-0">
+                <i class="ti ti-shield-check text-2xl"></i>
+            </div>
+            <div>
+                <h3 class="font-semibold text-slate-800">Quản lý phân quyền</h3>
+                <p class="text-sm text-slate-500 mt-1">Tạo quản lý mới hoặc chuyển nhân viên thành quản lý.</p>
+            </div>
+        </a>
 
+        <a href="/manager/users"
+            class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-brand-500/40 transition-all flex flex-col gap-3 group">
+            <div
+                class="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center group-hover:bg-brand-900 group-hover:text-white transition-colors shrink-0">
+                <i class="ti ti-users text-2xl"></i>
+            </div>
+            <div>
+                <h3 class="font-semibold text-slate-800">Duyệt tài khoản</h3>
+                <p class="text-sm text-slate-500 mt-1">Xem danh sách, khóa hoặc mở lại tài khoản người dùng.</p>
+            </div>
+        </a>
+
+        <a href="/admin/create-manager"
+            class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-brand-500/40 transition-all flex flex-col gap-3 group">
+            <div
+                class="w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:bg-brand-900 group-hover:text-white transition-colors shrink-0">
+                <i class="ti ti-user-plus text-2xl"></i>
+            </div>
+            <div>
+                <h3 class="font-semibold text-slate-800">Tạo tài khoản Quản lý</h3>
+                <p class="text-sm text-slate-500 mt-1">Tạo trực tiếp tài khoản quản lý mới.</p>
+            </div>
+        </a>
+
+        <a href="/manager/audit-logs"
+            class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-brand-500/40 transition-all flex flex-col gap-3 group">
+            <div
+                class="w-12 h-12 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center group-hover:bg-brand-900 group-hover:text-white transition-colors shrink-0">
+                <i class="ti ti-history text-2xl"></i>
+            </div>
+            <div>
+                <h3 class="font-semibold text-slate-800">Nhật ký hoạt động</h3>
+                <p class="text-sm text-slate-500 mt-1">Xem lịch sử upload, duyệt, từ chối và download hồ sơ.</p>
+            </div>
+        </a>
+
+        <a href="/statistics"
+            class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-brand-500/40 transition-all flex flex-col gap-3 group">
+            <div
+                class="w-12 h-12 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center group-hover:bg-brand-900 group-hover:text-white transition-colors shrink-0">
+                <i class="ti ti-chart-bar text-2xl"></i>
+            </div>
+            <div>
+                <h3 class="font-semibold text-slate-800">Thống kê</h3>
+                <p class="text-sm text-slate-500 mt-1">Xem biểu đồ upload theo tháng và thống kê người upload.</p>
+            </div>
+        </a>
+    </div>
+</div>
 {% endblock %}

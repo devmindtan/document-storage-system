@@ -1,0 +1,15 @@
+{% macro banner(kind, text) %}
+{% if text %}
+{% if kind == 'error' %}
+<div class="bg-rose-50 border border-rose-200 text-rose-700 rounded-xl p-4 mb-6 flex items-start gap-3">
+    <i class="ti ti-alert-circle text-rose-500 text-xl mt-0.5 shrink-0"></i>
+    <p class="text-sm">{{ text }}</p>
+</div>
+{% else %}
+<div class="bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl p-4 mb-6 flex items-start gap-3">
+    <i class="ti ti-circle-check text-emerald-500 text-xl mt-0.5 shrink-0"></i>
+    <p class="text-sm">{{ text }}</p>
+</div>
+{% endif %}
+{% endif %}
+{% endmacro %}
