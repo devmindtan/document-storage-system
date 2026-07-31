@@ -6,42 +6,46 @@
 <div class="fixed inset-0 -z-10 bg-cover bg-center bg-fixed"
      style="background-image: linear-gradient(rgba(240,244,248,0.25), rgba(240,244,248,0.25)), url('/static/images/login_background.jpg?v=1');"></div>
 
-<div class="flex items-center justify-between px-6 py-4">
-    <div class="flex items-center gap-3">
-        <a href="/"><img src="/static/images/AkzoNobel_RGB.png" alt="AkzoNobel" class="h-8 w-auto object-contain"></a>
-        <span class="w-px h-6 bg-slate-300"></span>
-        <a href="/"><img src="/static/images/amata_engineering_logo.png" alt="Amata Engineering" class="h-8 w-auto object-contain"></a>
+<div class="min-h-screen flex flex-col">
+    <div class="flex items-center justify-between px-6 py-4 bg-white shadow-sm">
+        <div class="flex items-center gap-3">
+            <a href="/"><img src="/static/images/AkzoNobel_RGB.png" alt="AkzoNobel" class="h-8 w-auto object-contain"></a>
+            <span class="w-px h-6 bg-slate-300"></span>
+            <a href="/"><img src="/static/images/amata_engineering_logo.png" alt="Amata Engineering" class="h-8 w-auto object-contain"></a>
+        </div>
+        <button id="languageToggle" type="button" class="min-w-[54px] max-w-[64px] h-[34px] px-3.5 rounded-full bg-brand-800 hover:bg-brand-900 text-white text-sm font-bold transition-colors">VI</button>
     </div>
-    <button id="languageToggle" type="button" class="min-w-[54px] max-w-[64px] h-[34px] px-3.5 rounded-full bg-brand-800 hover:bg-brand-900 text-white text-sm font-bold transition-colors">VI</button>
-</div>
 
-<div class="w-[380px] max-w-[calc(100%-2rem)] mx-auto mt-10 bg-white rounded-xl shadow-lg p-8">
-    <h1 id="loginTitle" class="text-center text-[22px] font-bold text-brand-900">HỆ THỐNG LƯU TRỮ HỒ SƠ</h1>
-    <p id="loginSubtitle" class="text-center text-slate-500 mt-2 mb-6">Đăng nhập để truy cập hệ thống.</p>
+    <div class="flex-1 flex items-center justify-center p-4">
+        <div class="w-[380px] max-w-[calc(100%-2rem)] bg-white rounded-xl shadow-lg p-8">
+            <h1 id="loginTitle" class="text-center text-[22px] font-bold text-brand-900">HỆ THỐNG LƯU TRỮ HỒ SƠ</h1>
+            <p id="loginSubtitle" class="text-center text-slate-500 mt-2 mb-6">Đăng nhập để truy cập hệ thống.</p>
 
-    {% if error %}
-    <p class="bg-rose-100 text-rose-700 rounded-md px-3.5 py-2.5 mt-4 mb-4 font-bold whitespace-pre-line">{{ error }}</p>
-    {% endif %}
-    {% if message %}
-    <p class="bg-emerald-100 text-emerald-700 rounded-md px-3.5 py-2.5 mt-4 mb-4 font-bold whitespace-pre-line">{{ message }}</p>
-    {% endif %}
+            {% if error %}
+            <p class="bg-rose-100 text-rose-700 rounded-md px-3.5 py-2.5 mt-4 mb-4 font-bold whitespace-pre-line">{{ error }}</p>
+            {% endif %}
+            {% if message %}
+            <p class="bg-emerald-100 text-emerald-700 rounded-md px-3.5 py-2.5 mt-4 mb-4 font-bold whitespace-pre-line">{{ message }}</p>
+            {% endif %}
 
-    <form action="/login" method="post">
-        <label for="username" id="usernameLabel" class="block mt-4 mb-1.5 font-bold text-slate-800">Tên đăng nhập</label>
-        <input id="username" type="text" name="username" placeholder="Nhập tên đăng nhập" required
-            class="w-full px-2.5 py-2.5 border border-slate-300 rounded text-sm bg-white outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20">
+            <form action="/login" method="post">
+                <label for="username" id="usernameLabel" class="block mt-4 mb-1.5 font-bold text-slate-800">Tên đăng nhập</label>
+                <input id="username" type="text" name="username" placeholder="Nhập tên đăng nhập" required
+                    class="w-full px-2.5 py-2.5 border border-slate-300 rounded text-sm bg-white outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20">
 
-        <label for="password" id="passwordLabel" class="block mt-4 mb-1.5 font-bold text-slate-800">Mật khẩu</label>
-        <input id="password" type="password" name="password" placeholder="Nhập mật khẩu" required
-            class="w-full px-2.5 py-2.5 border border-slate-300 rounded text-sm bg-white outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20">
+                <label for="password" id="passwordLabel" class="block mt-4 mb-1.5 font-bold text-slate-800">Mật khẩu</label>
+                <input id="password" type="password" name="password" placeholder="Nhập mật khẩu" required
+                    class="w-full px-2.5 py-2.5 border border-slate-300 rounded text-sm bg-white outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20">
 
-        <button type="submit" id="loginButton" class="w-full mt-5 py-2.5 bg-brand-900 hover:bg-brand-800 text-white rounded font-semibold transition-colors">Đăng nhập</button>
-    </form>
+                <button type="submit" id="loginButton" class="w-full mt-5 py-2.5 bg-brand-900 hover:bg-brand-800 text-white rounded font-semibold transition-colors">Đăng nhập</button>
+            </form>
 
-    <p class="text-center text-sm mt-4">
-        <span id="noAccountText" class="text-slate-600">Chưa có tài khoản?</span>
-        <a href="/register" id="registerNow" class="text-brand-700 font-bold hover:underline">Đăng ký ngay</a>
-    </p>
+            <p class="text-center text-sm mt-4">
+                <span id="noAccountText" class="text-slate-600">Chưa có tài khoản?</span>
+                <a href="/register" id="registerNow" class="text-brand-700 font-bold hover:underline">Đăng ký ngay</a>
+            </p>
+        </div>
+    </div>
 </div>
 
 <div id="loginClock" class="fixed right-6 bottom-4 bg-white/85 text-brand-900 font-bold text-lg px-3.5 py-2 rounded-lg shadow-md z-[9999]">--/--/---- --:--:--</div>
