@@ -5,73 +5,100 @@
 {% block active_nav %}statistics{% endblock %}
 
 {% block content %}
-<div class="space-y-6">
-    <div class="flex justify-end">
-        <a href="{{ dashboard_url }}" class="px-4 py-2 border border-slate-200 text-slate-600 rounded-lg text-sm font-medium hover:bg-slate-50 transition-colors flex items-center gap-1.5">
-            <i class="ti ti-arrow-left"></i> <span data-i18n-key="backButton">Quay lại</span>
-        </a>
-    </div>
-
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
-            <div class="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-                <i class="ti ti-files text-2xl"></i>
+<div class="space-y-6 animate-fade-in">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div
+            class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center gap-4 group hover:border-blue-300 transition-colors">
+            <div
+                class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 shadow-sm group-hover:scale-110 transition-transform">
+                <i class="ti ti-files text-xl"></i>
             </div>
             <div>
-                <p class="text-sm font-medium text-slate-500" data-i18n-key="totalLabel">Tổng số tài liệu đã upload</p>
-                <h3 class="text-2xl font-bold text-slate-800">{{ total_uploaded_documents }}</h3>
+                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider" data-i18n-key="totalLabel">Tổng
+                    số tài liệu</p>
+                <h3 class="text-2xl font-bold text-slate-800 tracking-tight mt-0.5">{{ total_uploaded_documents |
+                    default(0) }}</h3>
             </div>
         </div>
 
-        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
-            <div class="w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-                <i class="ti ti-check text-2xl"></i>
+        <div
+            class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center gap-4 group hover:border-emerald-300 transition-colors">
+            <div
+                class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 shadow-sm group-hover:scale-110 transition-transform">
+                <i class="ti ti-circle-check text-xl"></i>
             </div>
             <div>
-                <p class="text-sm font-medium text-slate-500" data-i18n-key="approvedLabel">Đã duyệt</p>
-                <h3 class="text-2xl font-bold text-slate-800">{{ total_approved_documents }}</h3>
+                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider" data-i18n-key="approvedLabel">
+                    Đã duyệt</p>
+                <h3 class="text-2xl font-bold text-slate-800 tracking-tight mt-0.5">{{ total_approved_documents |
+                    default(0) }}</h3>
             </div>
         </div>
 
-        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
-            <div class="w-12 h-12 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
-                <i class="ti ti-clock text-2xl"></i>
+        <div
+            class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center gap-4 group hover:border-amber-300 transition-colors">
+            <div
+                class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 shadow-sm group-hover:scale-110 transition-transform">
+                <i class="ti ti-clock-shield text-xl"></i>
             </div>
             <div>
-                <p class="text-sm font-medium text-slate-500" data-i18n-key="pendingLabel">Chờ duyệt</p>
-                <h3 class="text-2xl font-bold text-slate-800">{{ total_pending_documents }}</h3>
+                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider" data-i18n-key="pendingLabel">
+                    Chờ duyệt</p>
+                <h3 class="text-2xl font-bold text-slate-800 tracking-tight mt-0.5">{{ total_pending_documents |
+                    default(0) }}</h3>
             </div>
         </div>
 
-        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
-            <div class="w-12 h-12 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center shrink-0">
-                <i class="ti ti-x text-2xl"></i>
+        <div
+            class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center gap-4 group hover:border-rose-300 transition-colors">
+            <div
+                class="w-12 h-12 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center shrink-0 shadow-sm group-hover:scale-110 transition-transform">
+                <i class="ti ti-circle-x text-xl"></i>
             </div>
             <div>
-                <p class="text-sm font-medium text-slate-500" data-i18n-key="rejectedLabel">Từ chối</p>
-                <h3 class="text-2xl font-bold text-slate-800">{{ total_rejected_documents }}</h3>
+                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider" data-i18n-key="rejectedLabel">
+                    Từ chối</p>
+                <h3 class="text-2xl font-bold text-slate-800 tracking-tight mt-0.5">{{ total_rejected_documents |
+                    default(0) }}</h3>
             </div>
         </div>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm lg:col-span-2">
-            <h2 class="text-lg font-semibold text-slate-800 mb-4" data-i18n-key="monthlyChartTitle">Tài liệu upload theo tháng</h2>
-            <div class="relative h-72 w-full"><canvas id="barChartCanvas"></canvas></div>
+            <div class="flex items-center gap-2 mb-6">
+                <div class="w-2 h-6 bg-brand-500 rounded-full"></div>
+                <h2 class="text-lg font-bold text-slate-800 tracking-tight" data-i18n-key="monthlyChartTitle">Tài liệu
+                    upload theo tháng</h2>
+            </div>
+            <div class="relative h-72 w-full">
+                <canvas id="barChartCanvas"></canvas>
+            </div>
         </div>
 
         <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-            <h2 class="text-lg font-semibold text-slate-800 mb-4" data-i18n-key="statusChartTitle">Tỉ lệ theo trạng thái</h2>
-            <div class="relative h-64 w-full flex justify-center"><canvas id="doughnutChartCanvas"></canvas></div>
+            <div class="flex items-center gap-2 mb-6">
+                <div class="w-2 h-6 bg-purple-500 rounded-full"></div>
+                <h2 class="text-lg font-bold text-slate-800 tracking-tight" data-i18n-key="statusChartTitle">Tỉ lệ theo
+                    trạng thái</h2>
+            </div>
+            <div class="relative h-64 w-full flex justify-center">
+                <canvas id="doughnutChartCanvas"></canvas>
+            </div>
         </div>
     </div>
 
     <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        <h2 class="text-lg font-semibold text-slate-800 px-6 pt-6 pb-4" data-i18n-key="userTableTitle">Thống kê tài liệu theo user</h2>
+        <div class="px-6 py-5 border-b border-slate-100 flex items-center gap-2">
+            <div class="w-2 h-6 bg-blue-500 rounded-full"></div>
+            <h2 class="text-lg font-bold text-slate-800 tracking-tight" data-i18n-key="userTableTitle">Thống kê tài liệu
+                theo user</h2>
+        </div>
 
         <div class="overflow-x-auto">
             <table class="w-full text-left text-sm text-slate-600 whitespace-nowrap">
-                <thead class="bg-slate-50 border-b border-slate-200 text-slate-700 uppercase font-semibold text-xs">
+                <thead
+                    class="bg-slate-50 border-b border-slate-200 text-slate-700 uppercase font-bold text-[11px] tracking-wider">
                     <tr>
                         <th class="px-6 py-4" data-i18n-key="colStt">STT</th>
                         <th class="px-6 py-4" data-i18n-key="colFullName">Họ tên</th>
@@ -84,21 +111,32 @@
                 </thead>
                 <tbody class="divide-y divide-slate-100">
                     {% if user_rows %}
-                        {% for row in user_rows %}
-                        <tr class="hover:bg-slate-50 transition-colors">
-                            <td class="px-6 py-4">{{ loop.index }}</td>
-                            <td class="px-6 py-4 font-medium text-slate-800">{{ row['full_name'] }}</td>
-                            <td class="px-6 py-4">{{ row['username'] }}</td>
-                            <td class="px-6 py-4">{{ row['total_documents'] }}</td>
-                            <td class="px-6 py-4 text-emerald-600 font-medium">{{ row['approved_documents'] }}</td>
-                            <td class="px-6 py-4 text-amber-600 font-medium">{{ row['pending_documents'] }}</td>
-                            <td class="px-6 py-4 text-rose-600 font-medium">{{ row['rejected_documents'] }}</td>
-                        </tr>
-                        {% endfor %}
+                    {% for row in user_rows %}
+                    <tr class="hover:bg-slate-50/80 transition-colors group">
+                        <td class="px-6 py-4 text-slate-400 font-mono text-xs">{{ loop.index }}</td>
+                        <td class="px-6 py-4 font-semibold text-slate-800">{{ row['full_name'] }}</td>
+                        <td class="px-6 py-4 text-slate-500">{{ row['username'] }}</td>
+                        <td class="px-6 py-4 font-bold text-slate-700">{{ row['total_documents'] | default(0) }}</td>
+                        <td class="px-6 py-4">
+                            <span class="bg-emerald-50 text-emerald-600 px-2.5 py-1 rounded-md text-xs font-bold">{{
+                                row['approved_documents'] | default(0) }}</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="bg-amber-50 text-amber-600 px-2.5 py-1 rounded-md text-xs font-bold">{{
+                                row['pending_documents'] | default(0) }}</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="bg-rose-50 text-rose-600 px-2.5 py-1 rounded-md text-xs font-bold">{{
+                                row['rejected_documents'] | default(0) }}</span>
+                        </td>
+                    </tr>
+                    {% endfor %}
                     {% else %}
-                        <tr>
-                            <td colspan="7" class="px-6 py-10 text-center text-slate-400" data-i18n-key="emptyMessage">Chưa có tài liệu nào được upload.</td>
-                        </tr>
+                    <tr>
+                        <td colspan="7" class="px-6 py-12 text-center text-slate-400" data-i18n-key="emptyMessage">
+                            Chưa có tài liệu nào được upload.
+                        </td>
+                    </tr>
                     {% endif %}
                 </tbody>
             </table>
@@ -109,155 +147,169 @@
 
 {% block extra_script %}
 <script>
-const monthlyLabelsText = '{{ monthly_labels_json | safe }}';
-const monthlyValuesText = '{{ monthly_values_json | safe }}';
+    // FIX SYNTAX 1: Parse trực tiếp JSON sinh ra từ Backend, fallback về mảng rỗng nếu lỗi
+    const monthlyLabels = {{ monthly_labels_json | default ('[]') | safe }};
+    const monthlyValues = {{ monthly_values_json | default ('[]') | safe }};
 
-const monthlyLabels = JSON.parse(monthlyLabelsText);
-const monthlyValues = JSON.parse(monthlyValuesText);
-
-document.addEventListener("DOMContentLoaded", function () {
-    const ctxBar = document.getElementById("barChartCanvas").getContext("2d");
-    new Chart(ctxBar, {
-        type: "bar",
-        data: {
-            labels: monthlyLabels,
-            datasets: [{
-                label: "Số hồ sơ",
-                data: monthlyValues,
-                backgroundColor: "#1b4d78",
-                borderRadius: 4,
-                barThickness: "flex",
-                maxBarThickness: 32
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: {
-                y: { beginAtZero: true, grid: { color: "#f1f5f9" }, border: { dash: [4, 4] } },
-                x: { grid: { display: false } }
-            }
-        }
-    });
-
-    const ctxDoughnut = document.getElementById("doughnutChartCanvas").getContext("2d");
-    new Chart(ctxDoughnut, {
-        type: "doughnut",
-        data: {
-            labels: ["Đã duyệt", "Chờ duyệt", "Từ chối"],
-            datasets: [{
-                data: [{{ total_approved_documents }}, {{ total_pending_documents }}, {{ total_rejected_documents }}],
-                backgroundColor: ["#10b981", "#f59e0b", "#f43f5e"],
-                borderWidth: 0,
-                hoverOffset: 4
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            cutout: "75%",
-            plugins: { legend: { position: "bottom", labels: { padding: 20, usePointStyle: true, pointStyle: "circle" } } }
-        }
-    });
-});
-</script>
-
-<script>
-(function () {
-    const PAGE_TEXT = {
-        vi: {
-            pageTitle: "Thống kê upload tài liệu",
-            pageHeading: "Thống kê upload tài liệu",
-            backButton: "Quay lại",
-            totalLabel: "Tổng số tài liệu đã upload",
-            approvedLabel: "Đã duyệt",
-            pendingLabel: "Chờ duyệt",
-            rejectedLabel: "Từ chối",
-            monthlyChartTitle: "Tài liệu upload theo tháng",
-            statusChartTitle: "Tỉ lệ theo trạng thái",
-            userTableTitle: "Thống kê tài liệu theo user",
-            colStt: "STT",
-            colFullName: "Họ tên",
-            colUsername: "Tên đăng nhập",
-            colTotal: "Tổng đã upload",
-            colApproved: "Đã duyệt",
-            colPending: "Chờ duyệt",
-            colRejected: "Từ chối",
-            emptyMessage: "Chưa có tài liệu nào được upload."
-        },
-
-        en: {
-            pageTitle: "Upload statistics",
-            pageHeading: "Upload statistics",
-            backButton: "Back",
-            totalLabel: "Total uploaded documents",
-            approvedLabel: "Approved",
-            pendingLabel: "Pending",
-            rejectedLabel: "Rejected",
-            monthlyChartTitle: "Monthly uploaded documents",
-            statusChartTitle: "Status ratio",
-            userTableTitle: "Uploaded documents by user",
-            colStt: "No.",
-            colFullName: "Full name",
-            colUsername: "Username",
-            colTotal: "Total uploaded",
-            colApproved: "Approved",
-            colPending: "Pending",
-            colRejected: "Rejected",
-            emptyMessage: "No documents have been uploaded yet."
-        }
-    };
-
-    function getLanguage() {
-        return localStorage.getItem("appLanguage") || "vi";
-    }
-
-    function setLanguage(language) {
-        localStorage.setItem("appLanguage", language);
-    }
-
-    function applyStatisticsLanguage(language) {
-        const button = document.getElementById("languageToggle");
-        const text = PAGE_TEXT[language] || PAGE_TEXT.vi;
-
-        document.documentElement.lang = language;
-        document.title = text.pageTitle;
-
-        if (button) {
-            button.textContent = language === "vi" ? "EN" : "VI";
-        }
-
-        document.querySelectorAll("[data-i18n-key]").forEach(function (element) {
-            const key = element.getAttribute("data-i18n-key");
-
-            if (text[key]) {
-                element.textContent = text[key];
+    document.addEventListener("DOMContentLoaded", function () {
+        // BIỂU ĐỒ CỘT (Bar Chart)
+        const ctxBar = document.getElementById("barChartCanvas").getContext("2d");
+        new Chart(ctxBar, {
+            type: "bar",
+            data: {
+                labels: monthlyLabels,
+                datasets: [{
+                    label: "Số hồ sơ",
+                    data: monthlyValues,
+                    backgroundColor: "#1b4d78",
+                    hoverBackgroundColor: "#3b82f6",
+                    borderRadius: 6,
+                    barThickness: "flex",
+                    maxBarThickness: 40
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: "#f1f5f9", drawBorder: false },
+                        border: { dash: [4, 4] }
+                    },
+                    x: {
+                        grid: { display: false, drawBorder: false }
+                    }
+                }
             }
         });
 
-        setLanguage(language);
+        // BIỂU ĐỒ TRÒN (Doughnut Chart)
+        // FIX SYNTAX 2: Bổ sung default(0) tránh trường hợp biến undefined sinh ra mảng lỗi [,,]
+        const ctxDoughnut = document.getElementById("doughnutChartCanvas").getContext("2d");
+        new Chart(ctxDoughnut, {
+            type: "doughnut",
+            data: {
+                labels: ["Đã duyệt", "Chờ duyệt", "Từ chối"],
+                datasets: [{
+                    data: [
+                        {{ total_approved_documents | default(0)
+                }}, 
+                        {{ total_pending_documents | default(0) }},
+        {{ total_rejected_documents | default(0) }}
+                    ],
+        backgroundColor: ["#10b981", "#f59e0b", "#f43f5e"],
+        borderWidth: 0,
+        hoverOffset: 6
+                }]
+            },
+        options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: "75%",
+        plugins: {
+            legend: {
+                position: "bottom",
+                labels: { padding: 20, usePointStyle: true, pointStyle: "circle", font: { family: "'Plus Jakarta Sans', sans-serif" } }
+            }
+        }
     }
+        });
+    });
+</script>
 
-    function bindStatisticsLanguageButton() {
-        const button = document.getElementById("languageToggle");
+<script>
+    // BỘ NGÔN NGỮ
+    (function () {
+        const PAGE_TEXT = {
+            vi: {
+                pageTitle: "Thống kê upload tài liệu",
+                pageHeading: "Thống kê upload tài liệu",
+                backButton: "Quay lại",
+                totalLabel: "Tổng số tài liệu",
+                approvedLabel: "Đã duyệt",
+                pendingLabel: "Chờ duyệt",
+                rejectedLabel: "Từ chối",
+                monthlyChartTitle: "Tài liệu upload theo tháng",
+                statusChartTitle: "Tỉ lệ theo trạng thái",
+                userTableTitle: "Thống kê tài liệu theo user",
+                colStt: "STT",
+                colFullName: "Họ tên",
+                colUsername: "Tên đăng nhập",
+                colTotal: "Tổng đã upload",
+                colApproved: "Đã duyệt",
+                colPending: "Chờ duyệt",
+                colRejected: "Từ chối",
+                emptyMessage: "Chưa có tài liệu nào được upload."
+            },
 
-        if (!button) {
-            return;
+            en: {
+                pageTitle: "Upload statistics",
+                pageHeading: "Upload statistics",
+                backButton: "Back",
+                totalLabel: "Total documents",
+                approvedLabel: "Approved",
+                pendingLabel: "Pending",
+                rejectedLabel: "Rejected",
+                monthlyChartTitle: "Monthly uploaded documents",
+                statusChartTitle: "Status ratio",
+                userTableTitle: "Uploaded documents by user",
+                colStt: "No.",
+                colFullName: "Full name",
+                colUsername: "Username",
+                colTotal: "Total uploaded",
+                colApproved: "Approved",
+                colPending: "Pending",
+                colRejected: "Rejected",
+                emptyMessage: "No documents have been uploaded yet."
+            }
+        };
+
+        function getLanguage() {
+            return localStorage.getItem("appLanguage") || "vi";
         }
 
-        button.onclick = function () {
-            const currentLanguage = getLanguage();
-            const nextLanguage = currentLanguage === "vi" ? "en" : "vi";
+        function setLanguage(language) {
+            localStorage.setItem("appLanguage", language);
+        }
 
-            applyStatisticsLanguage(nextLanguage);
-        };
-    }
+        function applyStatisticsLanguage(language) {
+            const button = document.getElementById("languageToggle");
+            const text = PAGE_TEXT[language] || PAGE_TEXT.vi;
 
-    document.addEventListener("DOMContentLoaded", function () {
-        applyStatisticsLanguage(getLanguage());
-        bindStatisticsLanguageButton();
-    });
-})();
+            document.documentElement.lang = language;
+            document.title = text.pageTitle;
+
+            if (button) {
+                button.textContent = language === "vi" ? "EN" : "VI";
+            }
+
+            document.querySelectorAll("[data-i18n-key]").forEach(function (element) {
+                const key = element.getAttribute("data-i18n-key");
+                if (text[key]) {
+                    element.textContent = text[key];
+                }
+            });
+
+            setLanguage(language);
+        }
+
+        function bindStatisticsLanguageButton() {
+            const button = document.getElementById("languageToggle");
+            if (!button) return;
+
+            button.onclick = function () {
+                const currentLanguage = getLanguage();
+                const nextLanguage = currentLanguage === "vi" ? "en" : "vi";
+                applyStatisticsLanguage(nextLanguage);
+            };
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            applyStatisticsLanguage(getLanguage());
+            bindStatisticsLanguageButton();
+        });
+    })();
 </script>
 {% endblock %}
