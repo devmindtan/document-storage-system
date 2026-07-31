@@ -61,17 +61,16 @@
     <aside id="sidebar"
         class="fixed inset-y-0 left-0 z-50 w-64 bg-[#0b1329] text-slate-300 flex flex-col transition-transform duration-300 transform -translate-x-full lg:translate-x-0 lg:static lg:flex-shrink-0 border-r border-slate-800/60 font-sans">
 
-        <!-- Nhãn ứng dụng gọn, thay cho logo lớn (logo thật nằm ở trang Tổng quan) -->
-        <div class="h-16 flex items-center justify-between px-4 shrink-0 border-b border-slate-800/60">
-            <a href="/" class="flex items-center gap-2.5 min-w-0 group">
-                <div
-                    class="w-8 h-8 rounded-lg bg-amber-400 text-amber-950 flex items-center justify-center shrink-0 font-black text-sm group-hover:bg-amber-300 transition-colors">
-                    DS</div>
-                <span class="text-white font-bold text-sm tracking-wide truncate">Document Storage</span>
+        <!-- AkzoNobel ở sidebar, Amata Engineering ở các trang Tổng quan -->
+        <div class="h-20 flex items-center justify-between px-5 shrink-0 border-b border-slate-800/60 bg-[#0b1329]">
+            <a href="/" class="flex items-center min-w-0 transition-transform duration-200 hover:scale-[1.02]">
+                <img src="/static/images/AkzoNobel_RGB.png" alt="AkzoNobel" class="h-10 w-auto object-contain">
             </a>
-            <button class="lg:hidden text-slate-400 hover:text-white ml-2 shrink-0 transition-colors"
+
+            <button
+                class="lg:hidden p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 shrink-0 transition-colors outline-none focus:ring-2 focus:ring-slate-700"
                 onclick="toggleSidebar()">
-                <i class="ti ti-x text-xl"></i>
+                <i class="ti ti-x text-2xl"></i>
             </button>
         </div>
 
