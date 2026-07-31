@@ -5,224 +5,342 @@
 {% block active_nav %}my_documents{% endblock %}
 
 {% block content %}
-<div class="space-y-6">
-    <p class="text-sm text-slate-500">
-        <span data-i18n-key="employeeLabel">Nhân viên:</span>
-        <span class="font-semibold text-slate-700">{{ user['full_name'] }}</span>
-    </p>
-
-    {% if documents %}
-        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm text-slate-600 whitespace-nowrap">
-                    <thead class="bg-slate-50 border-b border-slate-200 text-slate-700 uppercase font-semibold text-xs">
-                        <tr>
-                            <th class="px-6 py-4" data-i18n-key="tableId">ID</th>
-                            <th class="px-6 py-4" data-i18n-key="fileName">Tên file</th>
-                            <th class="px-6 py-4" data-i18n-key="type">Loại</th>
-                            <th class="px-6 py-4" data-i18n-key="submittedAt">Ngày gửi</th>
-                            <th class="px-6 py-4" data-i18n-key="status">Trạng thái</th>
-                            <th class="px-6 py-4" data-i18n-key="approvedBy">Người duyệt</th>
-                            <th class="px-6 py-4" data-i18n-key="rejectionReason">Lý do từ chối</th>
-                        </tr>
-                    </thead>
-
-                    <tbody class="divide-y divide-slate-100">
-                        {% for document in documents %}
-                            <tr class="hover:bg-slate-50 transition-colors">
-                                <td class="px-6 py-4 font-mono text-brand-500 font-medium">{{ document['document_code'] or document['id'] }}</td>
-                                <td class="px-6 py-4 font-medium text-slate-800">
-                                    <span class="flex items-center gap-2"><i class="ti ti-file-text text-slate-400 text-lg"></i> {{ document['original_name'] }}</span>
-                                </td>
-                                <td class="px-6 py-4">{{ document['category'] }}</td>
-                                <td class="px-6 py-4">{{ document['submitted_at'] }}</td>
-
-                                <td class="px-6 py-4">
-                                    {% if document['status'] == 'PENDING' %}
-                                        <span class="bg-amber-100 text-amber-700 px-2.5 py-1 rounded text-xs font-bold" data-i18n-key="statusPending">Chờ quản lý duyệt</span>
-                                    {% elif document['status'] == 'APPROVED' %}
-                                        <span class="bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded text-xs font-bold" data-i18n-key="statusApproved">Đã được duyệt</span>
-                                    {% elif document['status'] == 'REJECTED' %}
-                                        <span class="bg-rose-100 text-rose-700 px-2.5 py-1 rounded text-xs font-bold" data-i18n-key="statusRejected">Bị từ chối</span>
-                                    {% else %}
-                                        <span class="bg-slate-100 text-slate-600 px-2.5 py-1 rounded text-xs font-bold" data-i18n-key="statusUnknown">Không xác định</span>
-                                    {% endif %}
-                                </td>
-
-                                <td class="px-6 py-4">{{ document['reviewed_by'] or '-' }}</td>
-                                <td class="px-6 py-4">{{ document['rejection_reason'] or '-' }}</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+<div class="space-y-6 animate-fade-in">
+    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-brand-50 text-brand-600 flex items-center justify-center shrink-0">
+                <i class="ti ti-user text-xl"></i>
+            </div>
+            <div>
+                <p class="text-xs text-slate-500 font-medium uppercase tracking-wider" data-i18n-key="employeeLabel">
+                    Nhân viên</p>
+                <p class="font-bold text-slate-800">{{ user['full_name'] }}</p>
             </div>
         </div>
+    </div>
+
+    {% if documents %}
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm text-slate-600 whitespace-nowrap table-fixed">
+                <thead
+                    class="bg-slate-50 border-b border-slate-200 text-slate-700 uppercase font-bold text-[11px] tracking-wider">
+                    <tr>
+                        <th class="px-6 py-4 w-44" data-i18n-key="tableId">ID</th>
+                        <th class="px-6 py-4 w-auto" data-i18n-key="fileName">Tên file</th>
+                        <th class="px-6 py-4 w-36" data-i18n-key="type">Loại</th>
+                        <th class="px-6 py-4 w-40" data-i18n-key="submittedAt">Ngày gửi</th>
+                        <th class="px-6 py-4 w-44" data-i18n-key="status">Trạng thái</th>
+                        <th class="px-6 py-4 w-32 text-center" data-i18n-key="action">Thao tác</th>
+                    </tr>
+                </thead>
+
+                <tbody class="divide-y divide-slate-100">
+                    {% for document in documents %}
+                    <tr class="hover:bg-slate-50/80 transition-colors group">
+                        <td class="px-6 py-4 font-mono text-brand-500 font-semibold text-xs truncate max-w-[10rem]"
+                            title="{{ document['document_code'] or document['id'] }}">
+                            {{ document['document_code'] or document['id'] }}
+                        </td>
+                        <td class="px-6 py-4 font-medium text-slate-800 truncate"
+                            title="{{ document['original_name'] }}">
+                            <span class="flex items-center gap-2">
+                                <i class="ti ti-file-text text-slate-400 text-lg shrink-0"></i>
+                                <span class="truncate">{{ document['original_name'] }}</span>
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="bg-slate-100 text-slate-600 px-2.5 py-1 rounded-lg text-xs font-medium">{{
+                                document['category'] }}</span>
+                        </td>
+                        <td class="px-6 py-4 text-slate-500">{{ document['submitted_at'] }}</td>
+
+                        <td class="px-6 py-4">
+                            {% if document['status'] == 'PENDING' %}
+                            <span class="bg-amber-100 text-amber-700 px-2.5 py-1 rounded text-xs font-bold"
+                                data-i18n-key="statusPending">Chờ duyệt</span>
+                            {% elif document['status'] == 'APPROVED' %}
+                            <span class="bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded text-xs font-bold"
+                                data-i18n-key="statusApproved">Đã duyệt</span>
+                            {% elif document['status'] == 'REJECTED' %}
+                            <span class="bg-rose-100 text-rose-700 px-2.5 py-1 rounded text-xs font-bold"
+                                data-i18n-key="statusRejected">Bị từ chối</span>
+                            {% else %}
+                            <span class="bg-slate-100 text-slate-600 px-2.5 py-1 rounded text-xs font-bold"
+                                data-i18n-key="statusUnknown">Không rõ</span>
+                            {% endif %}
+                        </td>
+
+                        <td class="px-6 py-4 text-center">
+                            <button type="button" data-code="{{ document['document_code'] or document['id'] }}"
+                                data-name="{{ document['original_name'] }}" data-category="{{ document['category'] }}"
+                                data-date="{{ document['submitted_at'] }}" data-status="{{ document['status'] }}"
+                                data-reviewer="{{ document['reviewed_by'] or '-' }}"
+                                data-reason="{{ document['rejection_reason'] or '-' }}"
+                                onclick="openDocumentModal(this)"
+                                class="text-slate-500 hover:text-brand-900 px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold inline-flex items-center gap-1.5 shadow-sm transition-all shrink-0"
+                                title="Xem chi tiết">
+                                <i class="ti ti-eye"></i> <span data-i18n-key="detailBtn">Chi tiết</span>
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 
     {% else %}
-        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-10 text-center text-slate-500" data-i18n-key="noEmployeeDocuments">
-            Bạn chưa gửi hồ sơ nào.
+    <div
+        class="bg-white rounded-2xl border border-slate-200 shadow-sm p-12 flex flex-col items-center justify-center text-center space-y-3">
+        <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center text-slate-300 mb-2">
+            <i class="ti ti-folder-x text-3xl"></i>
         </div>
+        <p class="text-slate-500 font-medium" data-i18n-key="noEmployeeDocuments">Bạn chưa gửi hồ sơ nào.</p>
+    </div>
     {% endif %}
 </div>
 
+<div id="documentDetailsModal"
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 hidden backdrop-blur-sm opacity-0 transition-opacity duration-300"
+    onclick="closeDocumentModal()">
+    <div class="bg-white rounded-2xl shadow-xl border border-slate-200 w-full max-w-lg transform scale-95 transition-transform duration-300 overflow-hidden"
+        onclick="event.stopPropagation()">
+
+        <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-brand-50 text-brand-800 flex items-center justify-center">
+                    <i class="ti ti-file-info text-base"></i>
+                </div>
+                <h4 class="font-bold text-slate-800" data-i18n-key="modalTitle">Chi tiết hồ sơ</h4>
+            </div>
+            <button onclick="closeDocumentModal()"
+                class="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-200/60 transition-colors">
+                <i class="ti ti-x text-lg"></i>
+            </button>
+        </div>
+
+        <div class="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+            <div class="grid grid-cols-3 gap-2 py-2 border-b border-slate-100">
+                <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider"
+                    data-i18n-key="tableId">ID</span>
+                <span id="modal_doc_code" class="col-span-2 text-sm font-mono font-bold text-brand-600"></span>
+            </div>
+            <div class="grid grid-cols-3 gap-2 py-2 border-b border-slate-100">
+                <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider" data-i18n-key="fileName">Tên
+                    file</span>
+                <span id="modal_original_name" class="col-span-2 text-sm font-semibold text-slate-800 break-all"></span>
+            </div>
+            <div class="grid grid-cols-3 gap-2 py-2 border-b border-slate-100">
+                <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider" data-i18n-key="type">Loại hồ
+                    sơ</span>
+                <div><span id="modal_category"
+                        class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded-md text-xs font-medium"></span></div>
+            </div>
+            <div class="grid grid-cols-3 gap-2 py-2 border-b border-slate-100">
+                <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider"
+                    data-i18n-key="submittedAt">Ngày gửi</span>
+                <span id="modal_submitted_at" class="col-span-2 text-sm text-slate-700"></span>
+            </div>
+            <div class="grid grid-cols-3 gap-2 py-2 border-b border-slate-100 items-center">
+                <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider" data-i18n-key="status">Trạng
+                    thái</span>
+                <div id="modal_status_badge" class="col-span-2"></div>
+            </div>
+            <div class="grid grid-cols-3 gap-2 py-2 border-b border-slate-100">
+                <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider"
+                    data-i18n-key="approvedBy">Người duyệt</span>
+                <span id="modal_reviewed_by" class="col-span-2 text-sm text-slate-700"></span>
+            </div>
+
+            <div id="modal_rejection_container" class="space-y-1.5 pt-1 hidden">
+                <span class="text-xs font-semibold text-rose-500 uppercase tracking-wider block"
+                    data-i18n-key="rejectionReason">Lý do từ chối</span>
+                <div id="modal_rejection_reason"
+                    class="text-sm text-rose-700 bg-rose-50 p-3 rounded-xl border border-rose-100 min-h-[60px] whitespace-pre-wrap leading-relaxed">
+                </div>
+            </div>
+        </div>
+
+        <div class="px-6 py-3.5 bg-slate-50 border-t border-slate-200 flex justify-end gap-2">
+            <button onclick="closeDocumentModal()"
+                class="px-5 py-2 border border-slate-200 text-slate-600 bg-white rounded-xl text-sm font-semibold hover:bg-slate-100 transition-colors shadow-sm"
+                data-i18n-key="closeBtn">Đóng</button>
+        </div>
+    </div>
+</div>
+
 <script>
-(function () {
-    const PAGE_TRANSLATIONS = {
-        vi: {
-            pageTitlePendingProjects: "Project chờ duyệt",
-            pageTitleMyDocuments: "Hồ sơ của tôi",
-            pendingProjectsTitle: "PROJECT CHỜ DUYỆT",
-            myDocumentsTitle: "HỒ SƠ CỦA TÔI",
-            managerLabel: "Quản lý:",
-            employeeLabel: "Nhân viên:",
-            backButton: "Quay lại",
-            noPendingProjects: "Hiện chưa có project nào đang chờ duyệt.",
-            noEmployeeDocuments: "Bạn chưa gửi hồ sơ nào.",
-            tableId: "ID",
-            projectName: "Tên project",
-            requestedBy: "Người yêu cầu",
-            requestedAt: "Ngày yêu cầu",
-            action: "Thao tác",
-            approve: "Duyệt",
-            reject: "Từ chối",
-            rejectionReason: "Lý do từ chối",
-            fileName: "Tên file",
-            type: "Loại",
-            submittedAt: "Ngày gửi",
-            status: "Trạng thái",
-            approvedBy: "Người duyệt",
-            statusPending: "Chờ quản lý duyệt",
-            statusApproved: "Đã được duyệt",
-            statusRejected: "Bị từ chối",
-            statusUnknown: "Không xác định"
-        },
-        en: {
-            pageTitlePendingProjects: "Pending projects",
-            pageTitleMyDocuments: "My document",
-            pendingProjectsTitle: "PENDING PROJECTS",
-            myDocumentsTitle: "MY DOCUMENT",
-            managerLabel: "Manager:",
-            employeeLabel: "Employee:",
-            backButton: "Back",
-            noPendingProjects: "There are no pending projects.",
-            noEmployeeDocuments: "You have not submitted any documents yet.",
-            tableId: "ID",
-            projectName: "Project name",
-            requestedBy: "Requested by",
-            requestedAt: "Requested at",
-            action: "Action",
-            approve: "Approve",
-            reject: "Reject",
-            rejectionReason: "Rejection reason",
-            fileName: "File name",
-            type: "Type",
-            submittedAt: "Submitted at",
-            status: "Status",
-            approvedBy: "Approved by",
-            statusPending: "Pending manager approval",
-            statusApproved: "Approved",
-            statusRejected: "Rejected",
-            statusUnknown: "Unknown"
-        }
-    };
+    // --- LOGIC CHO MODAL ---
+    function openDocumentModal(btn) {
+        const modal = document.getElementById('documentDetailsModal');
+        const box = modal.querySelector('div');
 
-    function getCurrentLanguageSafe() {
-        const savedLanguage = localStorage.getItem("appLanguage");
+        document.getElementById('modal_doc_code').textContent = btn.dataset.code || '-';
+        document.getElementById('modal_original_name').textContent = btn.dataset.name || '-';
+        document.getElementById('modal_category').textContent = btn.dataset.category || '-';
+        document.getElementById('modal_submitted_at').textContent = btn.dataset.date || '-';
+        document.getElementById('modal_reviewed_by').textContent = btn.dataset.reviewer || '-';
 
-        if (savedLanguage === "en" || savedLanguage === "vi") {
-            return savedLanguage;
+        // Render Badge Trạng Thái
+        const status = btn.dataset.status;
+        const badgeContainer = document.getElementById('modal_status_badge');
+        const rejectionContainer = document.getElementById('modal_rejection_container');
+
+        if (status === 'PENDING') {
+            badgeContainer.innerHTML = '<span class="bg-amber-100 text-amber-700 px-2.5 py-1 rounded text-xs font-bold" data-i18n-key="statusPending">Chờ duyệt</span>';
+            rejectionContainer.classList.add('hidden');
+        } else if (status === 'APPROVED') {
+            badgeContainer.innerHTML = '<span class="bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded text-xs font-bold" data-i18n-key="statusApproved">Đã duyệt</span>';
+            rejectionContainer.classList.add('hidden');
+        } else if (status === 'REJECTED') {
+            badgeContainer.innerHTML = '<span class="bg-rose-100 text-rose-700 px-2.5 py-1 rounded text-xs font-bold" data-i18n-key="statusRejected">Bị từ chối</span>';
+            document.getElementById('modal_rejection_reason').textContent = btn.dataset.reason || '-';
+            rejectionContainer.classList.remove('hidden');
+        } else {
+            badgeContainer.innerHTML = '<span class="bg-slate-100 text-slate-600 px-2.5 py-1 rounded text-xs font-bold" data-i18n-key="statusUnknown">Không rõ</span>';
+            rejectionContainer.classList.add('hidden');
         }
 
-        return "vi";
+        // Trigger lại dịch ngôn ngữ cho các thành phần vừa tiêm vào DOM
+        if (typeof window.setPageLanguage === 'function') {
+            window.setPageLanguage(window.getCurrentLanguageSafe());
+        }
+
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            modal.classList.remove('opacity-0');
+            box.classList.remove('scale-95');
+        }, 10);
     }
 
-    function setPageLanguage(language) {
-        const languageButton = document.getElementById("languageToggle");
+    function closeDocumentModal() {
+        const modal = document.getElementById('documentDetailsModal');
+        const box = modal.querySelector('div');
 
-        if (languageButton) {
-            languageButton.textContent = language === "vi" ? "EN" : "VI";
-        }
-
-        document.documentElement.lang = language;
-
-        const translations = PAGE_TRANSLATIONS[language] || PAGE_TRANSLATIONS.vi;
-
-        document.querySelectorAll("[data-i18n-key]").forEach(function (element) {
-            const key = element.getAttribute("data-i18n-key");
-
-            if (translations[key]) {
-                element.textContent = translations[key];
-            }
-        });
-
-        document.querySelectorAll("[data-i18n-placeholder-key]").forEach(function (element) {
-            const key = element.getAttribute("data-i18n-placeholder-key");
-
-            if (translations[key]) {
-                element.setAttribute("placeholder", translations[key]);
-            }
-        });
-
-        const pageTitleKey = document.body.getAttribute("data-page-title-key");
-
-        if (pageTitleKey && translations[pageTitleKey]) {
-            document.title = translations[pageTitleKey];
-        }
-
-        localStorage.setItem("appLanguage", language);
+        modal.classList.add('opacity-0');
+        box.classList.add('scale-95');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 300);
     }
+</script>
 
-    function patchGlobalApplyLanguage() {
-        if (
-            typeof window.applyLanguage === "function" &&
-            !window.applyLanguage.__pageTranslationPatched
-        ) {
-            const originalApplyLanguage = window.applyLanguage;
+<script>
+    // --- LOGIC ĐA NGÔN NGỮ ---
+    (function () {
+        const PAGE_TRANSLATIONS = {
+            vi: {
+                myDocumentsTitle: "HỒ SƠ CỦA TÔI",
+                employeeLabel: "Nhân viên:",
+                noEmployeeDocuments: "Bạn chưa gửi hồ sơ nào.",
+                tableId: "ID",
+                action: "Thao tác",
+                fileName: "Tên file",
+                type: "Loại",
+                submittedAt: "Ngày gửi",
+                status: "Trạng thái",
+                approvedBy: "Người duyệt",
+                statusPending: "Chờ duyệt",
+                statusApproved: "Đã duyệt",
+                statusRejected: "Bị từ chối",
+                statusUnknown: "Không rõ",
+                rejectionReason: "Lý do từ chối",
+                detailBtn: "Chi tiết",
+                modalTitle: "Chi tiết hồ sơ",
+                closeBtn: "Đóng"
+            },
+            en: {
+                myDocumentsTitle: "MY DOCUMENTS",
+                employeeLabel: "Employee:",
+                noEmployeeDocuments: "You have not submitted any documents yet.",
+                tableId: "ID",
+                action: "Action",
+                fileName: "File name",
+                type: "Type",
+                submittedAt: "Submitted at",
+                status: "Status",
+                approvedBy: "Reviewed by",
+                statusPending: "Pending",
+                statusApproved: "Approved",
+                statusRejected: "Rejected",
+                statusUnknown: "Unknown",
+                rejectionReason: "Rejection reason",
+                detailBtn: "Details",
+                modalTitle: "Document Details",
+                closeBtn: "Close"
+            }
+        };
 
-            window.applyLanguage = function (language) {
-                try {
-                    originalApplyLanguage(language);
-                } catch (error) {
-                    console.warn("Global language.js error:", error);
+        function getCurrentLanguageSafe() {
+            const savedLanguage = localStorage.getItem("appLanguage");
+            return (savedLanguage === "en" || savedLanguage === "vi") ? savedLanguage : "vi";
+        }
+
+        function setPageLanguage(language) {
+            const languageButton = document.getElementById("languageToggle");
+            if (languageButton) {
+                languageButton.textContent = language === "vi" ? "EN" : "VI";
+            }
+            document.documentElement.lang = language;
+            const translations = PAGE_TRANSLATIONS[language] || PAGE_TRANSLATIONS.vi;
+
+            document.querySelectorAll("[data-i18n-key]").forEach(function (element) {
+                const key = element.getAttribute("data-i18n-key");
+                if (translations[key]) {
+                    element.textContent = translations[key];
                 }
+            });
 
-                setPageLanguage(language);
-            };
+            document.querySelectorAll("[data-i18n-placeholder-key]").forEach(function (element) {
+                const key = element.getAttribute("data-i18n-placeholder-key");
+                if (translations[key]) {
+                    element.setAttribute("placeholder", translations[key]);
+                }
+            });
 
-            window.applyLanguage.__pageTranslationPatched = true;
+            const pageTitleKey = document.body.getAttribute("data-page-title-key");
+            if (pageTitleKey && translations[pageTitleKey]) {
+                document.title = translations[pageTitleKey];
+            }
+            localStorage.setItem("appLanguage", language);
         }
-    }
 
-    document.addEventListener("DOMContentLoaded", function () {
-        patchGlobalApplyLanguage();
+        // Expose ra window để trigger lại sau khi open Modal JS
+        window.getCurrentLanguageSafe = getCurrentLanguageSafe;
+        window.setPageLanguage = setPageLanguage;
 
-        setPageLanguage(getCurrentLanguageSafe());
+        function patchGlobalApplyLanguage() {
+            if (typeof window.applyLanguage === "function" && !window.applyLanguage.__pageTranslationPatched) {
+                const originalApplyLanguage = window.applyLanguage;
+                window.applyLanguage = function (language) {
+                    try { originalApplyLanguage(language); } catch (error) { console.warn(error); }
+                    setPageLanguage(language);
+                };
+                window.applyLanguage.__pageTranslationPatched = true;
+            }
+        }
 
-        const languageButton = document.getElementById("languageToggle");
+        document.addEventListener("DOMContentLoaded", function () {
+            patchGlobalApplyLanguage();
+            setPageLanguage(getCurrentLanguageSafe());
 
-        if (languageButton && !languageButton.dataset.pageTranslationBound) {
-            languageButton.dataset.pageTranslationBound = "1";
-
-            languageButton.addEventListener("click", function (event) {
-                event.preventDefault();
-                event.stopImmediatePropagation();
-
-                const currentLanguage = getCurrentLanguageSafe();
-                const nextLanguage = currentLanguage === "vi" ? "en" : "vi";
-
-                if (typeof window.applyLanguage === "function") {
-                    try {
-                        window.applyLanguage(nextLanguage);
-                    } catch (error) {
-                        console.warn("Global language.js error:", error);
+            const languageButton = document.getElementById("languageToggle");
+            if (languageButton && !languageButton.dataset.pageTranslationBound) {
+                languageButton.dataset.pageTranslationBound = "1";
+                languageButton.addEventListener("click", function (event) {
+                    event.preventDefault();
+                    event.stopImmediatePropagation();
+                    const nextLanguage = getCurrentLanguageSafe() === "vi" ? "en" : "vi";
+                    if (typeof window.applyLanguage === "function") {
+                        try { window.applyLanguage(nextLanguage); }
+                        catch (error) { setPageLanguage(nextLanguage); }
+                    } else {
                         setPageLanguage(nextLanguage);
                     }
-                } else {
-                    setPageLanguage(nextLanguage);
-                }
-            }, true);
-        }
-    });
-})();
+                }, true);
+            }
+        });
+    })();
 </script>
 {% endblock %}

@@ -5,101 +5,220 @@
 {% block active_nav %}dashboard{% endblock %}
 
 {% block content %}
-<div class="space-y-6">
-    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
-        <div>
-            <h2 class="text-lg font-semibold text-slate-800">Xin chào, {{ user.full_name }}</h2>
-            <p class="text-sm text-slate-500 mt-1">Chào mừng quay lại hệ thống lưu trữ hồ sơ.</p>
+<div class="space-y-8 animate-fade-in">
+    <div
+        class="relative overflow-hidden bg-gradient-to-br from-slate-800 via-slate-900 to-slate-950 p-6 md:p-8 rounded-2xl shadow-sm border border-slate-800 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div
+            class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-900/30 via-transparent to-transparent opacity-70 pointer-events-none">
         </div>
-        <div class="hidden sm:flex items-center bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 shrink-0">
-            <img src="/static/images/amata_engineering_logo.png" alt="Amata Engineering" class="h-7 w-auto object-contain">
+
+        <div class="relative z-10">
+            <h2 class="text-xl md:text-2xl font-bold tracking-tight text-white">Xin chào, {{ user.full_name }} 👋</h2>
+            <p class="text-slate-400 text-sm mt-1.5 max-w-xl leading-relaxed">
+                Chào mừng bạn quay lại. Hệ thống kho lưu trữ hồ sơ của Amata Documentation đã sẵn sàng xử lý các công
+                việc
+                hôm nay.
+            </p>
+        </div>
+
+    </div>
+
+    <div>
+        <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4">Số liệu tổng quan</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div
+                class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between group hover:border-amber-300 transition-all duration-300">
+                <div class="space-y-1">
+                    <p class="text-sm font-medium text-slate-500">Hồ sơ chờ duyệt</p>
+                    <h3 class="text-2xl font-bold text-slate-800 tracking-tight">{{ pending_count|default(0) }}</h3>
+                </div>
+                <div
+                    class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 shadow-sm group-hover:scale-110 transition-transform">
+                    <i class="ti ti-clock-shield text-2xl"></i>
+                </div>
+            </div>
+
+            <div
+                class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between group hover:border-emerald-300 transition-all duration-300">
+                <div class="space-y-1">
+                    <p class="text-sm font-medium text-slate-500">Đã phê duyệt</p>
+                    <h3 class="text-2xl font-bold text-slate-800 tracking-tight">{{ approved_count|default(0) }}</h3>
+                </div>
+                <div
+                    class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 shadow-sm group-hover:scale-110 transition-transform">
+                    <i class="ti ti-circle-check text-2xl"></i>
+                </div>
+            </div>
+
+            <div
+                class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between group hover:border-brand-300 transition-all duration-300">
+                <div class="space-y-1">
+                    <p class="text-sm font-medium text-slate-500">Yêu cầu dự án</p>
+                    <h3 class="text-2xl font-bold text-slate-800 tracking-tight">{{ project_requests_count|default(0) }}
+                    </h3>
+                </div>
+                <div
+                    class="w-12 h-12 rounded-2xl bg-brand-50 text-brand-800 flex items-center justify-center shrink-0 shadow-sm group-hover:scale-110 transition-transform">
+                    <i class="ti ti-briefcase text-2xl"></i>
+                </div>
+            </div>
+
+            <div
+                class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between group hover:border-blue-300 transition-all duration-300">
+                <div class="space-y-1">
+                    <p class="text-sm font-medium text-slate-500">Tổng kho tài liệu</p>
+                    <h3 class="text-2xl font-bold text-slate-800 tracking-tight">{{ total_count|default(0) }}</h3>
+                </div>
+                <div
+                    class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 shadow-sm group-hover:scale-110 transition-transform">
+                    <i class="ti ti-files text-2xl"></i>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-6">
-        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
-            <div class="w-12 h-12 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
-                <i class="ti ti-clock-shield text-2xl"></i>
-            </div>
-            <div>
-                <p class="text-sm font-medium text-slate-500">Hồ sơ chờ duyệt</p>
-                <h3 class="text-2xl font-bold text-slate-800">{{ pending_count }}</h3>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+
+        <div class="lg:col-span-2 space-y-4">
+            <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider">Lối tắt tác vụ</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                <a href="/manager/upload"
+                    class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-brand-500/40 hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-4 group">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover:bg-brand-900 group-hover:text-white transition-colors shrink-0 shadow-sm">
+                        <i class="ti ti-cloud-upload text-xl"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-slate-800 group-hover:text-brand-900 transition-colors">Gửi hồ sơ
+                            mới</h4>
+                        <p class="text-xs text-slate-500 mt-0.5 line-clamp-1">Tải hồ sơ trực tiếp vào kho lưu trữ.</p>
+                    </div>
+                </a>
+
+                <a href="/manager/pending"
+                    class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-brand-500/40 hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-4 group">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center group-hover:bg-brand-900 group-hover:text-white transition-colors shrink-0 shadow-sm">
+                        <i class="ti ti-clock-shield text-xl"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-slate-800 group-hover:text-brand-900 transition-colors">Chờ phê
+                            duyệt</h4>
+                        <p class="text-xs text-slate-500 mt-0.5 line-clamp-1">Xem, duyệt hoặc từ chối các hồ sơ đang
+                            đợi.</p>
+                    </div>
+                </a>
+
+                <a href="/manager/my-documents"
+                    class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-brand-500/40 hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-4 group">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center group-hover:bg-brand-900 group-hover:text-white transition-colors shrink-0 shadow-sm">
+                        <i class="ti ti-file-text text-xl"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-slate-800 group-hover:text-brand-900 transition-colors">Hồ sơ của
+                            tôi</h4>
+                        <p class="text-xs text-slate-500 mt-0.5 line-clamp-1">Xem và quản lý các tài liệu bạn đã tải
+                            lên.</p>
+                    </div>
+                </a>
+
+                <a href="/documents/approved"
+                    class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-brand-500/40 hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-4 group">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:bg-brand-900 group-hover:text-white transition-colors shrink-0 shadow-sm">
+                        <i class="ti ti-archive text-xl"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-slate-800 group-hover:text-brand-900 transition-colors">Kho hồ sơ
+                            đã duyệt</h4>
+                        <p class="text-xs text-slate-500 mt-0.5 line-clamp-1">Tra cứu nhanh và tải xuống tài liệu chính
+                            thức.</p>
+                    </div>
+                </a>
+
+                <a href="/manager/project-requests"
+                    class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-brand-500/40 hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-4 group">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-brand-50 text-brand-800 flex items-center justify-center group-hover:bg-brand-900 group-hover:text-white transition-colors shrink-0 shadow-sm">
+                        <i class="ti ti-briefcase text-xl"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-slate-800 group-hover:text-brand-900 transition-colors">Yêu cầu dự
+                            án</h4>
+                        <p class="text-xs text-slate-500 mt-0.5 line-clamp-1">Theo dõi các yêu cầu dự án / danh mục mới.
+                        </p>
+                    </div>
+                </a>
+
+                <a href="/statistics"
+                    class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-brand-500/40 hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-4 group">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center group-hover:bg-brand-900 group-hover:text-white transition-colors shrink-0 shadow-sm">
+                        <i class="ti ti-chart-bar text-xl"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-slate-800 group-hover:text-brand-900 transition-colors">Thống kê
+                        </h4>
+                        <p class="text-xs text-slate-500 mt-0.5 line-clamp-1">Biểu đồ tần suất tải lên và báo cáo nhân
+                            sự.</p>
+                    </div>
+                </a>
+
             </div>
         </div>
-    </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <a href="/manager/upload"
-            class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-brand-500/40 transition-all flex flex-col gap-3 group">
-            <div
-                class="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center group-hover:bg-brand-900 group-hover:text-white transition-colors shrink-0">
-                <i class="ti ti-cloud-upload text-2xl"></i>
+        <div class="space-y-4">
+            <div class="flex items-center justify-between">
+                <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider">Hồ sơ chờ duyệt mới nhất</h3>
+                <a href="/manager/pending"
+                    class="text-xs font-semibold text-brand-600 hover:text-brand-700 transition-colors">Xem tất cả</a>
             </div>
-            <div>
-                <h3 class="font-semibold text-slate-800">Gửi hồ sơ mới</h3>
-                <p class="text-sm text-slate-500 mt-1">Quản lý upload hồ sơ trực tiếp vào kho đã duyệt.</p>
-            </div>
-        </a>
 
-        <a href="/manager/pending"
-            class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-brand-500/40 transition-all flex flex-col gap-3 group">
             <div
-                class="w-12 h-12 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center group-hover:bg-brand-900 group-hover:text-white transition-colors shrink-0">
-                <i class="ti ti-clock-shield text-2xl"></i>
+                class="bg-white rounded-2xl border border-slate-200 shadow-sm divide-y divide-slate-100 overflow-hidden">
+                {% if recent_pending_documents %}
+                {% for doc in recent_pending_documents %}
+                <div class="p-4 hover:bg-slate-50 transition-colors flex items-center justify-between gap-3">
+                    <div class="min-w-0">
+                        <p class="text-sm font-medium text-slate-800 truncate" title="{{ doc.name }}">{{ doc.name }}</p>
+                        <span class="text-xs text-slate-400 block mt-0.5">{{ doc.created_at }} • Bởi {{ doc.uploader
+                            }}</span>
+                    </div>
+                    <a href="/manager/pending/{{ doc.id }}"
+                        class="px-2.5 py-1.5 rounded-lg text-xs font-medium bg-slate-100 hover:bg-brand-900 hover:text-white text-slate-700 shrink-0 transition-all">
+                        Xử lý
+                    </a>
+                </div>
+                {% endfor %}
+                {% else %}
+                <div class="p-6 text-center text-slate-400 space-y-2">
+                    <i class="ti ti-circle-check text-3xl text-emerald-500 block"></i>
+                    <p class="text-xs">Tuyệt vời! Không có hồ sơ nào đang chờ duyệt.</p>
+                </div>
+                {% endif %}
             </div>
-            <div>
-                <h3 class="font-semibold text-slate-800">Chờ phê duyệt</h3>
-                <p class="text-sm text-slate-500 mt-1">Xem, duyệt hoặc từ chối các hồ sơ đang chờ xử lý.</p>
-            </div>
-        </a>
+        </div>
 
-        <a href="/manager/my-documents"
-            class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-brand-500/40 transition-all flex flex-col gap-3 group">
-            <div
-                class="w-12 h-12 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center group-hover:bg-brand-900 group-hover:text-white transition-colors shrink-0">
-                <i class="ti ti-file-text text-2xl"></i>
-            </div>
-            <div>
-                <h3 class="font-semibold text-slate-800">Hồ sơ của tôi</h3>
-                <p class="text-sm text-slate-500 mt-1">Xem các tài liệu quản lý đã upload.</p>
-            </div>
-        </a>
-
-        <a href="/documents/approved"
-            class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-brand-500/40 transition-all flex flex-col gap-3 group">
-            <div
-                class="w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:bg-brand-900 group-hover:text-white transition-colors shrink-0">
-                <i class="ti ti-archive text-2xl"></i>
-            </div>
-            <div>
-                <h3 class="font-semibold text-slate-800">Kho hồ sơ đã duyệt</h3>
-                <p class="text-sm text-slate-500 mt-1">Tìm kiếm và tải hồ sơ đã được duyệt.</p>
-            </div>
-        </a>
-
-        <a href="/manager/project-requests"
-            class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-brand-500/40 transition-all flex flex-col gap-3 group">
-            <div
-                class="w-12 h-12 rounded-full bg-brand-50 text-brand-800 flex items-center justify-center group-hover:bg-brand-900 group-hover:text-white transition-colors shrink-0">
-                <i class="ti ti-briefcase text-2xl"></i>
-            </div>
-            <div>
-                <h3 class="font-semibold text-slate-800">Yêu cầu dự án</h3>
-                <p class="text-sm text-slate-500 mt-1">Xem các yêu cầu dự án / loại hồ sơ mới.</p>
-            </div>
-        </a>
-
-        <a href="/statistics"
-            class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-brand-500/40 transition-all flex flex-col gap-3 group">
-            <div
-                class="w-12 h-12 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center group-hover:bg-brand-900 group-hover:text-white transition-colors shrink-0">
-                <i class="ti ti-chart-bar text-2xl"></i>
-            </div>
-            <div>
-                <h3 class="font-semibold text-slate-800">Thống kê</h3>
-                <p class="text-sm text-slate-500 mt-1">Xem biểu đồ upload theo tháng và thống kê người upload.</p>
-            </div>
-        </a>
     </div>
 </div>
+
+<style>
+    .animate-fade-in {
+        animation: fadeIn 0.4s ease-out forwards;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(8px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
 {% endblock %}

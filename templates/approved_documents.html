@@ -5,182 +5,277 @@
 {% block active_nav %}approved{% endblock %}
 
 {% block content %}
-<div class="space-y-6">
+<div class="space-y-6 animate-fade-in">
     {% import "layout/_macros.html" as macros %}
     {{ macros.banner('error', error) }}
 
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
-        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
-            <div class="w-12 h-12 rounded-full bg-brand-50 text-brand-800 flex items-center justify-center shrink-0">
-                <i class="ti ti-briefcase text-2xl"></i>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center gap-4">
+            <div
+                class="w-12 h-12 rounded-xl bg-brand-50 text-brand-800 flex items-center justify-center shrink-0 shadow-sm">
+                <i class="ti ti-briefcase text-xl"></i>
             </div>
             <div>
-                <p class="text-sm font-medium text-slate-500" data-i18n-key="totalProjectsLabel">Tổng số project hiện có</p>
-                <h3 class="text-2xl font-bold text-slate-800">{{ total_project_count }}</h3>
+                <p class="text-xs font-medium text-slate-500" data-i18n-key="totalProjectsLabel">Tổng số project hiện có
+                </p>
+                <h3 class="text-xl font-bold text-slate-800 mt-0.5">{{ total_project_count }}</h3>
             </div>
         </div>
 
-        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
-            <div class="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-                <i class="ti ti-files text-2xl"></i>
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center gap-4">
+            <div
+                class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 shadow-sm">
+                <i class="ti ti-files text-xl"></i>
             </div>
             <div>
-                <p class="text-sm font-medium text-slate-500" data-i18n-key="totalUploadedDocumentsLabel">Tổng số tài liệu đã upload</p>
-                <h3 class="text-2xl font-bold text-slate-800">{{ total_uploaded_documents }}</h3>
+                <p class="text-xs font-medium text-slate-500" data-i18n-key="totalUploadedDocumentsLabel">Tổng số tài
+                    liệu đã upload</p>
+                <h3 class="text-xl font-bold text-slate-800 mt-0.5">{{ total_uploaded_documents }}</h3>
             </div>
         </div>
 
-        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
-            <div class="w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-                <i class="ti ti-check text-2xl"></i>
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center gap-4">
+            <div
+                class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 shadow-sm">
+                <i class="ti ti-check text-xl"></i>
             </div>
             <div>
-                <p class="text-sm font-medium text-slate-500" data-i18n-key="totalApprovedDocumentsLabel">Tài liệu đã được duyệt</p>
-                <h3 class="text-2xl font-bold text-slate-800">{{ total_approved_documents }}</h3>
+                <p class="text-xs font-medium text-slate-500" data-i18n-key="totalApprovedDocumentsLabel">Tài liệu đã
+                    được duyệt</p>
+                <h3 class="text-xl font-bold text-slate-800 mt-0.5">{{ total_approved_documents }}</h3>
             </div>
         </div>
     </div>
 
-    <form id="approvedSearchForm" class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm" action="/documents/approved" method="get">
-        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-3">
-            <div class="lg:col-span-2">
-                <label for="keyword" class="block text-xs font-medium text-slate-500 mb-1" data-i18n-key="keywordLabel">Tên file</label>
+    <form id="approvedSearchForm" class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4"
+        action="/documents/approved" method="get">
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+
+            <div class="lg:col-span-1">
+                <label for="keyword" class="block text-xs font-semibold text-slate-500 mb-1.5"
+                    data-i18n-key="keywordLabel">Tên file</label>
                 <div class="relative">
                     <i class="ti ti-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                    <input
-                        id="keyword"
-                        type="text"
-                        name="keyword"
-                        value="{{ filters['keyword'] or '' }}"
-                        placeholder="Nhập tên file..."
-                        data-i18n-placeholder-key="keywordPlaceholder"
-                        class="w-full pl-9 pr-3 py-2 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-brand-500"
-                    >
+                    <input id="keyword" type="text" name="keyword" value="{{ filters['keyword'] or '' }}"
+                        placeholder="Nhập tên file..." data-i18n-placeholder-key="keywordPlaceholder"
+                        class="w-full pl-9 pr-3 py-2 border border-slate-200 rounded-xl text-sm outline-none bg-slate-50/50 focus:border-brand-500 focus:bg-white transition-all">
                 </div>
             </div>
 
-            <div>
-                <label for="project" class="block text-xs font-medium text-slate-500 mb-1" data-i18n-key="projectLabel">Project</label>
-                <select id="project" name="project" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none bg-white focus:ring-2 focus:ring-brand-500">
+            <div class="lg:col-span-1">
+                <label for="project" class="block text-xs font-semibold text-slate-500 mb-1.5"
+                    data-i18n-key="projectLabel">Project</label>
+                <select id="project" name="project"
+                    class="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm outline-none bg-slate-50/50 focus:border-brand-500 focus:bg-white transition-all">
                     <option value="" data-project-id="" data-i18n-key="allProjectsOption">Tất cả project</option>
-
                     {% for key, item in projects.items() %}
-                        <option value="{{ item['label'] }}" data-project-id="{{ key }}" {% if filters['project'] == item['label'] %}selected{% endif %}>
-                            {{ item['label'] }}
-                        </option>
+                    <option value="{{ item['label'] }}" data-project-id="{{ key }}" {% if
+                        filters['project']==item['label'] %}selected{% endif %}>{{ item['label'] }}</option>
                     {% endfor %}
                 </select>
             </div>
 
-            <div>
-                <label for="category" class="block text-xs font-medium text-slate-500 mb-1" data-i18n-key="categoryLabel">Loại hồ sơ</label>
-                <select id="category" name="category" data-selected-category="{{ filters['category'] or '' }}" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none bg-white focus:ring-2 focus:ring-brand-500">
+            <div class="lg:col-span-1">
+                <label for="category" class="block text-xs font-semibold text-slate-500 mb-1.5"
+                    data-i18n-key="categoryLabel">Loại hồ sơ</label>
+                <select id="category" name="category" data-selected-category="{{ filters['category'] or '' }}"
+                    class="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm outline-none bg-slate-50/50 focus:border-brand-500 focus:bg-white transition-all">
                     <option value="" data-i18n-key="allCategoriesOption">Tất cả loại</option>
-
                     {% for key, item in categories.items() %}
-                        <option value="{{ item['label'] }}" data-project-id="{{ key }}" {% if filters['category'] == item['label'] %}selected{% endif %}>
-                            {{ item['label'] }}
-                        </option>
+                    <option value="{{ item['label'] }}" data-project-id="{{ key }}" {% if
+                        filters['category']==item['label'] %}selected{% endif %}>{{ item['label'] }}</option>
                     {% endfor %}
                 </select>
             </div>
 
-            <div>
-                <label for="submitted_by" class="block text-xs font-medium text-slate-500 mb-1" data-i18n-key="submittedByLabel">Người gửi</label>
-                <input
-                    id="submitted_by"
-                    type="text"
-                    name="submitted_by"
-                    value="{{ filters['submitted_by'] or '' }}"
-                    placeholder="Nhập tên người gửi..."
-                    data-i18n-placeholder-key="submittedByPlaceholder"
-                    class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-brand-500"
-                >
+            <div class="lg:col-span-1">
+                <label for="submitted_by" class="block text-xs font-semibold text-slate-500 mb-1.5"
+                    data-i18n-key="submittedByLabel">Người gửi</label>
+                <input id="submitted_by" type="text" name="submitted_by" value="{{ filters['submitted_by'] or '' }}"
+                    placeholder="Tên người gửi..." data-i18n-placeholder-key="submittedByPlaceholder"
+                    class="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm outline-none bg-slate-50/50 focus:border-brand-500 focus:bg-white transition-all">
             </div>
 
-            <div class="grid grid-cols-2 gap-2">
-                <div>
-                    <label for="date_from" class="block text-xs font-medium text-slate-500 mb-1" data-i18n-key="dateFromLabel">Từ ngày</label>
-                    <input id="date_from" type="date" name="date_from" value="{{ filters['date_from'] or '' }}" class="w-full border border-slate-200 rounded-lg px-2 py-2 text-sm outline-none focus:ring-2 focus:ring-brand-500">
-                </div>
-                <div>
-                    <label for="date_to" class="block text-xs font-medium text-slate-500 mb-1" data-i18n-key="dateToLabel">Đến ngày</label>
-                    <input id="date_to" type="date" name="date_to" value="{{ filters['date_to'] or '' }}" class="w-full border border-slate-200 rounded-lg px-2 py-2 text-sm outline-none focus:ring-2 focus:ring-brand-500">
+            <div class="md:col-span-2 lg:col-span-2">
+                <label class="block text-xs font-semibold text-slate-500 mb-1.5" data-i18n-key="dateRangeLabel">Khoảng
+                    thời gian duyệt</label>
+                <div class="flex items-center gap-2">
+                    <input id="date_from" type="date" name="date_from" value="{{ filters['date_from'] or '' }}"
+                        class="w-full border border-slate-200 rounded-xl px-2.5 py-2 text-xs sm:text-sm outline-none bg-slate-50/50 focus:border-brand-500 focus:bg-white transition-all">
+                    <span class="text-slate-400 font-medium shrink-0">—</span>
+                    <input id="date_to" type="date" name="date_to" value="{{ filters['date_to'] or '' }}"
+                        class="w-full border border-slate-200 rounded-xl px-2.5 py-2 text-xs sm:text-sm outline-none bg-slate-50/50 focus:border-brand-500 focus:bg-white transition-all">
                 </div>
             </div>
         </div>
 
-        <div class="flex justify-end gap-2 mt-3">
-            <a href="/documents/approved" class="px-4 py-2 border border-slate-200 text-slate-600 rounded-lg text-sm font-medium hover:bg-slate-50 transition-colors flex items-center gap-1.5">
-                <i class="ti ti-x"></i> <span data-i18n-key="resetButton">Xóa bộ lọc</span>
+        <div class="flex justify-end gap-3 border-t border-slate-100 pt-4">
+            <a href="/documents/approved"
+                class="px-5 py-2.5 border border-slate-200 text-slate-600 rounded-xl text-sm font-semibold hover:bg-slate-50 hover:text-slate-800 transition-colors flex items-center gap-1.5 shadow-sm">
+                <i class="ti ti-refresh-dot text-base"></i> <span data-i18n-key="resetButton">Xóa bộ lọc</span>
             </a>
-            <button type="submit" class="px-4 py-2 bg-brand-900 hover:bg-brand-800 text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5">
-                <i class="ti ti-filter"></i> <span data-i18n-key="filterButton">Lọc</span>
+            <button type="submit"
+                class="px-5 py-2.5 bg-brand-900 hover:bg-brand-800 text-white rounded-xl text-sm font-semibold transition-colors flex items-center gap-1.5 shadow-sm">
+                <i class="ti ti-filter text-base"></i> <span data-i18n-key="filterButton">Lọc dữ liệu</span>
             </button>
         </div>
     </form>
-
     <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="w-full text-left text-sm text-slate-600 whitespace-nowrap">
-                <thead class="bg-slate-50 border-b border-slate-200 text-slate-700 uppercase font-semibold text-xs">
+            <table class="w-full text-left text-sm text-slate-600 whitespace-nowrap table-fixed">
+                <thead
+                    class="bg-slate-50 border-b border-slate-200 text-slate-700 uppercase font-bold text-[11px] tracking-wider">
                     <tr>
-                        <th class="px-6 py-4" data-i18n-key="colId">ID</th>
-                        <th class="px-6 py-4" data-i18n-key="colFileName">Tên file</th>
-                        <th class="px-6 py-4" data-i18n-key="colType">Loại</th>
-                        <th class="px-6 py-4" data-i18n-key="colSubmittedBy">Người gửi</th>
-                        <th class="px-6 py-4" data-i18n-key="colReviewedAt">Ngày duyệt</th>
-                        <th class="px-6 py-4" data-i18n-key="colReviewedBy">Người duyệt</th>
-                        <th class="px-6 py-4" data-i18n-key="colDescription">Mô tả</th>
-                        <th class="px-6 py-4" data-i18n-key="colLocation">Vị trí</th>
-                        <th class="px-6 py-4" data-i18n-key="colAction">Thao tác</th>
+                        <th class="px-6 py-4 w-56" data-i18n-key="colId">ID</th>
+                        <th class="px-6 py-4 w-auto" data-i18n-key="colFileName">Tên file</th>
+                        <th class="px-6 py-4 w-36" data-i18n-key="colType">Loại</th>
+                        <th class="px-6 py-4 w-40" data-i18n-key="colSubmittedBy">Người gửi</th>
+                        <th class="px-6 py-4 w-48 text-center" data-i18n-key="colAction">Thao tác</th>
                     </tr>
                 </thead>
 
                 <tbody id="approvedDocumentsBody" class="divide-y divide-slate-100">
                     {% if documents %}
-                        {% for document in documents %}
-                            <tr class="hover:bg-slate-50 transition-colors">
-                                <td class="px-6 py-4 font-mono text-brand-500 font-medium">{{ document['document_code'] or document['id'] }}</td>
-                                <td class="px-6 py-4 font-medium text-slate-800">{{ document['original_name'] }}</td>
-                                <td class="px-6 py-4"><span class="bg-slate-100 text-slate-600 px-2.5 py-1 rounded-md text-xs">{{ document['category'] }}</span></td>
-                                <td class="px-6 py-4">{{ document['submitted_by'] }}</td>
-                                <td class="px-6 py-4">{{ document['reviewed_at'] or '-' }}</td>
-                                <td class="px-6 py-4">{{ document['reviewed_by'] or '-' }}</td>
-                                <td class="px-6 py-4 max-w-xs truncate" title="{{ document['description'] or '' }}">{{ document['description'] or '-' }}</td>
-                                <td class="px-6 py-4">{{ document['location'] or '-' }}</td>
-                                <td class="px-6 py-4">
-                                    <div class="flex items-center gap-2">
-                                        <a
-                                            href="/documents/{{ document['id'] }}/download"
-                                            target="_blank"
-                                            rel="noopener"
-                                            class="text-slate-400 hover:text-brand-500 p-1.5 bg-white border border-slate-200 rounded-lg shadow-sm"
-                                            title="Tải về"
-                                        >
-                                            <i class="ti ti-download text-lg"></i>
-                                        </a>
+                    {% for document in documents %}
+                    <tr class="hover:bg-slate-50/80 transition-colors group">
+                        <td class="px-6 py-4 font-mono text-brand-500 font-semibold text-xs truncate max-w-[14rem]"
+                            title="{{ document['document_code'] or document['id'] }}">
+                            {{ document['document_code'] or document['id'] }}
+                        </td>
+                        <td class="px-6 py-4 font-medium text-slate-800 truncate"
+                            title="{{ document['original_name'] }}">
+                            {{ document['original_name'] }}
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="bg-slate-100 text-slate-600 px-2.5 py-1 rounded-lg text-xs font-medium">{{
+                                document['category'] }}</span>
+                        </td>
+                        <td class="px-6 py-4 text-slate-500 truncate" title="{{ document['submitted_by'] }}">
+                            {{ document['submitted_by'] }}
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="flex items-center justify-center gap-2">
+                                <button type="button" data-id="{{ document['id'] }}"
+                                    data-code="{{ document['document_code'] or document['id'] }}"
+                                    data-name="{{ document['original_name'] }}"
+                                    data-category="{{ document['category'] }}"
+                                    data-submitter="{{ document['submitted_by'] }}"
+                                    data-date="{{ document['reviewed_at'] or '' }}"
+                                    data-reviewer="{{ document['reviewed_by'] or '' }}"
+                                    data-location="{{ document['location'] or '' }}"
+                                    data-desc="{{ document['description'] or '' }}" onclick="openDocumentModal(this)"
+                                    class="text-slate-500 hover:text-brand-900 px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold flex items-center gap-1 shadow-sm transition-all shrink-0"
+                                    title="Xem chi tiết">
+                                    <i class="ti ti-eye"></i> <span data-i18n-key="detailBtn">Chi tiết</span>
+                                </button>
 
-                                        {% if user['role'] == 'MANAGER' %}
-                                            <form action="/documents/{{ document['id'] }}/delete" method="post" onsubmit="return confirm('Bạn có chắc muốn xóa hồ sơ này không?');">
-                                                <button type="submit" class="text-slate-400 hover:text-rose-500 p-1.5 bg-white border border-slate-200 rounded-lg shadow-sm" title="Xóa hồ sơ">
-                                                    <i class="ti ti-trash text-lg"></i>
-                                                </button>
-                                            </form>
-                                        {% endif %}
-                                    </div>
-                                </td>
-                            </tr>
-                        {% endfor %}
+                                <a href="/documents/{{ document['id'] }}/download" target="_blank" rel="noopener"
+                                    class="text-slate-400 hover:text-brand-500 p-1.5 bg-white border border-slate-200 rounded-xl shadow-sm transition-colors shrink-0"
+                                    title="Tải về">
+                                    <i class="ti ti-download text-base"></i>
+                                </a>
+
+                                {% if user['role'] == 'MANAGER' %}
+                                <form action="/documents/{{ document['id'] }}/delete" method="post"
+                                    onsubmit="return confirm('Bạn có chắc muốn xóa hồ sơ này không?');"
+                                    class="inline shrink-0">
+                                    <button type="submit"
+                                        class="text-slate-400 hover:text-rose-500 p-1.5 bg-white border border-slate-200 rounded-xl shadow-sm transition-colors"
+                                        title="Xóa hồ sơ">
+                                        <i class="ti ti-trash text-base"></i>
+                                    </button>
+                                </form>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
                     {% else %}
-                        <tr>
-                            <td colspan="9" class="px-6 py-10 text-center text-slate-400" data-i18n-key="emptyMessage">
-                                Hiện chưa có hồ sơ nào được quản lý duyệt.
-                            </td>
-                        </tr>
+                    <tr>
+                        <td colspan="5" class="px-6 py-12 text-center text-slate-400" data-i18n-key="emptyMessage">
+                            Hiện chưa có hồ sơ nào được quản lý duyệt.
+                        </td>
+                    </tr>
                     {% endif %}
                 </tbody>
             </table>
+        </div>
+    </div>
+</div>
+
+<div id="documentDetailsModal"
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 hidden backdrop-blur-sm opacity-0 transition-opacity duration-300"
+    onclick="closeDocumentModal()">
+    <div class="bg-white rounded-2xl shadow-xl border border-slate-200 w-full max-w-lg transform scale-95 transition-transform duration-300 overflow-hidden"
+        onclick="event.stopPropagation()">
+
+        <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-brand-50 text-brand-800 flex items-center justify-center">
+                    <i class="ti ti-file-info text-base"></i>
+                </div>
+                <h4 class="font-bold text-slate-800" data-i18n-key="modalTitle">Chi tiết hồ sơ lưu trữ</h4>
+            </div>
+            <button onclick="closeDocumentModal()"
+                class="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-200/60 transition-colors">
+                <i class="ti ti-x text-lg"></i>
+            </button>
+        </div>
+
+        <div class="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+            <div class="grid grid-cols-3 gap-2 py-2 border-b border-slate-100">
+                <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider" data-i18n-key="colId">ID /
+                    Mã hồ sơ</span>
+                <span id="modal_doc_code" class="col-span-2 text-sm font-mono font-bold text-brand-600"></span>
+            </div>
+            <div class="grid grid-cols-3 gap-2 py-2 border-b border-slate-100">
+                <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider"
+                    data-i18n-key="colFileName">Tên file gốc</span>
+                <span id="modal_original_name" class="col-span-2 text-sm font-semibold text-slate-800 break-all"></span>
+            </div>
+            <div class="grid grid-cols-3 gap-2 py-2 border-b border-slate-100">
+                <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider" data-i18n-key="colType">Loại
+                    danh mục</span>
+                <div><span id="modal_category"
+                        class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded-md text-xs font-medium"></span></div>
+            </div>
+            <div class="grid grid-cols-3 gap-2 py-2 border-b border-slate-100">
+                <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider"
+                    data-i18n-key="colSubmittedBy">Người gửi</span>
+                <span id="modal_submitted_by" class="col-span-2 text-sm text-slate-700"></span>
+            </div>
+            <div class="grid grid-cols-3 gap-2 py-2 border-b border-slate-100">
+                <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider"
+                    data-i18n-key="colReviewedAt">Ngày phê duyệt</span>
+                <span id="modal_reviewed_at" class="col-span-2 text-sm text-slate-700"></span>
+            </div>
+            <div class="grid grid-cols-3 gap-2 py-2 border-b border-slate-100">
+                <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider"
+                    data-i18n-key="colReviewedBy">Người phê duyệt</span>
+                <span id="modal_reviewed_by" class="col-span-2 text-sm text-slate-700"></span>
+            </div>
+            <div class="grid grid-cols-3 gap-2 py-2 border-b border-slate-100">
+                <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider"
+                    data-i18n-key="colLocation">Vị trí lưu kho</span>
+                <span id="modal_location" class="col-span-2 text-sm text-slate-700 font-medium"></span>
+            </div>
+            <div class="space-y-1.5 pt-1">
+                <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block"
+                    data-i18n-key="colDescription">Mô tả nội dung</span>
+                <div id="modal_description"
+                    class="text-sm text-slate-600 bg-slate-50 p-3 rounded-xl border border-slate-200/60 min-h-[60px] whitespace-pre-wrap leading-relaxed">
+                </div>
+            </div>
+        </div>
+
+        <div class="px-6 py-3.5 bg-slate-50 border-t border-slate-200 flex justify-end gap-2">
+            <button onclick="closeDocumentModal()"
+                class="px-4 py-2 border border-slate-200 text-slate-600 bg-white rounded-xl text-sm font-medium hover:bg-slate-100 transition-colors"
+                data-i18n-key="closeBtn">Đóng</button>
+            <a id="modal_download_btn" href="#" target="_blank" rel="noopener"
+                class="px-4 py-2 bg-brand-900 hover:bg-brand-800 text-white rounded-xl text-sm font-medium transition-colors flex items-center gap-1.5 shadow-sm">
+                <i class="ti ti-download"></i> <span data-i18n-key="downloadBtn">Tải tài liệu</span>
+            </a>
         </div>
     </div>
 </div>
@@ -188,341 +283,324 @@
 
 {% block extra_script %}
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-    const searchForm = document.getElementById("approvedSearchForm");
-    const tableBody = document.getElementById("approvedDocumentsBody");
+    function openDocumentModal(btn) {
+        const modal = document.getElementById('documentDetailsModal');
+        const box = modal.querySelector('div');
 
-    if (!searchForm || !tableBody) {
-        return;
+        document.getElementById('modal_doc_code').textContent = btn.dataset.code || '-';
+        document.getElementById('modal_original_name').textContent = btn.dataset.name || '-';
+        document.getElementById('modal_category').textContent = btn.dataset.category || '-';
+        document.getElementById('modal_submitted_by').textContent = btn.dataset.submitter || '-';
+        document.getElementById('modal_reviewed_at').textContent = btn.dataset.date || '-';
+        document.getElementById('modal_reviewed_by').textContent = btn.dataset.reviewer || '-';
+        document.getElementById('modal_location').textContent = btn.dataset.location || '-';
+        document.getElementById('modal_description').textContent = btn.dataset.desc || '-';
+        document.getElementById('modal_download_btn').href = `/documents/${btn.dataset.id}/download`;
+
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            modal.classList.remove('opacity-0');
+            box.classList.remove('scale-95');
+        }, 10);
     }
 
-    let searchTimer = null;
-    let activeController = null;
+    function closeDocumentModal() {
+        const modal = document.getElementById('documentDetailsModal');
+        const box = modal.querySelector('div');
 
-    function escapeHtml(value) {
-        return String(value || "")
-            .replaceAll("&", "&amp;")
-            .replaceAll("<", "&lt;")
-            .replaceAll(">", "&gt;")
-            .replaceAll('"', "&quot;")
-            .replaceAll("'", "&#039;");
+        modal.classList.add('opacity-0');
+        box.classList.add('scale-95');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 300);
     }
+</script>
 
-    function buildActionButtons(documentId, isManager) {
-        let html = `
-            <div class="flex items-center gap-2">
-                <a
-                    href="/documents/${documentId}/download"
-                    target="_blank"
-                    rel="noopener"
-                    class="text-slate-400 hover:text-brand-500 p-1.5 bg-white border border-slate-200 rounded-lg shadow-sm"
-                    title="Tải về"
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const searchForm = document.getElementById("approvedSearchForm");
+        const tableBody = document.getElementById("approvedDocumentsBody");
+
+        if (!searchForm || !tableBody) return;
+
+        let searchTimer = null;
+        let activeController = null;
+
+        function escapeHtml(value) {
+            return String(value || "")
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#039;");
+        }
+
+        function buildActionButtons(doc, isManager) {
+            let html = `
+            <div class="flex items-center justify-center gap-2">
+                <button type="button" 
+                    data-id="${escapeHtml(doc.id)}"
+                    data-code="${escapeHtml(doc.document_code || doc.id)}"
+                    data-name="${escapeHtml(doc.original_name)}"
+                    data-category="${escapeHtml(doc.category)}"
+                    data-submitter="${escapeHtml(doc.submitted_by)}"
+                    data-date="${escapeHtml(doc.reviewed_at || '')}"
+                    data-reviewer="${escapeHtml(doc.reviewed_by || '')}"
+                    data-location="${escapeHtml(doc.location || '')}"
+                    data-desc="${escapeHtml(doc.description || '')}"
+                    onclick="openDocumentModal(this)"
+                    class="text-slate-500 hover:text-brand-900 px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold flex items-center gap-1 shadow-sm transition-all shrink-0"
+                    title="Xem chi tiết"
                 >
-                    <i class="ti ti-download text-lg"></i>
+                    <i class="ti ti-eye"></i> <span data-i18n-key="detailBtn">Chi tiết</span>
+                </button>
+                <a href="/documents/${doc.id}/download" target="_blank" rel="noopener" class="text-slate-400 hover:text-brand-500 p-1.5 bg-white border border-slate-200 rounded-xl shadow-sm transition-colors shrink-0" title="Tải về">
+                    <i class="ti ti-download text-base"></i>
                 </a>
         `;
 
-        if (isManager) {
-            html += `
-                <form action="/documents/${documentId}/delete" method="post" onsubmit="return confirm('Bạn có chắc muốn xóa hồ sơ này không?');">
-                    <button type="submit" class="text-slate-400 hover:text-rose-500 p-1.5 bg-white border border-slate-200 rounded-lg shadow-sm" title="Xóa hồ sơ">
-                        <i class="ti ti-trash text-lg"></i>
+            if (isManager) {
+                html += `
+                <form action="/documents/${doc.id}/delete" method="post" onsubmit="return confirm('Bạn có chắc muốn xóa hồ sơ này không?');" class="inline shrink-0">
+                    <button type="submit" class="text-slate-400 hover:text-rose-500 p-1.5 bg-white border border-slate-200 rounded-xl shadow-sm transition-colors" title="Xóa hồ sơ">
+                        <i class="ti ti-trash text-base"></i>
                     </button>
                 </form>
             `;
-        }
-
-        html += `</div>`;
-        return html;
-    }
-
-    function renderDocuments(documents, isManager) {
-        if (!documents || documents.length === 0) {
-            tableBody.innerHTML = `
-                <tr>
-                    <td colspan="9" class="px-6 py-10 text-center text-slate-400">
-                        Không tìm thấy tài liệu phù hợp.
-                    </td>
-                </tr>
-            `;
-            return;
-        }
-
-        let html = "";
-
-        documents.forEach(function (doc) {
-            html += `
-                <tr class="hover:bg-slate-50 transition-colors">
-                    <td class="px-6 py-4 font-mono text-brand-500 font-medium">${escapeHtml(doc.document_code || doc.id || "-")}</td>
-                    <td class="px-6 py-4 font-medium text-slate-800">${escapeHtml(doc.original_name)}</td>
-                    <td class="px-6 py-4"><span class="bg-slate-100 text-slate-600 px-2.5 py-1 rounded-md text-xs">${escapeHtml(doc.category)}</span></td>
-                    <td class="px-6 py-4">${escapeHtml(doc.submitted_by)}</td>
-                    <td class="px-6 py-4">${escapeHtml(doc.reviewed_at || "-")}</td>
-                    <td class="px-6 py-4">${escapeHtml(doc.reviewed_by || "-")}</td>
-                    <td class="px-6 py-4 max-w-xs truncate" title="${escapeHtml(doc.description || "")}">${escapeHtml(doc.description || "-")}</td>
-                    <td class="px-6 py-4">${escapeHtml(doc.location || "-")}</td>
-                    <td class="px-6 py-4">
-                        ${buildActionButtons(doc.id, isManager)}
-                    </td>
-                </tr>
-            `;
-        });
-
-        tableBody.innerHTML = html;
-
-        if (window.applyApprovedLanguage) {
-            window.applyApprovedLanguage(localStorage.getItem("appLanguage") || "vi");
-        }
-    }
-
-    function liveSearch() {
-        const formData = new FormData(searchForm);
-        const params = new URLSearchParams(formData);
-
-        if (activeController) {
-            activeController.abort();
-        }
-
-        activeController = new AbortController();
-
-        tableBody.innerHTML = `
-            <tr class="animate-pulse"><td colspan="9" class="px-6 py-4"><div class="h-4 bg-slate-100 rounded"></div></td></tr>
-            <tr class="animate-pulse"><td colspan="9" class="px-6 py-4"><div class="h-4 bg-slate-100 rounded"></div></td></tr>
-            <tr class="animate-pulse"><td colspan="9" class="px-6 py-4"><div class="h-4 bg-slate-100 rounded"></div></td></tr>
-        `;
-
-        fetch("/documents/approved/live-search?" + params.toString(), {
-            method: "GET",
-            headers: {
-                "Accept": "application/json"
-            },
-            signal: activeController.signal
-        })
-        .then(function (response) {
-            if (!response.ok) {
-                throw new Error("Search request failed");
             }
-
-            return response.json();
-        })
-        .then(function (data) {
-            renderDocuments(data.documents, data.is_manager);
-        })
-        .catch(function (error) {
-            if (error.name === "AbortError") {
+            html += `</div>`;
+            return html;
+        }
+        function renderDocuments(documents, isManager) {
+            if (!documents || documents.length === 0) {
+                tableBody.innerHTML = `
+                <tr>
+                    <td colspan="5" class="px-6 py-10 text-center text-slate-400" data-i18n-key="emptyMessage">Không tìm thấy tài liệu phù hợp.</td>
+                </tr>
+            `;
                 return;
             }
 
-            tableBody.innerHTML = `
-                <tr>
-                    <td colspan="9" class="px-6 py-10 text-center text-rose-500">
-                        Có lỗi khi tìm kiếm dữ liệu.
-                    </td>
+            let html = "";
+            documents.forEach(function (doc) {
+                let docCode = escapeHtml(doc.document_code || doc.id || "-");
+                let docName = escapeHtml(doc.original_name);
+                let docCategory = escapeHtml(doc.category);
+                let docSubmitter = escapeHtml(doc.submitted_by);
+
+                html += `
+                <tr class="hover:bg-slate-50/80 transition-colors">
+                    <td class="px-6 py-4 font-mono text-brand-500 font-semibold text-xs truncate max-w-[14rem]" title="${docCode}">${docCode}</td>
+                    <td class="px-6 py-4 font-medium text-slate-800 truncate" title="${docName}">${docName}</td>
+                    <td class="px-6 py-4"><span class="bg-slate-100 text-slate-600 px-2.5 py-1 rounded-lg text-xs font-medium">${docCategory}</span></td>
+                    <td class="px-6 py-4 text-slate-500 truncate" title="${docSubmitter}">${docSubmitter}</td>
+                    <td class="px-6 py-4">${buildActionButtons(doc, isManager)}</td>
                 </tr>
             `;
-        });
-    }
-
-    function liveSearchWithDelay() {
-        clearTimeout(searchTimer);
-
-        searchTimer = setTimeout(function () {
-            liveSearch();
-        }, 350);
-    }
-
-    searchForm.addEventListener("submit", function (event) {
-        event.preventDefault();
-        liveSearch();
-    });
-
-    const inputs = searchForm.querySelectorAll("input, select");
-
-    inputs.forEach(function (input) {
-        if (input.tagName.toLowerCase() === "input") {
-            input.addEventListener("input", liveSearchWithDelay);
-        } else {
-            input.addEventListener("change", liveSearch);
-        }
-    });
-});
-</script>
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    const projectSelect = document.getElementById("project");
-    const categorySelect = document.getElementById("category");
-
-    if (!projectSelect || !categorySelect) return;
-
-    function updateApprovedCategoryOptions() {
-        const selectedOption = projectSelect.options[projectSelect.selectedIndex];
-        const projectId = selectedOption ? selectedOption.dataset.projectId : "";
-        const selectedCategory = categorySelect.dataset.selectedCategory || categorySelect.value || "";
-
-        if (!projectId) {
-            return;
-        }
-
-        fetch("/project-categories/" + projectId)
-            .then(response => response.json())
-            .then(data => {
-                const allTypesText = localStorage.getItem("appLanguage") === "en"
-                    ? "All types"
-                    : "Tất cả loại";
-                categorySelect.innerHTML = '<option value="">' + allTypesText + '</option>';
-
-                if (!data.success || !data.categories) {
-                    return;
-                }
-
-                data.categories.forEach(function (category) {
-                    const option = document.createElement("option");
-                    option.value = category.label;
-                    option.textContent = category.label;
-
-                    if (String(category.label) === String(selectedCategory)) {
-                        option.selected = true;
-                    }
-
-                    categorySelect.appendChild(option);
-                });
-
-                categorySelect.dataset.selectedCategory = categorySelect.value;
             });
-    }
 
-    projectSelect.addEventListener("change", function () {
-        categorySelect.dataset.selectedCategory = "";
+            tableBody.innerHTML = html;
+
+            if (window.applyApprovedLanguage) {
+                window.applyApprovedLanguage(localStorage.getItem("appLanguage") || "vi");
+            }
+        }
+
+        function liveSearch() {
+            const formData = new FormData(searchForm);
+            const params = new URLSearchParams(formData);
+
+            if (activeController) activeController.abort();
+            activeController = new AbortController();
+
+            tableBody.innerHTML = `
+            <tr class="animate-pulse"><td colspan="5" class="px-6 py-4"><div class="h-4 bg-slate-100 rounded"></div></td></tr>
+            <tr class="animate-pulse"><td colspan="5" class="px-6 py-4"><div class="h-4 bg-slate-100 rounded"></div></td></tr>
+        `;
+
+            fetch("/documents/approved/live-search?" + params.toString(), {
+                method: "GET",
+                headers: { "Accept": "application/json" },
+                signal: activeController.signal
+            })
+                .then(res => {
+                    if (!res.ok) throw new Error("Search request failed");
+                    return res.json();
+                })
+                .then(data => {
+                    renderDocuments(data.documents, data.is_manager);
+                })
+                .catch(err => {
+                    if (err.name === "AbortError") return;
+                    tableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-10 text-center text-rose-500">Có lỗi khi tìm kiếm dữ liệu.</td></tr>`;
+                });
+        }
+
+        function liveSearchWithDelay() {
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(liveSearch, 350);
+        }
+
+        searchForm.addEventListener("submit", function (e) {
+            e.preventDefault();
+            liveSearch();
+        });
+
+        searchForm.querySelectorAll("input, select").forEach(input => {
+            if (input.tagName.toLowerCase() === "input") {
+                input.addEventListener("input", liveSearchWithDelay);
+            } else {
+                input.addEventListener("change", liveSearch);
+            }
+        });
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const projectSelect = document.getElementById("project");
+        const categorySelect = document.getElementById("category");
+
+        if (!projectSelect || !categorySelect) return;
+
+        function updateApprovedCategoryOptions() {
+            const selectedOption = projectSelect.options[projectSelect.selectedIndex];
+            const projectId = selectedOption ? selectedOption.dataset.projectId : "";
+            const selectedCategory = categorySelect.dataset.selectedCategory || categorySelect.value || "";
+
+            if (!projectId) return;
+
+            fetch("/project-categories/" + projectId)
+                .then(res => res.json())
+                .then(data => {
+                    const allTypesText = localStorage.getItem("appLanguage") === "en" ? "All types" : "Tất cả loại";
+                    categorySelect.innerHTML = '<option value="">' + allTypesText + '</option>';
+
+                    if (!data.success || !data.categories) return;
+
+                    data.categories.forEach(function (cat) {
+                        const opt = document.createElement("option");
+                        opt.value = cat.label;
+                        opt.textContent = cat.label;
+                        if (String(cat.label) === String(selectedCategory)) opt.selected = true;
+                        categorySelect.appendChild(opt);
+                    });
+                    categorySelect.dataset.selectedCategory = categorySelect.value;
+                });
+        }
+
+        projectSelect.addEventListener("change", function () {
+            categorySelect.dataset.selectedCategory = "";
+            updateApprovedCategoryOptions();
+        });
         updateApprovedCategoryOptions();
     });
-
-    updateApprovedCategoryOptions();
-});
 </script>
 
 <script>
-(function () {
-    const PAGE_TEXT = {
-        vi: {
-            pageTitle: "Kho hồ sơ đã được duyệt",
-            pageHeading: "Kho hồ sơ đã được duyệt",
-            totalProjectsLabel: "Tổng số project hiện có",
-            totalUploadedDocumentsLabel: "Tổng số tài liệu đã upload",
-            totalApprovedDocumentsLabel: "Tài liệu đã được duyệt",
-            keywordLabel: "Tên file",
-            keywordPlaceholder: "Nhập tên file...",
-            projectLabel: "Project",
-            allProjectsOption: "Tất cả project",
-            categoryLabel: "Loại hồ sơ",
-            allCategoriesOption: "Tất cả loại",
-            submittedByLabel: "Người gửi",
-            submittedByPlaceholder: "Nhập tên người gửi...",
-            dateFromLabel: "Từ ngày",
-            dateToLabel: "Đến ngày",
-            resetButton: "Xóa bộ lọc",
-            filterButton: "Lọc",
-            colId: "ID",
-            colFileName: "Tên file",
-            colType: "Loại",
-            colSubmittedBy: "Người gửi",
-            colReviewedAt: "Ngày duyệt",
-            colReviewedBy: "Người duyệt",
-            colDescription: "Mô tả",
-            colLocation: "Vị trí",
-            colAction: "Thao tác",
-            emptyMessage: "Hiện chưa có hồ sơ nào được quản lý duyệt."
-        },
-
-        en: {
-            pageTitle: "Approved document storage",
-            pageHeading: "Approved document storage",
-            totalProjectsLabel: "Total existing projects",
-            totalUploadedDocumentsLabel: "Total uploaded documents",
-            totalApprovedDocumentsLabel: "Approved documents",
-            keywordLabel: "File name",
-            keywordPlaceholder: "Enter file name...",
-            projectLabel: "Project",
-            allProjectsOption: "All projects",
-            categoryLabel: "Document type",
-            allCategoriesOption: "All types",
-            submittedByLabel: "Submitted by",
-            submittedByPlaceholder: "Enter submitter name...",
-            dateFromLabel: "From date",
-            dateToLabel: "To date",
-            resetButton: "Clear filters",
-            filterButton: "Filter",
-            colId: "ID",
-            colFileName: "File name",
-            colType: "Type",
-            colSubmittedBy: "Submitted by",
-            colReviewedAt: "Approved date",
-            colReviewedBy: "Approved by",
-            colDescription: "Description",
-            colLocation: "Location",
-            colAction: "Action",
-            emptyMessage: "There are no approved documents yet."
-        }
-    };
-
-    function getLanguage() {
-        return localStorage.getItem("appLanguage") || "vi";
-    }
-
-    function setLanguage(language) {
-        localStorage.setItem("appLanguage", language);
-    }
-
-    function applyApprovedLanguage(language) {
-        const button = document.getElementById("languageToggle");
-        const text = PAGE_TEXT[language] || PAGE_TEXT.vi;
-
-        document.documentElement.lang = language;
-        document.title = text.pageTitle;
-
-        if (button) {
-            button.textContent = language === "vi" ? "EN" : "VI";
-        }
-
-        document.querySelectorAll("[data-i18n-key]").forEach(function (element) {
-            const key = element.getAttribute("data-i18n-key");
-
-            if (text[key]) {
-                element.textContent = text[key];
+    (function () {
+        const PAGE_TEXT = {
+            vi: {
+                pageTitle: "Kho hồ sơ đã được duyệt",
+                pageHeading: "Kho hồ sơ đã được duyệt",
+                totalProjectsLabel: "Tổng số project hiện có",
+                totalUploadedDocumentsLabel: "Tổng số tài liệu đã upload",
+                totalApprovedDocumentsLabel: "Tài liệu đã được duyệt",
+                keywordLabel: "Tên file",
+                keywordPlaceholder: "Nhập tên file...",
+                projectLabel: "Project",
+                allProjectsOption: "Tất cả project",
+                categoryLabel: "Loại hồ sơ",
+                allCategoriesOption: "Tất cả loại",
+                submittedByLabel: "Người gửi",
+                submittedByPlaceholder: "Tên người gửi...",
+                dateRangeLabel: "Khoảng thời gian duyệt",
+                resetButton: "Xóa bộ lọc",
+                filterButton: "Lọc",
+                colId: "ID",
+                colFileName: "Tên file",
+                colType: "Loại",
+                colSubmittedBy: "Người gửi",
+                colAction: "Thao tác",
+                emptyMessage: "Hiện chưa có hồ sơ nào được quản lý duyệt.",
+                modalTitle: "Chi tiết hồ sơ lưu trữ",
+                colReviewedAt: "Ngày phê duyệt",
+                colReviewedBy: "Người phê duyệt",
+                colLocation: "Vị trí lưu kho",
+                colDescription: "Mô tả nội dung",
+                closeBtn: "Đóng",
+                downloadBtn: "Tải tài liệu"
+            },
+            en: {
+                pageTitle: "Approved document storage",
+                pageHeading: "Approved document storage",
+                totalProjectsLabel: "Total existing projects",
+                totalUploadedDocumentsLabel: "Total uploaded documents",
+                totalApprovedDocumentsLabel: "Approved documents",
+                keywordLabel: "File name",
+                keywordPlaceholder: "Enter file name...",
+                projectLabel: "Project",
+                allProjectsOption: "All projects",
+                categoryLabel: "Document type",
+                allCategoriesOption: "All types",
+                submittedByLabel: "Submitted by",
+                submittedByPlaceholder: "Submitter name...",
+                dateRangeLabel: "Approval date range",
+                resetButton: "Clear filters",
+                filterButton: "Filter",
+                colId: "ID",
+                colFileName: "File name",
+                colType: "Type",
+                colSubmittedBy: "Submitted by",
+                colAction: "Action",
+                emptyMessage: "There are no approved documents yet.",
+                modalTitle: "Document Repository Details",
+                colReviewedAt: "Approved Date",
+                colReviewedBy: "Approved By",
+                colLocation: "Storage Location",
+                colDescription: "Content Description",
+                closeBtn: "Close",
+                downloadBtn: "Download File"
             }
-        });
-
-        document.querySelectorAll("[data-i18n-placeholder-key]").forEach(function (element) {
-            const key = element.getAttribute("data-i18n-placeholder-key");
-
-            if (text[key]) {
-                element.setAttribute("placeholder", text[key]);
-            }
-        });
-
-        setLanguage(language);
-    }
-
-    function bindApprovedLanguageButton() {
-        const button = document.getElementById("languageToggle");
-
-        if (!button) {
-            return;
-        }
-
-        button.onclick = function () {
-            const currentLanguage = getLanguage();
-            const nextLanguage = currentLanguage === "vi" ? "en" : "vi";
-
-            applyApprovedLanguage(nextLanguage);
         };
-    }
 
-    document.addEventListener("DOMContentLoaded", function () {
-        applyApprovedLanguage(getLanguage());
-        bindApprovedLanguageButton();
-    });
+        function getLanguage() { return localStorage.getItem("appLanguage") || "vi"; }
+        function setLanguage(lang) { localStorage.setItem("appLanguage", lang); }
 
-    window.applyApprovedLanguage = applyApprovedLanguage;
-})();
+        function applyApprovedLanguage(lang) {
+            const button = document.getElementById("languageToggle");
+            const text = PAGE_TEXT[lang] || PAGE_TEXT.vi;
+
+            document.documentElement.lang = lang;
+            document.title = text.pageTitle;
+
+            if (button) button.textContent = lang === "vi" ? "EN" : "VI";
+
+            document.querySelectorAll("[data-i18n-key]").forEach(el => {
+                const key = el.getAttribute("data-i18n-key");
+                if (text[key]) el.textContent = text[key];
+            });
+
+            document.querySelectorAll("[data-i18n-placeholder-key]").forEach(el => {
+                const key = el.getAttribute("data-i18n-placeholder-key");
+                if (text[key]) el.setAttribute("placeholder", text[key]);
+            });
+
+            setLanguage(lang);
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            applyApprovedLanguage(getLanguage());
+            const toggle = document.getElementById("languageToggle");
+            if (toggle) {
+                toggle.addEventListener("click", function () {
+                    const next = getLanguage() === "vi" ? "en" : "vi";
+                    applyApprovedLanguage(next);
+                });
+            }
+        });
+
+        window.applyApprovedLanguage = applyApprovedLanguage;
+    })();
 </script>
 {% endblock %}
