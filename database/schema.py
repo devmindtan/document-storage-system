@@ -386,6 +386,44 @@ def initialize_user_approval_status():
         )
 
 
+def initialize_user_category_permissions():
+    """
+    Thêm cột category_permissions_enabled vào bảng users và tạo bảng
+    user_category_permissions nếu database cũ chưa có.
+
+    category_permissions_enabled = 0 (mặc định): không giới hạn, nhân
+    viên upload được vào mọi loại hồ sơ như trước giờ.
+    category_permissions_enabled = 1: chỉ được upload vào các loại hồ
+    sơ có trong user_category_permissions (có thể là rỗng = bị chặn
+    hoàn toàn, do admin chủ động chọn).
+    """
+
+    with get_connection() as conn:
+        columns = {
+            row["name"]
+            for row in conn.execute(
+                "PRAGMA table_info(users)"
+            ).fetchall()
+        }
+
+        if "category_permissions_enabled" not in columns:
+            conn.execute(
+                """
+                ALTER TABLE users
+                ADD COLUMN category_permissions_enabled INTEGER NOT NULL DEFAULT 0
+                """
+            )
+
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS user_category_permissions (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                category_label TEXT NOT NULL,
+                UNIQUE(user_id, category_label)
+            )
+        """)
+
+
 def initialize_storage_and_documents():
     """
     Tạo thư mục lưu file và bảng documents nếu chưa tồn tại.

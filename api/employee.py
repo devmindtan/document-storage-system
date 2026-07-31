@@ -58,6 +58,7 @@ from services.projects import (
     seed_project_default_categories,
     get_active_categories_for_project_key,
     get_all_active_categories,
+    get_user_allowed_categories,
     get_project_category_by_key,
     get_project_category_json_list,
     get_category_management_rows,
@@ -268,6 +269,17 @@ async def employee_upload_file(
     requested_new_project = selection["requested_new_project"]
     requested_new_category = selection["requested_new_category"]
     requested_category_code = selection["requested_category_code"]
+
+    if current_user["category_permissions_enabled"] and not requested_new_category:
+        allowed_categories = get_user_allowed_categories(current_user["id"])
+
+        if category_label not in allowed_categories:
+            return show_upload_page(
+                error=(
+                    f"Bạn không có quyền upload vào loại hồ sơ "
+                    f"'{category_label}'. Vui lòng liên hệ quản trị viên."
+                )
+            )
 
     success_messages = []
     error_messages = []

@@ -161,7 +161,7 @@
         </div>
         {% set active_nav = self.active_nav() %}
         {% set nav_titles = {'dashboard': 'Tổng quan', 'upload': 'Gửi hồ sơ mới', 'pending': 'Chờ phê duyệt',
-        'my_documents': 'Hồ sơ của tôi', 'approved': 'Kho hồ sơ đã duyệt', 'project_requests': 'Yêu cầu dự án',
+        'my_documents': 'Hồ sơ của tôi', 'approved': 'Kho hồ sơ đã duyệt', 'project_requests': 'Dự án chờ duyệt',
         'statistics': 'Thống kê', 'admin_dashboard': 'Admin Dashboard', 'admin_users': 'Phân quyền', 'manager_users':
         'Duyệt tài khoản', 'create_manager': 'Tạo tài khoản Quản lý', 'create_employee': 'Tạo tài khoản Nhân viên',
         'audit_logs': 'Nhật ký hoạt động'} %}
@@ -211,14 +211,15 @@
                 {% if user.role == 'EMPLOYEE' %}
                 {{ nav_link('/employee', 'dashboard', 'ti-layout-dashboard', 'Tổng quan') }}
                 {{ nav_link('/employee/my-documents', 'my_documents', 'ti-folder', 'Hồ sơ của tôi') }}
-                {{ nav_link('/documents/approved', 'approved', 'ti-lock-square', 'Kho đã duyệt') }}
+                {{ nav_link('/documents/approved', 'approved', 'ti-lock-square', 'Hồ sơ đã duyệt') }}
                 {{ nav_link('/statistics', 'statistics', 'ti-chart-pie', 'Thống kê') }}
                 {% else %}
                 {{ nav_link('/manager', 'dashboard', 'ti-layout-dashboard', 'Tổng quan') }}
                 {{ nav_link('/manager/pending', 'pending', 'ti-bell-ringing', 'Chờ phê duyệt') }}
                 {{ nav_link('/manager/my-documents', 'my_documents', 'ti-folder', 'Hồ sơ của tôi') }}
-                {{ nav_link('/documents/approved', 'approved', 'ti-lock-square', 'Kho đã duyệt') }}
-                {{ nav_link('/manager/project-requests', 'project_requests', 'ti-git-pull-request', 'Yêu cầu dự án') }}
+                {{ nav_link('/documents/approved', 'approved', 'ti-lock-square', 'Hồ sơ đã duyệt') }}
+                {{ nav_link('/manager/project-requests', 'project_requests', 'ti-git-pull-request', 'Dự án chờ duyệt')
+                }}
                 {{ nav_link('/statistics', 'statistics', 'ti-chart-pie', 'Thống kê') }}
                 {% endif %}
             </div>
@@ -375,7 +376,7 @@
                 vi: {
                     'section.workspace': 'Quản lý hồ sơ', 'section.admin': 'Quản trị hệ thống',
                     dashboard: 'Tổng quan', upload: 'Gửi hồ sơ mới', pending: 'Chờ phê duyệt',
-                    my_documents: 'Hồ sơ của tôi', approved: 'Kho đã duyệt', project_requests: 'Yêu cầu dự án',
+                    my_documents: 'Hồ sơ của tôi', approved: 'Hồ sơ đã duyệt', project_requests: 'Dự án chờ duyệt',
                     statistics: 'Thống kê', admin_dashboard: 'Admin Dashboard', admin_users: 'Phân quyền',
                     manager_users: 'Duyệt tài khoản', create_manager: 'Tạo tài khoản Quản lý',
                     create_employee: 'Tạo tài khoản Nhân viên',

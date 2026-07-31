@@ -61,17 +61,24 @@
                                         </form>
                                     </div>
                                 {% else %}
-                                    <form method="post" action="/manager/users/{{ u.id }}/toggle-status">
-                                        {% if u.is_active %}
-                                            <button type="submit" class="text-slate-400 hover:text-rose-500 p-1.5 bg-white border border-slate-200 rounded shadow-sm" data-i18n-title="lockTitle" title="Khóa tài khoản">
-                                                <i class="ti ti-lock text-lg"></i>
-                                            </button>
-                                        {% else %}
-                                            <button type="submit" class="text-slate-400 hover:text-emerald-500 p-1.5 bg-white border border-slate-200 rounded shadow-sm" data-i18n-title="unlockTitle" title="Mở khóa">
-                                                <i class="ti ti-lock-open text-lg"></i>
-                                            </button>
+                                    <div class="flex items-center justify-end gap-2">
+                                        {% if u.role == 'EMPLOYEE' %}
+                                            <a href="/manager/users/{{ u.id }}/permissions" class="text-slate-400 hover:text-brand-500 p-1.5 bg-white border border-slate-200 rounded shadow-sm inline-flex" data-i18n-title="permissionsTitle" title="Phân quyền">
+                                                <i class="ti ti-shield-check text-lg"></i>
+                                            </a>
                                         {% endif %}
-                                    </form>
+                                        <form method="post" action="/manager/users/{{ u.id }}/toggle-status">
+                                            {% if u.is_active %}
+                                                <button type="submit" class="text-slate-400 hover:text-rose-500 p-1.5 bg-white border border-slate-200 rounded shadow-sm" data-i18n-title="lockTitle" title="Khóa tài khoản">
+                                                    <i class="ti ti-lock text-lg"></i>
+                                                </button>
+                                            {% else %}
+                                                <button type="submit" class="text-slate-400 hover:text-emerald-500 p-1.5 bg-white border border-slate-200 rounded shadow-sm" data-i18n-title="unlockTitle" title="Mở khóa">
+                                                    <i class="ti ti-lock-open text-lg"></i>
+                                                </button>
+                                            {% endif %}
+                                        </form>
+                                    </div>
                                 {% endif %}
                             </td>
                         </tr>
@@ -104,6 +111,7 @@
                 currentAccount: "Tài khoản hiện tại",
                 approveButton: "Duyệt tài khoản",
                 rejectButton: "Từ chối",
+                permissionsTitle: "Phân quyền",
                 lockTitle: "Khóa tài khoản",
                 unlockTitle: "Mở khóa",
                 noAccounts: "Chưa có tài khoản nào trong hệ thống."
@@ -122,6 +130,7 @@
                 currentAccount: "Current account",
                 approveButton: "Approve account",
                 rejectButton: "Reject",
+                permissionsTitle: "Permissions",
                 lockTitle: "Lock account",
                 unlockTitle: "Unlock",
                 noAccounts: "No accounts in the system yet."

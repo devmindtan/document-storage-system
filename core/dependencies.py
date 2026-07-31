@@ -126,7 +126,8 @@ def get_current_user(request: Request):
                 u.role,
                 COALESCE(u.is_admin, 0) AS is_admin,
                 COALESCE(u.is_active, 1) AS is_active,
-                COALESCE(u.approval_status, 'APPROVED') AS approval_status
+                COALESCE(u.approval_status, 'APPROVED') AS approval_status,
+                COALESCE(u.category_permissions_enabled, 0) AS category_permissions_enabled
             FROM user_sessions us
             JOIN users u ON u.id = us.user_id
             WHERE us.session_token = ?

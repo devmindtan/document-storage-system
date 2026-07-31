@@ -361,6 +361,60 @@ def get_all_active_categories() -> dict:
     return categories
 
 
+def get_user_allowed_categories(user_id: int) -> set:
+    """
+    Danh sách tên loại hồ sơ (category_label) mà user được phép upload,
+    theo bảng user_category_permissions. Chỉ có ý nghĩa khi
+    users.category_permissions_enabled = 1.
+    """
+    with get_connection() as conn:
+        rows = conn.execute(
+            """
+            SELECT category_label
+            FROM user_category_permissions
+            WHERE user_id = ?
+            """,
+            (user_id,),
+        ).fetchall()
+
+    return {row["category_label"] for row in rows}
+
+
+def set_user_category_permissions(
+    user_id: int,
+    enabled: bool,
+    category_labels,
+):
+    """
+    Ghi đè toàn bộ danh sách loại hồ sơ được phép của một user, và cập
+    nhật cờ bật/tắt giới hạn phân quyền.
+    """
+    with get_connection() as conn:
+        conn.execute(
+            """
+            UPDATE users
+            SET category_permissions_enabled = ?
+            WHERE id = ?
+            """,
+            (1 if enabled else 0, user_id),
+        )
+
+        conn.execute(
+            "DELETE FROM user_category_permissions WHERE user_id = ?",
+            (user_id,),
+        )
+
+        for label in category_labels:
+            conn.execute(
+                """
+                INSERT OR IGNORE INTO user_category_permissions
+                    (user_id, category_label)
+                VALUES (?, ?)
+                """,
+                (user_id, label),
+            )
+
+
 def get_project_category_by_key(category_key: str, project_id: int):
     """
     Lấy file con theo id và project.

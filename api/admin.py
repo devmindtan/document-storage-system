@@ -58,6 +58,8 @@ from services.projects import (
     seed_project_default_categories,
     get_active_categories_for_project_key,
     get_all_active_categories,
+    get_user_allowed_categories,
+    set_user_category_permissions,
     get_project_category_by_key,
     get_project_category_json_list,
     get_category_management_rows,
@@ -470,6 +472,90 @@ def admin_create_employee(
         success=(
             f"Đã tạo tài khoản nhân viên '{username}' thành công."
         )
+    )
+
+
+@router.get("/manager/users/{user_id}/permissions", response_class=HTMLResponse)
+def user_category_permissions_page(
+    request: Request,
+    user_id: int,
+    message: str = "",
+    error: str = "",
+):
+    """
+    Trang phân quyền loại hồ sơ cho một nhân viên cụ thể.
+    """
+
+    current_user = get_current_user(request)
+
+    if not current_user:
+        return RedirectResponse("/", status_code=303)
+
+    if not is_admin_user(current_user):
+        return RedirectResponse("/", status_code=303)
+
+    with get_connection() as conn:
+        target_user = conn.execute(
+            "SELECT * FROM users WHERE id = ?",
+            (user_id,),
+        ).fetchone()
+
+    if not target_user or target_user["role"] != ROLE_EMPLOYEE:
+        return RedirectResponse("/manager/users", status_code=303)
+
+    return templates.TemplateResponse(
+        request=request,
+        name="user_permissions.html",
+        context={
+            "user": current_user,
+            "target_user": target_user,
+            "categories": CATEGORY_MAP,
+            "selected_categories": get_user_allowed_categories(user_id),
+            "permissions_enabled": bool(target_user["category_permissions_enabled"]),
+            "message": message or None,
+            "error": error or None,
+        }
+    )
+
+
+@router.post("/manager/users/{user_id}/permissions", response_class=HTMLResponse)
+def user_category_permissions_save(
+    request: Request,
+    user_id: int,
+    enabled: str = Form(""),
+    categories: list = Form([]),
+):
+    """
+    Lưu phân quyền loại hồ sơ cho một nhân viên cụ thể.
+    """
+
+    current_user = get_current_user(request)
+
+    if not current_user:
+        return RedirectResponse("/", status_code=303)
+
+    if not is_admin_user(current_user):
+        return RedirectResponse("/", status_code=303)
+
+    with get_connection() as conn:
+        target_user = conn.execute(
+            "SELECT id, role FROM users WHERE id = ?",
+            (user_id,),
+        ).fetchone()
+
+    if not target_user or target_user["role"] != ROLE_EMPLOYEE:
+        return RedirectResponse("/manager/users", status_code=303)
+
+    set_user_category_permissions(
+        user_id=user_id,
+        enabled=bool(enabled),
+        category_labels=categories,
+    )
+
+    return RedirectResponse(
+        f"/manager/users/{user_id}/permissions?message="
+        + quote("Đã lưu phân quyền."),
+        status_code=303,
     )
 # ============================================================
 # ĐĂNG XUẤT

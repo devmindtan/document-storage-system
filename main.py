@@ -12,6 +12,7 @@ from database.schema import (
     initialize_admin_status,
     initialize_user_approval_status,
     initialize_storage_and_documents,
+    initialize_user_category_permissions,
 )
 from api import auth, employee, manager, documents, admin, statistics
 
@@ -46,3 +47,4 @@ def startup():
     initialize_user_approval_status()
     initialize_admin_status()
     initialize_user_sessions()
+    initialize_user_category_permissions()
