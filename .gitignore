@@ -9,3 +9,4 @@ storage/
 pending/
 rejected/
 downloads/
+node_modules/

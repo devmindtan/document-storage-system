@@ -23,22 +23,10 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
-                    colors: {
-                        brand: {
-                            50: '#f0f5fa', 100: '#e1ebf4', 500: '#3b82f6',
-                            800: '#1b4d78', 900: '#0a2540', accent: '#c9852a'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
+    <!-- CSS Tailwind biên dịch sẵn (static/tailwind.css) thay cho script CDN
+         JIT-compile lại từ đầu mỗi lần chuyển trang. Chạy `make build-css`
+         sau khi thêm class Tailwind mới vào template. -->
+    <link rel="stylesheet" href="/static/tailwind.css">
     <style>
         ::-webkit-scrollbar {
             width: 6px;
