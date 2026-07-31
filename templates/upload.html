@@ -28,13 +28,14 @@
 
 {% block content %}
 {% import "layout/_macros.html" as macros %}
-<div class="dashboard-box max-w-4xl mx-auto">
-    <div class="top-bar flex flex-wrap items-center justify-between gap-3 mb-6">
+<div class="dashboard-box max-w-4xl mx-auto space-y-6">
+    <div class="top-bar flex flex-wrap items-center justify-between gap-3">
         <p class="text-sm text-slate-500">
             Nhân viên: <strong class="text-slate-800 font-semibold">{{ user['full_name'] }}</strong>
         </p>
 
-        <a class="back-link inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600 transition-colors" href="/employee">
+        <a class="back-link inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600 transition-colors"
+            href="/employee">
             <i class="ti ti-arrow-left"></i> Quay lại
         </a>
     </div>
@@ -49,680 +50,439 @@
             </div>
             <div>
                 <h2 class="text-lg font-semibold text-slate-800">Gửi hồ sơ mới</h2>
-                <p class="text-sm text-slate-500">Điền thông tin và đính kèm tệp cần trình quản lý duyệt.</p>
+                <p class="text-sm text-slate-500">Điền thông tin, quản lý danh mục và đính kèm tệp cần trình quản lý
+                    duyệt.</p>
             </div>
         </div>
 
-        <form
-            action="/employee/upload"
-            method="post"
-            enctype="multipart/form-data"
-            class="p-6 space-y-6"
-        >
+        <form action="/employee/upload" method="post" enctype="multipart/form-data" class="p-6 space-y-6">
             <div class="flex items-center gap-2">
-                <span class="w-6 h-6 rounded-full bg-brand-900 text-white text-xs font-bold flex items-center justify-center shrink-0">1</span>
-                <h3 class="form-step-heading text-sm font-semibold text-slate-800 uppercase tracking-wide">Chọn vị trí lưu</h3>
+                <span
+                    class="w-6 h-6 rounded-full bg-brand-900 text-white text-xs font-bold flex items-center justify-center shrink-0">1</span>
+                <h3 class="form-step-heading text-sm font-semibold text-slate-800 uppercase tracking-wide">Chọn vị trí
+                    lưu & Quản lý danh mục</h3>
             </div>
 
             <div>
-                <label for="project_key" class="block text-sm font-medium text-slate-700 mb-1.5">Project</label>
+                <div class="flex items-center justify-between mb-1.5">
+                    <label for="project_key" class="block text-sm font-medium text-slate-700">Project</label>
 
-                <select id="project_key" name="project_key" required class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-sm text-slate-800 bg-white outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
+                    <div id="projectActionButtons" class="hidden items-center gap-2">
+                        <button type="button" onclick="openEditProjectModal()"
+                            class="text-xs font-semibold text-brand-600 hover:text-brand-800 inline-flex items-center gap-1">
+                            <i class="ti ti-edit"></i> Sửa tên
+                        </button>
+                        <span class="text-slate-300">|</span>
+                        <button type="button" onclick="openDeleteProjectModal()"
+                            class="text-xs font-semibold text-rose-500 hover:text-rose-700 inline-flex items-center gap-1">
+                            <i class="ti ti-trash"></i> Xóa
+                        </button>
+                    </div>
+                </div>
+
+                <select id="project_key" name="project_key" required
+                    class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-sm text-slate-800 bg-white outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
                     {% for key, project in projects.items() %}
-                        {% if selected_project_key == key %}
-                            <option value="{{ key }}" selected>
-                                {{ project['label'] }}
-                            </option>
-                        {% else %}
-                            <option value="{{ key }}">
-                                {{ project['label'] }}
-                            </option>
-                        {% endif %}
+                    {% if selected_project_key == key %}
+                    <option value="{{ key }}" selected>{{ project['label'] }}</option>
+                    {% else %}
+                    <option value="{{ key }}">{{ project['label'] }}</option>
+                    {% endif %}
                     {% endfor %}
 
                     {% if selected_project_key == new_project_key %}
-                        <option value="{{ new_project_key }}" selected>
-                            + Tạo project mới
-                        </option>
+                    <option value="{{ new_project_key }}" selected>+ Tạo project mới</option>
                     {% else %}
-                        <option value="{{ new_project_key }}">
-                            + Tạo project mới
-                        </option>
+                    <option value="{{ new_project_key }}">+ Tạo project mới</option>
                     {% endif %}
                 </select>
 
-                <div id="newProjectBox" class="conditional-input-box mt-3 p-3.5 border border-dashed border-brand-200 rounded-lg bg-brand-50/40">
+                <div id="newProjectBox"
+                    class="conditional-input-box mt-3 p-3.5 border border-dashed border-brand-200 rounded-lg bg-brand-50/40">
                     <label for="new_project_name" class="block text-sm font-medium text-slate-700 mb-1.5">
                         Tên project mới <span class="required-star">*</span>
                     </label>
-
-                    <input
-                        id="new_project_name"
-                        type="text"
-                        name="new_project_name"
-                        maxlength="50"
-                        placeholder="Nhập tên project mới"
-                        value="{{ new_project_name_value or '' }}"
-                        class="w-full border border-slate-300 rounded-lg px-3.5 py-2 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors"
-                    >
-
-                    <p class="note-text text-xs text-slate-500 mt-1.5">
-                        Project mới sẽ được gửi kèm hồ sơ và chờ quản lý duyệt một lần.
-                    </p>
+                    <input id="new_project_name" type="text" name="new_project_name" maxlength="50"
+                        placeholder="Nhập tên project mới" value="{{ new_project_name_value or '' }}"
+                        class="w-full border border-slate-300 rounded-lg px-3.5 py-2 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
+                    <p class="note-text text-xs text-slate-500 mt-1.5">Project mới sẽ được gửi kèm hồ sơ và chờ quản lý
+                        duyệt một lần.</p>
                 </div>
             </div>
 
             <div>
-                <label for="category_key" class="block text-sm font-medium text-slate-700 mb-1.5">Loại hồ sơ</label>
+                <div class="flex items-center justify-between mb-1.5">
+                    <label for="category_key" class="block text-sm font-medium text-slate-700">Loại hồ sơ</label>
 
-                <select
-                    id="category_key"
-                    name="category_key"
-                    required
+                    <div id="categoryActionButtons" class="hidden items-center gap-2">
+                        <button type="button" onclick="openEditCategoryModal()"
+                            class="text-xs font-semibold text-brand-600 hover:text-brand-800 inline-flex items-center gap-1">
+                            <i class="ti ti-edit"></i> Sửa tên
+                        </button>
+                        <span class="text-slate-300">|</span>
+                        <button type="button" onclick="openDeleteCategoryModal()"
+                            class="text-xs font-semibold text-rose-500 hover:text-rose-700 inline-flex items-center gap-1">
+                            <i class="ti ti-trash"></i> Xóa
+                        </button>
+                    </div>
+                </div>
+
+                <select id="category_key" name="category_key" required
                     data-selected-category-key="{{ selected_category_key }}"
-                    class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-sm text-slate-800 bg-white outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors"
-                >
+                    class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-sm text-slate-800 bg-white outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
                     <option value="">Đang tải file con...</option>
                 </select>
 
-                <div id="newCategoryBox" class="conditional-input-box mt-3 p-3.5 border border-dashed border-brand-200 rounded-lg bg-brand-50/40 space-y-3">
+                <div id="newCategoryBox"
+                    class="conditional-input-box mt-3 p-3.5 border border-dashed border-brand-200 rounded-lg bg-brand-50/40 space-y-3">
                     <div>
                         <label for="new_category_name" class="block text-sm font-medium text-slate-700 mb-1.5">
                             Tên file con mới <span class="required-star">*</span>
                         </label>
-
-                        <input
-                            id="new_category_name"
-                            type="text"
-                            name="new_category_name"
-                            maxlength="50"
-                            placeholder="Nhập tên file con mới"
-                            value="{{ new_category_name_value or '' }}"
-                            class="w-full border border-slate-300 rounded-lg px-3.5 py-2 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors"
-                        >
+                        <input id="new_category_name" type="text" name="new_category_name" maxlength="50"
+                            placeholder="Nhập tên file con mới" value="{{ new_category_name_value or '' }}"
+                            class="w-full border border-slate-300 rounded-lg px-3.5 py-2 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
                     </div>
 
                     <div>
-                        <label for="new_category_code" class="block text-sm font-medium text-slate-700 mb-1.5">
-                            Mã file con
-                        </label>
-
-                        <input
-                            id="new_category_code"
-                            type="text"
-                            name="new_category_code"
-                            maxlength="10"
-                            placeholder="Ví dụ: IR, QC, LEG"
-                            value="{{ new_category_code_value or '' }}"
-                            class="w-full border border-slate-300 rounded-lg px-3.5 py-2 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors"
-                        >
+                        <label for="new_category_code" class="block text-sm font-medium text-slate-700 mb-1.5">Mã file
+                            con</label>
+                        <input id="new_category_code" type="text" name="new_category_code" maxlength="10"
+                            placeholder="Ví dụ: IR, QC, LEG" value="{{ new_category_code_value or '' }}"
+                            class="w-full border border-slate-300 rounded-lg px-3.5 py-2 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
                     </div>
 
-                    <p class="note-text text-xs text-slate-500">
-                        Nếu để trống mã file con, hệ thống sẽ tự tạo mã.
-                    </p>
+                    <p class="note-text text-xs text-slate-500">Nếu để trống mã file con, hệ thống sẽ tự tạo mã.</p>
                 </div>
             </div>
 
             <div class="flex items-center gap-2 pt-2">
-                <span class="w-6 h-6 rounded-full bg-brand-900 text-white text-xs font-bold flex items-center justify-center shrink-0">2</span>
+                <span
+                    class="w-6 h-6 rounded-full bg-brand-900 text-white text-xs font-bold flex items-center justify-center shrink-0">2</span>
                 <h3 class="form-step-heading text-sm font-semibold text-slate-800 uppercase tracking-wide">Chọn tệp</h3>
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1.5">
-                    Chọn file
-                </label>
-
-                <div class="custom-file-upload border-2 border-dashed border-slate-300 rounded-xl bg-slate-50 hover:bg-brand-50 transition-colors flex flex-col items-center justify-center p-8 text-center cursor-pointer">
-                    <input
-                        id="uploaded_files"
-                        class="real-file-input hidden"
-                        type="file"
-                        name="uploaded_files"
-                        multiple
-                        required
-                    >
-
+                <label class="block text-sm font-medium text-slate-700 mb-1.5">Chọn file</label>
+                <div
+                    class="custom-file-upload border-2 border-dashed border-slate-300 rounded-xl bg-slate-50 hover:bg-brand-50 transition-colors flex flex-col items-center justify-center p-8 text-center cursor-pointer">
+                    <input id="uploaded_files" class="real-file-input hidden" type="file" name="uploaded_files" multiple
+                        required>
                     <div class="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-sm mb-3">
                         <i class="ti ti-cloud-upload text-2xl text-brand-500"></i>
                     </div>
-
                     <label
                         class="custom-file-button cursor-pointer text-sm font-semibold text-brand-600 hover:text-brand-800 underline underline-offset-2"
-                        for="uploaded_files"
-                    >
+                        for="uploaded_files">
                         Chọn tệp
                     </label>
-
-                    <span
-                        class="selected-file-text text-xs text-slate-500 mt-2"
-                        id="selectedFileText"
-                    >
-                        Không có tệp nào được chọn
-                    </span>
+                    <span class="selected-file-text text-xs text-slate-500 mt-2" id="selectedFileText">Không có tệp nào
+                        được chọn</span>
                 </div>
             </div>
 
             <div class="flex items-center gap-2 pt-2">
-                <span class="w-6 h-6 rounded-full bg-brand-900 text-white text-xs font-bold flex items-center justify-center shrink-0">3</span>
-                <h3 class="form-step-heading text-sm font-semibold text-slate-800 uppercase tracking-wide">Thông tin mô tả</h3>
+                <span
+                    class="w-6 h-6 rounded-full bg-brand-900 text-white text-xs font-bold flex items-center justify-center shrink-0">3</span>
+                <h3 class="form-step-heading text-sm font-semibold text-slate-800 uppercase tracking-wide">Thông tin mô
+                    tả</h3>
             </div>
 
             <label for="description" class="block text-sm font-medium text-slate-700 mb-1.5">
                 Mô tả <span class="required-star">*</span>
             </label>
-
-            <input
-                id="description"
-                type="text"
-                name="description"
-                maxlength="50"
-                required
-                aria-required="true"
-                placeholder="Nhập mô tả hồ sơ, tối đa 50 ký tự"
-                value="{{ description_value or '' }}"
-                oninvalid="this.setCustomValidity('Vui lòng nhập mô tả hồ sơ.')"
-                oninput="this.setCustomValidity('')"
-                class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors"
-            >
-
-            <p class="note-text text-xs text-slate-500">
-                Bắt buộc nhập. Tối đa 50 ký tự.
-            </p>
+            <input id="description" type="text" name="description" maxlength="50" required
+                placeholder="Nhập mô tả hồ sơ, tối đa 50 ký tự" value="{{ description_value or '' }}"
+                class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
+            <p class="note-text text-xs text-slate-500">Bắt buộc nhập. Tối đa 50 ký tự.</p>
 
             <label for="location" class="block text-sm font-medium text-slate-700 mb-1.5">
                 Vị trí <span class="required-star">*</span>
             </label>
-
-            <input
-                id="location"
-                type="text"
-                name="location"
-                maxlength="50"
-                required
-                aria-required="true"
-                placeholder="Nhập vị trí hồ sơ, tối đa 50 ký tự"
-                value="{{ location_value }}"
-                oninvalid="this.setCustomValidity('Vui lòng nhập vị trí hồ sơ.')"
-                oninput="this.setCustomValidity('')"
-                class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors"
-            >
-
-            <p class="note-text text-xs text-slate-500">
-                Bắt buộc nhập. Tối đa 50 ký tự.
-            </p>
+            <input id="location" type="text" name="location" maxlength="50" required
+                placeholder="Nhập vị trí hồ sơ, tối đa 50 ký tự" value="{{ location_value }}"
+                class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
+            <p class="note-text text-xs text-slate-500">Bắt buộc nhập. Tối đa 50 ký tự.</p>
 
             <div class="pt-4 border-t border-slate-200 flex justify-end">
-                <button type="submit" class="primary-upload-button inline-flex items-center gap-2 px-5 py-2.5 bg-brand-900 text-white rounded-lg text-sm font-medium hover:bg-brand-800 transition-colors shadow-sm">
+                <button type="submit"
+                    class="primary-upload-button inline-flex items-center gap-2 px-5 py-2.5 bg-brand-900 text-white rounded-lg text-sm font-medium hover:bg-brand-800 transition-colors shadow-sm">
                     <i class="ti ti-send"></i> Gửi hồ sơ cho quản lý duyệt
                 </button>
             </div>
         </form>
     </div>
+</div>
 
-    <p class="note-text text-xs text-slate-500 mt-4">
-        Nếu cần project mới hoặc file con mới, hãy chọn trực tiếp trong danh sách phía trên. Quản lý chỉ cần duyệt hồ sơ một lần.
-    </p>
+<div id="actionModal"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 hidden backdrop-blur-sm">
+    <div class="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl border border-slate-200 space-y-4">
+        <h3 id="modalTitle" class="text-lg font-bold text-slate-800">Tiêu đề modal</h3>
+        <p id="modalDesc" class="text-sm text-slate-500">Nội dung thông báo hoặc hướng dẫn.</p>
+
+        <div id="modalInputContainer" class="hidden">
+            <input id="modalInputField" type="text"
+                class="w-full border border-slate-300 rounded-lg px-3.5 py-2 text-sm outline-none focus:ring-2 focus:ring-brand-500"
+                placeholder="Nhập tên mới...">
+        </div>
+
+        <div class="flex justify-end gap-2 pt-2">
+            <button type="button" onclick="closeActionModal()"
+                class="px-4 py-2 border border-slate-200 text-slate-600 rounded-xl text-sm font-semibold hover:bg-slate-50">Hủy</button>
+            <button type="button" id="modalConfirmBtn"
+                class="px-4 py-2 bg-brand-900 text-white rounded-xl text-sm font-semibold hover:bg-brand-800">Xác
+                nhận</button>
+        </div>
+    </div>
 </div>
 {% endblock %}
 
 {% block extra_script %}
 <script>
-(function () {
-    const PAGE_TEXT = {
-        vi: {
-            title: "GỬI HỒ SƠ CHỜ DUYỆT",
-            personLabel: "Nhân viên:",
-            back: "Quay lại",
-            projectLabel: "Project",
-            documentTypeLabel: "Loại hồ sơ",
-            newProjectOption: "+ Tạo project mới",
-            newProjectNameLabel: "Tên project mới",
-            newProjectPlaceholder: "Nhập tên project mới",
-            newProjectNote: "Project mới sẽ được gửi kèm hồ sơ và chờ quản lý duyệt một lần.",
-            newCategoryNameLabel: "Tên file con mới",
-            newCategoryNamePlaceholder: "Nhập tên file con mới",
-            newCategoryCodeLabel: "Mã file con",
-            newCategoryCodePlaceholder: "Ví dụ: IR, QC, LEG",
-            newCategoryNote: "Nếu để trống mã file con, hệ thống sẽ tự tạo mã.",
-            fileSelectionLabel: "Chọn file",
-            chooseFileButton: "Chọn tệp",
-            noFilesSelected: "Không có tệp nào được chọn",
-            descriptionLabel: "Mô tả",
-            descriptionPlaceholder: "Nhập mô tả hồ sơ, tối đa 50 ký tự",
-            locationLabel: "Vị trí",
-            locationPlaceholder: "Nhập vị trí hồ sơ, tối đa 50 ký tự",
-            requiredNote: "Bắt buộc nhập. Tối đa 50 ký tự.",
-            submitButton: "Gửi hồ sơ cho quản lý duyệt",
-            bottomNote: "Nếu cần project mới hoặc file con mới, hãy chọn trực tiếp trong danh sách phía trên. Quản lý chỉ cần duyệt hồ sơ một lần."
-        },
-        en: {
-            title: "SUBMIT DOCUMENT FOR APPROVAL",
-            personLabel: "Employee:",
-            back: "Back",
-            projectLabel: "Project",
-            documentTypeLabel: "Document type",
-            newProjectOption: "+ Create new project",
-            newProjectNameLabel: "New project name",
-            newProjectPlaceholder: "Enter new project name",
-            newProjectNote: "The new project will be submitted together with the document and approved once by the manager.",
-            newCategoryNameLabel: "New document type name",
-            newCategoryNamePlaceholder: "Enter new document type name",
-            newCategoryCodeLabel: "Document type code",
-            newCategoryCodePlaceholder: "Example: IR, QC, LEG",
-            newCategoryNote: "If left blank, the system will generate the code automatically.",
-            fileSelectionLabel: "File selection",
-            chooseFileButton: "Choose files",
-            noFilesSelected: "No files selected",
-            descriptionLabel: "Description",
-            descriptionPlaceholder: "Enter document description, maximum 50 characters",
-            locationLabel: "Location",
-            locationPlaceholder: "Enter document location, maximum 50 characters",
-            requiredNote: "Required. Maximum 50 characters.",
-            submitButton: "Submit document for manager approval",
-            bottomNote: "If a new project or document type is needed, select it directly from the dropdown above. The manager only needs to approve the document once."
-        }
-    };
+    let currentModalAction = null;
 
-    function getLanguage() {
-        return localStorage.getItem("appLanguage") || "vi";
+    function showModal(title, desc, showInput, confirmText, callback) {
+        document.getElementById("modalTitle").textContent = title;
+        document.getElementById("modalDesc").textContent = desc;
+
+        const inputContainer = document.getElementById("modalInputContainer");
+        const inputField = document.getElementById("modalInputField");
+        if (showInput) {
+            inputContainer.classList.remove("hidden");
+            inputField.value = showInput;
+        } else {
+            inputContainer.classList.add("hidden");
+        }
+
+        const confirmBtn = document.getElementById("modalConfirmBtn");
+        confirmBtn.textContent = confirmText;
+        confirmBtn.onclick = function () {
+            callback(inputField.value);
+            closeActionModal();
+        };
+
+        document.getElementById("actionModal").classList.remove("hidden");
     }
 
-    function setLanguage(language) {
-        localStorage.setItem("appLanguage", language);
+    function closeActionModal() {
+        document.getElementById("actionModal").classList.add("hidden");
     }
 
-    function setText(selector, value) {
-        const element = document.querySelector(selector);
-        if (element) {
-            element.textContent = value;
-        }
+    // Các hàm mở Modal tương ứng cho Sửa/Xóa
+    function openEditProjectModal() {
+        const select = document.getElementById("project_key");
+        const selectedOption = select.options[select.selectedIndex];
+        if (!selectedOption || selectedOption.value === "__new_project__" || !selectedOption.value) return;
+
+        showModal("Sửa tên Project", "Nhập tên mới cho project này:", selectedOption.text, "Lưu thay đổi", function (newValue) {
+            if (!newValue.trim()) return;
+            selectedOption.text = newValue.trim();
+            selectedOption.value = newValue.trim().toLowerCase().replace(/\s+/g, "_"); // Cập nhật key tùy ý
+        });
     }
 
-    function setPlaceholder(selector, value) {
-        const element = document.querySelector(selector);
-        if (element) {
-            element.setAttribute("placeholder", value);
-        }
+    function openDeleteProjectModal() {
+        const select = document.getElementById("project_key");
+        const selectedOption = select.options[select.selectedIndex];
+        if (!selectedOption || selectedOption.value === "__new_project__" || !selectedOption.value) return;
+
+        showModal("Xóa Project", `Bạn có chắc chắn muốn xóa project "${selectedOption.text}" khỏi danh sách chọn?`, false, "Xóa ngay", function () {
+            select.remove(select.selectedIndex);
+            select.value = "__new_project__";
+            select.dispatchEvent(new Event("change"));
+        });
     }
 
-    function setHeaderPersonLabel(value) {
-        const paragraph = document.querySelector(".top-bar p");
-        if (!paragraph) {
-            return;
-        }
+    function openEditCategoryModal() {
+        const select = document.getElementById("category_key");
+        const selectedOption = select.options[select.selectedIndex];
+        if (!selectedOption || selectedOption.value === "__new_category__" || !selectedOption.value) return;
 
-        const strong = paragraph.querySelector("strong");
-        const name = strong ? strong.textContent : "";
-
-        paragraph.innerHTML = "";
-        paragraph.appendChild(document.createTextNode(value + " "));
-
-        const newStrong = document.createElement("strong");
-        newStrong.textContent = name;
-        paragraph.appendChild(newStrong);
+        showModal("Sửa tên Loại hồ sơ", "Nhập tên mới cho loại hồ sơ này:", selectedOption.text, "Lưu thay đổi", function (newValue) {
+            if (!newValue.trim()) return;
+            selectedOption.text = newValue.trim();
+        });
     }
 
-    function setLabelWithRequiredStar(selector, value) {
-        const label = document.querySelector(selector);
-        if (!label) {
-            return;
-        }
+    function openDeleteCategoryModal() {
+        const select = document.getElementById("category_key");
+        const selectedOption = select.options[select.selectedIndex];
+        if (!selectedOption || selectedOption.value === "__new_category__" || !selectedOption.value) return;
 
-        label.innerHTML = "";
-        label.appendChild(document.createTextNode(value + " "));
-
-        const star = document.createElement("span");
-        star.className = "required-star";
-        star.textContent = "*";
-        label.appendChild(star);
-    }
-
-    function setPlainLabel(selector, value) {
-        const label = document.querySelector(selector);
-        if (label) {
-            label.textContent = value;
-        }
-    }
-
-    function updateNoFileText(value) {
-        const element = document.getElementById("selectedFileText");
-        if (!element) {
-            return;
-        }
-
-        const currentText = element.textContent.replace(/\s+/g, " ").trim();
-        const defaultTexts = [
-            "Không có tệp nào được chọn",
-            "No files selected"
-        ];
-
-        if (defaultTexts.includes(currentText)) {
-            element.textContent = value;
-        }
-    }
-
-    function applyUploadPageLanguage(language) {
-        const text = PAGE_TEXT[language];
-        const button = document.getElementById("languageToggle");
-
-        document.documentElement.lang = language;
-
-        if (button) {
-            button.textContent = language === "vi" ? "EN" : "VI";
-        }
-
-        setHeaderPersonLabel(text.personLabel);
-        setText(".logout-button", text.back);
-
-        setPlainLabel("label[for='project_key']", text.projectLabel);
-        setPlainLabel("label[for='category_key']", text.documentTypeLabel);
-        setText("#project_key option[value='__new_project__']", text.newProjectOption);
-
-        setLabelWithRequiredStar("label[for='new_project_name']", text.newProjectNameLabel);
-        setPlaceholder("#new_project_name", text.newProjectPlaceholder);
-        setText("#newProjectBox .note-text", text.newProjectNote);
-
-        setLabelWithRequiredStar("label[for='new_category_name']", text.newCategoryNameLabel);
-        setPlainLabel("label[for='new_category_code']", text.newCategoryCodeLabel);
-        setPlaceholder("#new_category_name", text.newCategoryNamePlaceholder);
-        setPlaceholder("#new_category_code", text.newCategoryCodePlaceholder);
-        setText("#newCategoryBox .note-text", text.newCategoryNote);
-
-        const fileUploadBox = document.querySelector(".custom-file-upload");
-        if (fileUploadBox && fileUploadBox.previousElementSibling) {
-            fileUploadBox.previousElementSibling.textContent = text.fileSelectionLabel;
-        }
-
-        setText(".custom-file-button", text.chooseFileButton);
-        updateNoFileText(text.noFilesSelected);
-
-        setLabelWithRequiredStar("label[for='description']", text.descriptionLabel);
-        setPlaceholder("#description", text.descriptionPlaceholder);
-
-        setLabelWithRequiredStar("label[for='location']", text.locationLabel);
-        setPlaceholder("#location", text.locationPlaceholder);
-
-        const requiredNotes = document.querySelectorAll("form > p.note-text");
-        if (requiredNotes[0]) {
-            requiredNotes[0].textContent = text.requiredNote;
-        }
-        if (requiredNotes[1]) {
-            requiredNotes[1].textContent = text.requiredNote;
-        }
-
-        const submitButton = document.querySelector("form button[type='submit']");
-        if (submitButton) {
-            submitButton.textContent = text.submitButton;
-        }
-
-        const bottomNote = document.querySelector(".dashboard-box > p.note-text");
-        if (bottomNote) {
-            bottomNote.textContent = text.bottomNote;
-        }
-
-        setLanguage(language);
+        showModal("Xóa Loại hồ sơ", `Bạn có chắc chắn muốn xóa loại hồ sơ "${selectedOption.text}"?`, false, "Xóa ngay", function () {
+            select.remove(select.selectedIndex);
+            select.selectedIndex = 0;
+            select.dispatchEvent(new Event("change"));
+        });
     }
 
     document.addEventListener("DOMContentLoaded", function () {
-        applyUploadPageLanguage(getLanguage());
+        const NEW_PROJECT_KEY = "__new_project__";
+        const NEW_CATEGORY_KEY = "__new_category__";
+        const DEFAULT_CATEGORY_PREFIX = "__default_category__:";
 
-        const button = document.getElementById("languageToggle");
-        if (button) {
-            button.addEventListener("click", function () {
-                const currentLanguage = getLanguage();
-                const nextLanguage = currentLanguage === "vi" ? "en" : "vi";
-                applyUploadPageLanguage(nextLanguage);
-            });
-        }
-    });
+        const defaultCategories = [
+            { id: DEFAULT_CATEGORY_PREFIX + "BC", label: "Business Case" },
+            { id: DEFAULT_CATEGORY_PREFIX + "CAPEX", label: "CAPEX" },
+            { id: DEFAULT_CATEGORY_PREFIX + "PTW", label: "PTW" },
+            { id: DEFAULT_CATEGORY_PREFIX + "JSA", label: "JSA" },
+            { id: DEFAULT_CATEGORY_PREFIX + "RAHS", label: "Risk Assessment / Hazard Study" },
+            { id: DEFAULT_CATEGORY_PREFIX + "DWG", label: "Drawings" },
+            { id: DEFAULT_CATEGORY_PREFIX + "FSH", label: "FAT / SAT / Handover" },
+            { id: DEFAULT_CATEGORY_PREFIX + "PHOTO", label: "Photos" },
+            { id: DEFAULT_CATEGORY_PREFIX + "TSOP", label: "Training / SOP" },
+            { id: DEFAULT_CATEGORY_PREFIX + "LEG", label: "Legal" },
+            { id: DEFAULT_CATEGORY_PREFIX + "VM", label: "Vendor Manual" },
+            { id: DEFAULT_CATEGORY_PREFIX + "OTH", label: "Others" }
+        ];
 
-    window.applyUploadPageLanguage = applyUploadPageLanguage;
-})();
-</script>
+        const projectSelect = document.getElementById("project_key");
+        const categorySelect = document.getElementById("category_key");
+        const newProjectBox = document.getElementById("newProjectBox");
+        const newProjectInput = document.getElementById("new_project_name");
+        const newCategoryBox = document.getElementById("newCategoryBox");
+        const newCategoryNameInput = document.getElementById("new_category_name");
+        const fileInput = document.getElementById("uploaded_files");
+        const selectedFileText = document.getElementById("selectedFileText");
+        const projectActionButtons = document.getElementById("projectActionButtons");
+        const categoryActionButtons = document.getElementById("categoryActionButtons");
 
-
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    const NEW_PROJECT_KEY = "__new_project__";
-    const NEW_CATEGORY_KEY = "__new_category__";
-    const DEFAULT_CATEGORY_PREFIX = "__default_category__:";
-
-    const defaultCategories = [
-        { id: DEFAULT_CATEGORY_PREFIX + "BC", label: "Business Case" },
-        { id: DEFAULT_CATEGORY_PREFIX + "CAPEX", label: "CAPEX" },
-        { id: DEFAULT_CATEGORY_PREFIX + "PTW", label: "PTW" },
-        { id: DEFAULT_CATEGORY_PREFIX + "JSA", label: "JSA" },
-        { id: DEFAULT_CATEGORY_PREFIX + "RAHS", label: "Risk Assessment / Hazard Study" },
-        { id: DEFAULT_CATEGORY_PREFIX + "DWG", label: "Drawings" },
-        { id: DEFAULT_CATEGORY_PREFIX + "FSH", label: "FAT / SAT / Handover" },
-        { id: DEFAULT_CATEGORY_PREFIX + "PHOTO", label: "Photos" },
-        { id: DEFAULT_CATEGORY_PREFIX + "TSOP", label: "Training / SOP" },
-        { id: DEFAULT_CATEGORY_PREFIX + "LEG", label: "Legal" },
-        { id: DEFAULT_CATEGORY_PREFIX + "VM", label: "Vendor Manual" },
-        { id: DEFAULT_CATEGORY_PREFIX + "OTH", label: "Others" }
-    ];
-
-    const projectSelect = document.getElementById("project_key");
-    const categorySelect = document.getElementById("category_key");
-    const newProjectBox = document.getElementById("newProjectBox");
-    const newProjectInput = document.getElementById("new_project_name");
-    const newCategoryBox = document.getElementById("newCategoryBox");
-    const newCategoryNameInput = document.getElementById("new_category_name");
-    const fileInput = document.getElementById("uploaded_files");
-    const selectedFileText = document.getElementById("selectedFileText");
-
-    function currentLanguage() {
-        return localStorage.getItem("appLanguage") || "vi";
-    }
-
-    function text(vi, en) {
-        return currentLanguage() === "en" ? en : vi;
-    }
-
-    function setRequired(input, required) {
-        if (!input) {
-            return;
-        }
-
-        if (required) {
-            input.setAttribute("required", "required");
-        } else {
-            input.removeAttribute("required");
-        }
-    }
-
-    function addOption(value, label, selectedValue) {
-        const option = document.createElement("option");
-        option.value = value;
-        option.textContent = label;
-
-        if (String(value) === String(selectedValue)) {
-            option.selected = true;
-        }
-
-        categorySelect.appendChild(option);
-    }
-
-    function updateNewProjectBox() {
-        const isNewProject = projectSelect.value === NEW_PROJECT_KEY;
-
-        newProjectBox.classList.toggle("is-visible", isNewProject);
-        setRequired(newProjectInput, isNewProject);
-    }
-
-    function updateNewCategoryBox() {
-        const isNewCategory = categorySelect.value === NEW_CATEGORY_KEY;
-
-        newCategoryBox.classList.toggle("is-visible", isNewCategory);
-        setRequired(newCategoryNameInput, isNewCategory);
-    }
-
-    function addCreateNewCategoryOption(selectedCategoryKey) {
-        addOption(
-            NEW_CATEGORY_KEY,
-            text("+ Tạo file con mới", "+ Create new document type"),
-            selectedCategoryKey
-        );
-    }
-
-    function loadDefaultCategoriesForNewProject(selectedCategoryKey) {
-        categorySelect.innerHTML = "";
-
-        defaultCategories.forEach(function (category) {
-            addOption(category.id, category.label, selectedCategoryKey);
-        });
-
-        addCreateNewCategoryOption(selectedCategoryKey);
-
-        categorySelect.disabled = false;
-
-        if (!categorySelect.value && categorySelect.options.length > 0) {
-            categorySelect.selectedIndex = 0;
-        }
-
-        categorySelect.dataset.selectedCategoryKey = categorySelect.value;
-        updateNewCategoryBox();
-    }
-
-    function updateCategoryDropdown() {
-        const projectId = projectSelect.value;
-        const selectedCategoryKey = categorySelect.dataset.selectedCategoryKey || "";
-
-        updateNewProjectBox();
-
-        if (projectId === NEW_PROJECT_KEY) {
-            loadDefaultCategoriesForNewProject(selectedCategoryKey);
-            return;
-        }
-
-        categorySelect.innerHTML = "";
-
-        if (!projectId) {
-            addOption("", text("Không có file con", "No document types"), "");
-            categorySelect.disabled = true;
-            updateNewCategoryBox();
-            return;
-        }
-
-        addOption("", text("Đang tải file con...", "Loading document types..."), "");
-
-        fetch("/project-categories/" + projectId, {
-            method: "GET",
-            headers: {
-                "Accept": "application/json"
+        function setRequired(input, required) {
+            if (!input) return;
+            if (required) {
+                input.setAttribute("required", "required");
+            } else {
+                input.removeAttribute("required");
             }
-        })
-        .then(function (response) {
-            return response.json();
-        })
-        .then(function (data) {
-            categorySelect.innerHTML = "";
+        }
 
-            if (!data.success || !data.categories || data.categories.length === 0) {
-                addOption("", text("Không có file con", "No document types"), "");
-                addCreateNewCategoryOption(selectedCategoryKey);
-                categorySelect.disabled = false;
+        function addOption(value, label, selectedValue) {
+            const option = document.createElement("option");
+            option.value = value;
+            option.textContent = label;
+            if (String(value) === String(selectedValue)) {
+                option.selected = true;
+            }
+            categorySelect.appendChild(option);
+        }
+
+        function updateActionButtonsVisibility() {
+            // Chỉ hiện nút Sửa/Xóa nếu đang chọn mục có thật (không phải trống hay tạo mới)
+            const isProjectSelected = projectSelect.value && projectSelect.value !== NEW_PROJECT_KEY;
+            projectActionButtons.style.display = isProjectSelected ? "flex" : "none";
+
+            const isCategorySelected = categorySelect.value && categorySelect.value !== NEW_CATEGORY_KEY;
+            categoryActionButtons.style.display = isCategorySelected ? "flex" : "none";
+        }
+
+        function updateNewProjectBox() {
+            const isNewProject = projectSelect.value === NEW_PROJECT_KEY;
+            newProjectBox.classList.toggle("is-visible", isNewProject);
+            setRequired(newProjectInput, isNewProject);
+            updateActionButtonsVisibility();
+        }
+
+        function updateNewCategoryBox() {
+            const isNewCategory = categorySelect.value === NEW_CATEGORY_KEY;
+            newCategoryBox.classList.toggle("is-visible", isNewCategory);
+            setRequired(newCategoryNameInput, isNewCategory);
+            updateActionButtonsVisibility();
+        }
+
+        function loadDefaultCategoriesForNewProject(selectedCategoryKey) {
+            categorySelect.innerHTML = "";
+            defaultCategories.forEach(function (category) {
+                addOption(category.id, category.label, selectedCategoryKey);
+            });
+            addOption(NEW_CATEGORY_KEY, "+ Tạo file con mới", selectedCategoryKey);
+            categorySelect.disabled = false;
+            if (!categorySelect.value && categorySelect.options.length > 0) {
+                categorySelect.selectedIndex = 0;
+            }
+            categorySelect.dataset.selectedCategoryKey = categorySelect.value;
+            updateNewCategoryBox();
+        }
+
+        function updateCategoryDropdown() {
+            const projectId = projectSelect.value;
+            const selectedCategoryKey = categorySelect.dataset.selectedCategoryKey || "";
+
+            updateNewProjectBox();
+
+            if (projectId === NEW_PROJECT_KEY) {
+                loadDefaultCategoriesForNewProject(selectedCategoryKey);
+                return;
+            }
+
+            categorySelect.innerHTML = "";
+            if (!projectId) {
+                addOption("", "Không có file con", "");
+                categorySelect.disabled = true;
                 updateNewCategoryBox();
                 return;
             }
 
-            data.categories.forEach(function (category) {
-                addOption(category.id, category.label, selectedCategoryKey);
-            });
+            addOption("", "Đang tải file con...", "");
 
-            addCreateNewCategoryOption(selectedCategoryKey);
+            fetch("/project-categories/" + projectId, {
+                method: "GET",
+                headers: { "Accept": "application/json" }
+            })
+                .then(res => res.json())
+                .then(data => {
+                    categorySelect.innerHTML = "";
+                    if (!data.success || !data.categories || data.categories.length === 0) {
+                        addOption("", "Không có file con", "");
+                        addOption(NEW_CATEGORY_KEY, "+ Tạo file con mới", selectedCategoryKey);
+                        categorySelect.disabled = false;
+                        updateNewCategoryBox();
+                        return;
+                    }
 
-            categorySelect.disabled = false;
+                    data.categories.forEach(function (category) {
+                        addOption(category.id, category.label, selectedCategoryKey);
+                    });
+                    addOption(NEW_CATEGORY_KEY, "+ Tạo file con mới", selectedCategoryKey);
+                    categorySelect.disabled = false;
 
-            if (!categorySelect.value && categorySelect.options.length > 0) {
-                categorySelect.selectedIndex = 0;
-            }
-
-            categorySelect.dataset.selectedCategoryKey = categorySelect.value;
-            updateNewCategoryBox();
-        })
-        .catch(function () {
-            categorySelect.innerHTML = "";
-            addOption("", text("Không thể tải file con", "Cannot load document types"), "");
-            categorySelect.disabled = true;
-            updateNewCategoryBox();
-        });
-    }
-
-    if (fileInput && selectedFileText) {
-        fileInput.addEventListener("change", function () {
-            const files = Array.from(fileInput.files);
-
-            if (files.length === 0) {
-                selectedFileText.textContent = text("Không có tệp nào được chọn", "No files selected");
-                return;
-            }
-
-            if (files.length === 1) {
-                selectedFileText.textContent = files[0].name;
-                return;
-            }
-
-            selectedFileText.textContent = text("Đã chọn ", "Selected ") + files.length + text(" tệp", " files");
-        });
-
-        const dropZone = fileInput.closest(".custom-file-upload");
-
-        if (dropZone) {
-            ["dragover", "dragenter"].forEach(function (eventName) {
-                dropZone.addEventListener(eventName, function (event) {
-                    event.preventDefault();
-                    dropZone.classList.add("is-dragover");
+                    if (!categorySelect.value && categorySelect.options.length > 0) {
+                        categorySelect.selectedIndex = 0;
+                    }
+                    categorySelect.dataset.selectedCategoryKey = categorySelect.value;
+                    updateNewCategoryBox();
+                })
+                .catch(() => {
+                    categorySelect.innerHTML = "";
+                    addOption("", "Không thể tải file con", "");
+                    categorySelect.disabled = true;
+                    updateNewCategoryBox();
                 });
-            });
+        }
 
-            ["dragleave", "dragend"].forEach(function (eventName) {
-                dropZone.addEventListener(eventName, function () {
-                    dropZone.classList.remove("is-dragover");
-                });
-            });
-
-            dropZone.addEventListener("drop", function (event) {
-                event.preventDefault();
-                dropZone.classList.remove("is-dragover");
-
-                if (event.dataTransfer && event.dataTransfer.files.length > 0) {
-                    fileInput.files = event.dataTransfer.files;
-                    fileInput.dispatchEvent(new Event("change"));
+        if (fileInput && selectedFileText) {
+            fileInput.addEventListener("change", function () {
+                const files = Array.from(fileInput.files);
+                if (files.length === 0) {
+                    selectedFileText.textContent = "Không có tệp nào được chọn";
+                    return;
                 }
+                selectedFileText.textContent = files.length === 1 ? files[0].name : `Đã chọn ${files.length} tệp`;
             });
         }
-    }
 
-    if (projectSelect && categorySelect) {
-        projectSelect.addEventListener("change", function () {
-            categorySelect.dataset.selectedCategoryKey = "";
+        if (projectSelect && categorySelect) {
+            projectSelect.addEventListener("change", function () {
+                categorySelect.dataset.selectedCategoryKey = "";
+                updateCategoryDropdown();
+            });
+
+            categorySelect.addEventListener("change", function () {
+                categorySelect.dataset.selectedCategoryKey = categorySelect.value;
+                updateNewCategoryBox();
+            });
+
             updateCategoryDropdown();
-        });
-
-        categorySelect.addEventListener("change", function () {
-            categorySelect.dataset.selectedCategoryKey = categorySelect.value;
-            updateNewCategoryBox();
-        });
-
-        updateCategoryDropdown();
-    }
-
-    const languageButton = document.getElementById("languageToggle");
-
-    if (languageButton) {
-        languageButton.addEventListener("click", function () {
-            setTimeout(function () {
-                if (projectSelect && categorySelect) {
-                    const currentCategoryValue = categorySelect.value;
-                    categorySelect.dataset.selectedCategoryKey = currentCategoryValue;
-                    updateCategoryDropdown();
-                }
-            }, 120);
-        });
-    }
-});
+        }
+    });
 </script>
 {% endblock %}
