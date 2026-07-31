@@ -1,15 +1,7 @@
 {% macro banner(kind, text) %}
 {% if text %}
-{% if kind == 'error' %}
-<div class="bg-rose-50 border border-rose-200 text-rose-700 rounded-xl p-4 mb-6 flex items-start gap-3" data-toast-kind="error" data-toast-text="{{ text }}">
-    <i class="ti ti-alert-circle text-rose-500 text-xl mt-0.5 shrink-0"></i>
-    <p class="text-sm">{{ text }}</p>
-</div>
-{% else %}
-<div class="bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl p-4 mb-6 flex items-start gap-3" data-toast-kind="success" data-toast-text="{{ text }}">
-    <i class="ti ti-circle-check text-emerald-500 text-xl mt-0.5 shrink-0"></i>
-    <p class="text-sm">{{ text }}</p>
-</div>
-{% endif %}
+{# Toast (layout/base.html) hiện thông báo này rồi nên không cần hiện lại
+   trực tiếp trên trang nữa — chỉ giữ div ẩn để script chrome đọc data-toast-*. #}
+<div class="hidden" data-toast-kind="{{ 'error' if kind == 'error' else 'success' }}" data-toast-text="{{ text }}"></div>
 {% endif %}
 {% endmacro %}

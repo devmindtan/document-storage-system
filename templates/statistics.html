@@ -188,7 +188,7 @@
         // BIỂU ĐỒ TRÒN (Doughnut Chart)
         // FIX SYNTAX 2: Bổ sung default(0) tránh trường hợp biến undefined sinh ra mảng lỗi [,,]
         const ctxDoughnut = document.getElementById("doughnutChartCanvas").getContext("2d");
-        new Chart(ctxDoughnut, {
+        window.statsDoughnutChart = new Chart(ctxDoughnut, {
             type: "doughnut",
             data: {
                 labels: ["Đã duyệt", "Chờ duyệt", "Từ chối"],
@@ -291,6 +291,13 @@
                     element.textContent = text[key];
                 }
             });
+
+            if (window.statsDoughnutChart) {
+                window.statsDoughnutChart.data.labels = language === "vi"
+                    ? ["Đã duyệt", "Chờ duyệt", "Từ chối"]
+                    : ["Approved", "Pending", "Rejected"];
+                window.statsDoughnutChart.update();
+            }
 
             setLanguage(language);
         }

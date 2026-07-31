@@ -349,6 +349,128 @@ def admin_create_manager(
             f"Đã tạo tài khoản quản lý '{username}' thành công."
         )
     )
+
+
+@router.get("/admin/create-employee", response_class=HTMLResponse)
+def admin_create_employee_page(request: Request):
+    """
+    Form tạo tài khoản nhân viên.
+    """
+
+    current_user = get_current_user(request)
+
+    if not current_user:
+        return RedirectResponse("/", status_code=303)
+
+    if not is_admin_user(current_user):
+        return RedirectResponse("/", status_code=303)
+
+    return templates.TemplateResponse(
+        request=request,
+        name="admin_create_employee.html",
+        context={
+            "user": current_user,
+            "error": None,
+            "success": None,
+        }
+    )
+
+
+@router.post("/admin/create-employee", response_class=HTMLResponse)
+def admin_create_employee(
+    request: Request,
+    username: str = Form(...),
+    full_name: str = Form(...),
+    password: str = Form(...),
+    confirm_password: str = Form(...)
+):
+    """
+    Admin tạo tài khoản nhân viên mới, duyệt sẵn ngay (bỏ qua bước
+    chờ duyệt vì admin đã trực tiếp tạo tài khoản này).
+    """
+
+    current_user = get_current_user(request)
+
+    if not current_user:
+        return RedirectResponse("/", status_code=303)
+
+    if not is_admin_user(current_user):
+        return RedirectResponse("/", status_code=303)
+
+    def show_page(error=None, success=None):
+        return templates.TemplateResponse(
+            request=request,
+            name="admin_create_employee.html",
+            context={
+                "user": current_user,
+                "error": error,
+                "success": success,
+            }
+        )
+
+    username = username.strip().lower()
+    full_name = full_name.strip()
+
+    if not username:
+        return show_page(error="Username không được để trống.")
+
+    if not full_name:
+        return show_page(error="Họ tên không được để trống.")
+
+    if len(password) < 8:
+        return show_page(error="Mật khẩu cần ít nhất 8 ký tự.")
+
+    if password != confirm_password:
+        return show_page(error="Hai mật khẩu không khớp.")
+
+    password_salt, password_hash = hash_password(password)
+    created_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    try:
+        with get_connection() as conn:
+            conn.execute(
+                """
+                INSERT INTO users (
+                    username,
+                    full_name,
+                    role,
+                    password_salt,
+                    password_hash,
+                    created_at,
+                    is_active,
+                    approval_status,
+                    is_admin
+                )
+                VALUES (?, ?, 'EMPLOYEE', ?, ?, ?, 1, 'APPROVED', 0)
+                """,
+                (
+                    username,
+                    full_name,
+                    password_salt,
+                    password_hash,
+                    created_at,
+                ),
+            )
+
+    except sqlite3.IntegrityError:
+        return show_page(
+            error="Username này đã tồn tại."
+        )
+
+    write_audit_log(
+        user=current_user,
+        action="CREATE_EMPLOYEE",
+        details=(
+            f"Admin tạo tài khoản nhân viên '{username}' "
+            f"({full_name})."
+        ),
+    )
+
+    return show_page(
+        success=(
+            f"Đã tạo tài khoản nhân viên '{username}' thành công."
+        )
+    )
 # ============================================================
 # ĐĂNG XUẤT
 # ============================================================

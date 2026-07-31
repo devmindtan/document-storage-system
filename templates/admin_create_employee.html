@@ -1,0 +1,212 @@
+{% extends "layout/base.html" %}
+
+{% block title %}Tạo tài khoản nhân viên{% endblock %}
+{% block page_title %}Tạo tài khoản Nhân viên{% endblock %}
+{% block active_nav %}create_employee{% endblock %}
+
+{% block content %}
+<div class="space-y-6 max-w-3xl mx-auto animate-fade-in pt-4">
+    {% import "layout/_macros.html" as macros %}
+    {{ macros.banner('error', error) }}
+    {{ macros.banner('success', success) }}
+
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+
+        <div class="p-6 sm:p-8 border-b border-slate-100 flex items-start gap-4">
+            <div
+                class="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 shadow-sm border border-blue-100/50">
+                <i class="ti ti-user-plus text-2xl"></i>
+            </div>
+            <div class="pt-1">
+                <h2 class="text-xl font-bold text-slate-800 tracking-tight" data-i18n-key="createEmployeeHeader">Tạo tài khoản Nhân viên</h2>
+                <p class="text-sm text-slate-500 mt-1.5 leading-relaxed">
+                    <span data-i18n-key="createEmployeeDescBefore">Tài khoản được tạo sẽ tự động được gán quyền</span> <span
+                        class="font-semibold text-slate-700">EMPLOYEE</span><span data-i18n-key="createEmployeeDescAfter">, được duyệt sẵn và có thể đăng nhập ngay,
+                    không cần chờ duyệt như khi tự đăng ký.</span>
+                </p>
+            </div>
+        </div>
+
+        <form action="/admin/create-employee" method="post" class="p-6 sm:p-8 space-y-6">
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                    <label for="username"
+                        class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2"><span data-i18n-key="usernameLabel">Tên đăng nhập</span> <span
+                            class="text-rose-500">*</span></label>
+                    <div class="relative group">
+                        <i
+                            class="ti ti-id absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-lg group-focus-within:text-brand-500 transition-colors"></i>
+                        <input id="username" type="text" name="username" placeholder="VD: nguyen.van.a"
+                            data-i18n-placeholder="usernamePlaceholder" required
+                            class="w-full pl-10 pr-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-sm outline-none focus:bg-white focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-all">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="full_name"
+                        class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2"><span data-i18n-key="fullNameLabel">Họ và tên</span> <span
+                            class="text-rose-500">*</span></label>
+                    <div class="relative group">
+                        <i
+                            class="ti ti-user absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-lg group-focus-within:text-brand-500 transition-colors"></i>
+                        <input id="full_name" type="text" name="full_name" placeholder="VD: Nguyễn Văn A"
+                            data-i18n-placeholder="fullNamePlaceholder" required
+                            class="w-full pl-10 pr-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-sm outline-none focus:bg-white focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-all">
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                    <label for="password"
+                        class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2"><span data-i18n-key="passwordLabel">Mật khẩu</span> <span
+                            class="text-rose-500">*</span></label>
+                    <div class="relative group">
+                        <i
+                            class="ti ti-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-lg group-focus-within:text-brand-500 transition-colors"></i>
+                        <input id="password" type="password" name="password" placeholder="Tối thiểu 8 ký tự"
+                            data-i18n-placeholder="passwordPlaceholder" required
+                            class="w-full pl-10 pr-10 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-sm outline-none focus:bg-white focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-all">
+                        <button type="button" onclick="togglePassword('password', this)"
+                            class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none">
+                            <i class="ti ti-eye text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="confirm_password"
+                        class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2"><span data-i18n-key="confirmPasswordLabel">Xác nhận mật khẩu</span>
+                        <span class="text-rose-500">*</span></label>
+                    <div class="relative group">
+                        <i
+                            class="ti ti-lock-check absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-lg group-focus-within:text-brand-500 transition-colors"></i>
+                        <input id="confirm_password" type="password" name="confirm_password"
+                            placeholder="Nhập lại mật khẩu" data-i18n-placeholder="confirmPasswordPlaceholder" required
+                            class="w-full pl-10 pr-10 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-sm outline-none focus:bg-white focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-all">
+                        <button type="button" onclick="togglePassword('confirm_password', this)"
+                            class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none">
+                            <i class="ti ti-eye text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-blue-50/50 border border-blue-100 rounded-xl p-4 flex gap-3 mt-2">
+                <i class="ti ti-info-circle text-blue-500 text-xl shrink-0"></i>
+                <p class="text-sm text-blue-800 leading-relaxed" data-i18n-key="infoBoxText">
+                    Vui lòng cung cấp tài khoản này cho nhân viên nội bộ. Họ có thể thay đổi mật khẩu sau khi đăng
+                    nhập lần đầu tiên.
+                </p>
+            </div>
+
+            <div class="pt-6 mt-6 border-t border-slate-100 flex items-center justify-end gap-3">
+                <a href="/manager/users"
+                    class="px-5 py-2.5 text-sm font-semibold text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition-colors"
+                    data-i18n-key="cancelBtn">
+                    Hủy bỏ
+                </a>
+                <button type="submit"
+                    class="bg-brand-900 hover:bg-brand-800 text-white px-6 py-2.5 rounded-xl text-sm font-semibold shadow-sm inline-flex items-center gap-2 transition-transform active:scale-95">
+                    <i class="ti ti-user-plus text-base"></i> <span data-i18n-key="submitBtn">Khởi tạo tài khoản</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_script %}
+<script>
+    // Hàm xử lý ẩn/hiện mật khẩu mượt mà
+    function togglePassword(inputId, btn) {
+        const input = document.getElementById(inputId);
+        const icon = btn.querySelector('i');
+
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.remove('ti-eye');
+            icon.classList.add('ti-eye-off');
+            icon.classList.add('text-brand-500');
+        } else {
+            input.type = 'password';
+            icon.classList.remove('ti-eye-off');
+            icon.classList.add('ti-eye');
+            icon.classList.remove('text-brand-500');
+        }
+    }
+
+    (function () {
+        const PAGE_TRANSLATIONS = {
+            vi: {
+                createEmployeeHeader: "Tạo tài khoản Nhân viên",
+                createEmployeeDescBefore: "Tài khoản được tạo sẽ tự động được gán quyền",
+                createEmployeeDescAfter: ", được duyệt sẵn và có thể đăng nhập ngay, không cần chờ duyệt như khi tự đăng ký.",
+                usernameLabel: "Tên đăng nhập",
+                usernamePlaceholder: "VD: nguyen.van.a",
+                fullNameLabel: "Họ và tên",
+                fullNamePlaceholder: "VD: Nguyễn Văn A",
+                passwordLabel: "Mật khẩu",
+                passwordPlaceholder: "Tối thiểu 8 ký tự",
+                confirmPasswordLabel: "Xác nhận mật khẩu",
+                confirmPasswordPlaceholder: "Nhập lại mật khẩu",
+                infoBoxText: "Vui lòng cung cấp tài khoản này cho nhân viên nội bộ. Họ có thể thay đổi mật khẩu sau khi đăng nhập lần đầu tiên.",
+                cancelBtn: "Hủy bỏ",
+                submitBtn: "Khởi tạo tài khoản"
+            },
+            en: {
+                createEmployeeHeader: "Create Employee Account",
+                createEmployeeDescBefore: "The created account will automatically be assigned the",
+                createEmployeeDescAfter: "role, pre-approved and able to log in right away, without waiting for approval like self-registration.",
+                usernameLabel: "Username",
+                usernamePlaceholder: "e.g. nguyen.van.a",
+                fullNameLabel: "Full name",
+                fullNamePlaceholder: "e.g. Nguyen Van A",
+                passwordLabel: "Password",
+                passwordPlaceholder: "At least 8 characters",
+                confirmPasswordLabel: "Confirm password",
+                confirmPasswordPlaceholder: "Re-enter password",
+                infoBoxText: "Please provide this account to the internal employee. They can change the password after their first login.",
+                cancelBtn: "Cancel",
+                submitBtn: "Create Account"
+            }
+        };
+
+        function getPageLanguage() {
+            const savedLanguage = localStorage.getItem("appLanguage");
+            return (savedLanguage === "en" || savedLanguage === "vi") ? savedLanguage : "vi";
+        }
+
+        function applyPageTranslations() {
+            const currentLanguage = getPageLanguage();
+            const dict = PAGE_TRANSLATIONS[currentLanguage];
+
+            document.querySelectorAll("[data-i18n-key]").forEach(function (element) {
+                const key = element.getAttribute("data-i18n-key");
+                if (dict && dict[key]) {
+                    element.textContent = dict[key];
+                }
+            });
+
+            document.querySelectorAll("[data-i18n-placeholder]").forEach(function (element) {
+                const key = element.getAttribute("data-i18n-placeholder");
+                if (dict && dict[key]) {
+                    element.setAttribute("placeholder", dict[key]);
+                }
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            applyPageTranslations();
+
+            const languageButton = document.getElementById("languageToggle");
+            if (languageButton) {
+                languageButton.addEventListener("click", function () {
+                    setTimeout(applyPageTranslations, 100);
+                });
+            }
+        });
+    })();
+</script>
+{% endblock %}

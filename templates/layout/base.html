@@ -93,6 +93,22 @@
             background: #b91c1c;
         }
 
+        .toast-close {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            padding: 0.125rem;
+            line-height: 0;
+            border-radius: 0.375rem;
+            flex-shrink: 0;
+        }
+
+        .toast-close:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
         @keyframes toast-in {
             from {
                 opacity: 0;
@@ -147,14 +163,15 @@
         {% set nav_titles = {'dashboard': 'Tổng quan', 'upload': 'Gửi hồ sơ mới', 'pending': 'Chờ phê duyệt',
         'my_documents': 'Hồ sơ của tôi', 'approved': 'Kho hồ sơ đã duyệt', 'project_requests': 'Yêu cầu dự án',
         'statistics': 'Thống kê', 'admin_dashboard': 'Admin Dashboard', 'admin_users': 'Phân quyền', 'manager_users':
-        'Duyệt tài khoản', 'create_manager': 'Tạo tài khoản Quản lý', 'audit_logs': 'Nhật ký hoạt động'} %}
+        'Duyệt tài khoản', 'create_manager': 'Tạo tài khoản Quản lý', 'create_employee': 'Tạo tài khoản Nhân viên',
+        'audit_logs': 'Nhật ký hoạt động'} %}
         {% set nav_icons = {'dashboard': 'ti-layout-dashboard', 'upload': 'ti-cloud-upload', 'pending':
         'ti-bell-ringing', 'my_documents': 'ti-folder', 'approved': 'ti-lock-square', 'project_requests':
         'ti-git-pull-request', 'statistics': 'ti-chart-pie', 'admin_dashboard': 'ti-settings-automation', 'admin_users':
-        'ti-fingerprint', 'manager_users': 'ti-users-group', 'create_manager': 'ti-user-plus', 'audit_logs':
-        'ti-activity-heartbeat'} %}
+        'ti-fingerprint', 'manager_users': 'ti-users-group', 'create_manager': 'ti-user-plus', 'create_employee':
+        'ti-user-plus', 'audit_logs': 'ti-activity-heartbeat'} %}
         {% set is_admin_section = active_nav in ['admin_dashboard', 'admin_users', 'manager_users', 'create_manager',
-        'audit_logs'] %}
+        'create_employee', 'audit_logs'] %}
 
         <!-- Macro dùng lại cho mọi nav item: 1 active state duy nhất (thanh trái vàng + nền nhạt) -->
         {% macro nav_link(href, key, icon, label) %}
@@ -216,6 +233,7 @@
                 {{ nav_link('/admin/users', 'admin_users', 'ti-fingerprint', 'Phân quyền') }}
                 {{ nav_link('/manager/users', 'manager_users', 'ti-users-group', 'Duyệt tài khoản') }}
                 {{ nav_link('/admin/create-manager', 'create_manager', 'ti-user-plus', 'Tạo tài khoản Quản lý') }}
+                {{ nav_link('/admin/create-employee', 'create_employee', 'ti-user-plus', 'Tạo tài khoản Nhân viên') }}
                 {{ nav_link('/manager/audit-logs', 'audit_logs', 'ti-activity-heartbeat', 'Nhật ký hoạt động') }}
             </div>
             {% endif %}
@@ -305,16 +323,41 @@
         function showToast(message, type = 'success') {
             const host = document.getElementById("toastHost");
             if (!host) return;
+
             const el = document.createElement("div");
             el.className = `toast-item ${type}`;
-            const icon = type === 'danger' ? 'ti-circle-x' : (type === 'info' ? 'ti-info-circle' : 'ti-circle-check');
-            el.innerHTML = `<i class="ti ${icon} text-base"></i><span>${message}</span>`;
+
+            const iconClass = type === 'danger' ? 'ti-circle-x' : (type === 'info' ? 'ti-info-circle' : 'ti-circle-check');
+            const icon = document.createElement("i");
+            icon.className = `ti ${iconClass} text-base shrink-0`;
+            el.appendChild(icon);
+
+            // textContent (không phải innerHTML) để tránh chèn HTML lạ từ
+            // dữ liệu có thể do người dùng nhập (vd: tên file upload).
+            const text = document.createElement("span");
+            text.className = "flex-1";
+            text.textContent = message;
+            el.appendChild(text);
+
+            const closeBtn = document.createElement("button");
+            closeBtn.type = "button";
+            closeBtn.className = "toast-close";
+            closeBtn.setAttribute("aria-label", "Đóng thông báo");
+            closeBtn.innerHTML = '<i class="ti ti-x"></i>';
+            el.appendChild(closeBtn);
+
             host.appendChild(el);
-            setTimeout(() => {
+
+            let dismissed = false;
+            function dismiss() {
+                if (dismissed) return;
+                dismissed = true;
                 el.style.opacity = "0";
                 el.style.transition = "opacity .2s ease";
                 setTimeout(() => el.remove(), 200);
-            }, 2600);
+            }
+            closeBtn.addEventListener("click", dismiss);
+            setTimeout(dismiss, 5000);
         }
 
         document.addEventListener("DOMContentLoaded", function () {
@@ -335,6 +378,7 @@
                     my_documents: 'Hồ sơ của tôi', approved: 'Kho đã duyệt', project_requests: 'Yêu cầu dự án',
                     statistics: 'Thống kê', admin_dashboard: 'Admin Dashboard', admin_users: 'Phân quyền',
                     manager_users: 'Duyệt tài khoản', create_manager: 'Tạo tài khoản Quản lý',
+                    create_employee: 'Tạo tài khoản Nhân viên',
                     audit_logs: 'Nhật ký hoạt động', logout: 'Đăng xuất'
                 },
                 en: {
@@ -343,6 +387,7 @@
                     my_documents: 'My Documents', approved: 'Approved Archive', project_requests: 'Project Requests',
                     statistics: 'Statistics', admin_dashboard: 'Admin Dashboard', admin_users: 'Permissions',
                     manager_users: 'Account Approval', create_manager: 'Create Manager Account',
+                    create_employee: 'Create Employee Account',
                     audit_logs: 'Activity Log', logout: 'Log out'
                 }
             };
