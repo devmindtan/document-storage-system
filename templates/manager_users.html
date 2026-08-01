@@ -7,9 +7,9 @@
 {% block active_nav %}manager_users{% endblock %}
 
 {% block content %}
-<div class="space-y-6">
+<div class="space-y-6 relative">
 
-    <div id="mainView" class="block space-y-6">
+    <div id="mainView" class="space-y-6">
         {% if users %}
         <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
             <div class="overflow-x-auto">
@@ -141,12 +141,12 @@
         </div>
 
         <form id="permissionsForm" method="post" action="" class="space-y-6">
-            <label
-                class="flex items-center gap-3 p-3 rounded-lg border border-amber-200 bg-amber-50/60 cursor-pointer">
+            <label class="flex items-center gap-3 p-3 rounded-lg border border-amber-200 bg-amber-50/60 cursor-pointer">
                 <input type="checkbox" id="permissionsEnabledInput" name="enabled" value="1"
-                    class="w-4 h-4 rounded border-slate-300 text-brand-500 focus:ring-brand-500">
-                <span class="text-sm font-semibold text-slate-800" data-i18n-key="enableToggleLabel">Bật giới hạn
-                    phân quyền cho tài khoản này</span>
+                    class="w-4 h-4 rounded border-slate-300 text-brand-500 focus:ring-brand-500"
+                    onchange="togglePermissionsCheckboxes(this)">
+                <span class="text-sm font-semibold text-slate-800" data-i18n-key="enableToggleLabel">Bật giới hạn phân
+                    quyền cho tài khoản này</span>
             </label>
 
             <div class="p-5 border border-slate-100 rounded-xl bg-slate-50/50 space-y-3">
@@ -158,10 +158,12 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2" id="permissionsCategoryList">
                     {% for key, category in categories.items() %}
                     <label
-                        class="flex items-center gap-3 cursor-pointer p-2 rounded hover:bg-white transition-colors">
+                        class="flex items-center gap-3 cursor-pointer p-2 rounded hover:bg-white transition-colors group">
                         <input type="checkbox" name="categories" value="{{ category.label }}"
-                            class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
-                        <span class="text-sm font-medium text-slate-700">{{ category.label }}</span>
+                            class="permission-checkbox rounded border-slate-300 text-blue-600 focus:ring-blue-500 disabled:bg-slate-100 disabled:cursor-not-allowed">
+                        <span class="text-sm font-medium text-slate-700 group-hover:text-slate-900">
+                            {{ category.label }}
+                        </span>
                     </label>
                     {% endfor %}
                 </div>
@@ -174,9 +176,9 @@
                     Hủy bỏ
                 </button>
                 <button type="submit"
-                    class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold shadow-sm transition-colors"
-                    data-i18n-key="savePermissionsButton">
-                    Lưu cấu hình
+                    class="min-w-[120px] px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold shadow-sm transition-colors flex items-center justify-center gap-2">
+                    <i class="ti ti-device-floppy text-base text-white"></i>
+                    <span data-i18n-key="savePermissionsButton">Lưu cấu hình</span>
                 </button>
             </div>
         </form>
@@ -215,6 +217,7 @@
                 permissionsSectionTitle: "Loại hồ sơ được phép upload"
             },
             en: {
+                // ... (phần tiếng anh giữ nguyên)
                 pageTitleApproval: "Account Approval",
                 pageTitlePermission: "Permission Configuration",
                 userNameHeader: "User name",
@@ -244,8 +247,9 @@
         };
 
         const PERMISSIONS_BY_USER = JSON.parse(
-            document.getElementById("permissionsDataJson").textContent
+            document.getElementById("permissionsDataJson").textContent || "{}"
         );
+        let currentPermissionsUserId = null;
 
         function getPageLanguage() {
             const savedLanguage = localStorage.getItem("appLanguage");
@@ -260,7 +264,13 @@
             document.querySelectorAll("[data-i18n-key]").forEach(function (element) {
                 const key = element.getAttribute("data-i18n-key");
                 if (dict[key]) {
-                    element.textContent = dict[key];
+                    // Xử lý giữ lại icon bên trong button (nếu có)
+                    if (element.querySelector('i')) {
+                        const iconHtml = element.querySelector('i').outerHTML;
+                        element.innerHTML = `${iconHtml} ${dict[key]}`;
+                    } else {
+                        element.textContent = dict[key];
+                    }
                 }
             });
 
@@ -272,34 +282,51 @@
             });
         }
 
-        // --- HÀM ẨN HIỆN PHẲNG (ĐÃ FIX KHÔNG BỊ KẸT BẤM) ---
+        // --- UX: Vô hiệu hóa checkbox khi tắt phân quyền ---
+        window.togglePermissionsCheckboxes = function (mainToggle) {
+            const checkboxes = document.querySelectorAll('.permission-checkbox');
+            checkboxes.forEach(cb => {
+                cb.disabled = !mainToggle.checked;
+                // Nếu muốn giao diện mờ đi rõ ràng hơn khi tắt
+                cb.closest('label').style.opacity = mainToggle.checked ? "1" : "0.6";
+                cb.closest('label').style.pointerEvents = mainToggle.checked ? "auto" : "none";
+            });
+        };
+
+        // --- HÀM ẨN/HIỆN (SỬ DỤNG .add / .remove ĐỂ TRÁNH LỖI) ---
         window.openPermissionsView = function (userId, fullName, username) {
             const mainView = document.getElementById("mainView");
             const permissionsView = document.getElementById("permissionsView");
             const pageTitleText = document.getElementById("pageTitleText");
+            const toggleInput = document.getElementById("permissionsEnabledInput");
 
             // Gán thông tin động
+            currentPermissionsUserId = userId;
             document.getElementById("targetUserRealName").textContent = fullName;
             document.getElementById("targetUsername").textContent = username;
             document.getElementById("permissionsForm").action = `/manager/users/${userId}/permissions`;
 
-            // Nạp trạng thái phân quyền hiện tại của nhân viên này
+            // Nạp trạng thái phân quyền
             const currentPermissions = PERMISSIONS_BY_USER[userId] || { enabled: false, categories: [] };
-            document.getElementById("permissionsEnabledInput").checked = currentPermissions.enabled;
+            toggleInput.checked = currentPermissions.enabled;
+
             document.querySelectorAll('#permissionsCategoryList input[name="categories"]').forEach(function (checkbox) {
                 checkbox.checked = currentPermissions.categories.includes(checkbox.value);
             });
 
-            // Thay đổi tiêu đề ngôn ngữ
+            // Cập nhật trạng thái disable/enable của các nút ngay khi mở
+            window.togglePermissionsCheckboxes(toggleInput);
+
+            // Thay đổi tiêu đề
             const currentLang = getPageLanguage();
             if (pageTitleText) {
                 pageTitleText.textContent = PAGE_TRANSLATIONS[currentLang].pageTitlePermission;
                 pageTitleText.setAttribute("data-i18n-key", "pageTitlePermission");
             }
 
-            // Ẩn view chính hoàn toàn bằng display: none và hiện view phân quyền lên
-            mainView.classList.replace("block", "hidden");
-            permissionsView.classList.replace("hidden", "block");
+            // Ẩn bảng và hiện form (Cách an toàn 100%)
+            mainView.classList.add("hidden");
+            permissionsView.classList.remove("hidden");
         };
 
         window.closePermissionsView = function () {
@@ -313,9 +340,9 @@
                 pageTitleText.setAttribute("data-i18n-key", "pageTitleApproval");
             }
 
-            // Đảo ngược trạng thái hiển thị
-            permissionsView.classList.replace("block", "hidden");
-            mainView.classList.replace("hidden", "block");
+            // Đảo ngược
+            permissionsView.classList.add("hidden");
+            mainView.classList.remove("hidden");
         };
 
         document.addEventListener("DOMContentLoaded", function () {
@@ -326,12 +353,51 @@
                     setTimeout(applyPageTranslations, 100);
                 });
             }
+
+            const permissionsForm = document.getElementById("permissionsForm");
+            permissionsForm.addEventListener("submit", async function (event) {
+                event.preventDefault();
+
+                const formData = new FormData(permissionsForm);
+                let response;
+                try {
+                    response = await fetch(permissionsForm.action, {
+                        method: "POST",
+                        body: formData,
+                    });
+                } catch (err) {
+                    if (window.showToast) showToast("Không thể kết nối máy chủ.", "error");
+                    return;
+                }
+
+                let payload = {};
+                try {
+                    payload = await response.json();
+                } catch (err) {
+                    // ignore, xử lý theo response.ok bên dưới
+                }
+
+                if (!response.ok) {
+                    if (window.showToast) showToast(payload.error || "Lưu phân quyền thất bại.", "error");
+                    return;
+                }
+
+                // Cập nhật cache cục bộ để lần mở panel kế tiếp phản ánh đúng
+                if (currentPermissionsUserId !== null) {
+                    PERMISSIONS_BY_USER[currentPermissionsUserId] = {
+                        enabled: formData.get("enabled") === "1",
+                        categories: formData.getAll("categories"),
+                    };
+                }
+
+                if (window.showToast) showToast(payload.message || "Đã lưu phân quyền.", "success");
+                window.closePermissionsView();
+            });
         });
     })();
 </script>
 
 <style>
-    /* CSS hỗ trợ hiệu ứng hiển thị mượt mà */
     .fade-in {
         animation: fadeIn 0.2s ease-out forwards;
     }
