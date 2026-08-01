@@ -370,6 +370,48 @@
             }
         }
 
+        // Bảng có thể sort: click <th data-sort-key> để sort <tbody> theo
+        // data-sort-value của <td> cùng cột (dùng chung cho mọi trang bảng).
+        function initSortableTable(table) {
+            if (!table) return;
+            const headers = Array.from(table.querySelectorAll('thead th[data-sort-key]'));
+            let currentSort = { colIndex: null, dir: 1 };
+
+            headers.forEach(function (th) {
+                th.classList.add('cursor-pointer', 'select-none', 'hover:text-slate-900');
+                th.addEventListener('click', function () {
+                    const tbody = table.querySelector('tbody');
+                    if (!tbody) return;
+                    const rows = Array.from(tbody.querySelectorAll('tr'));
+                    const colIndex = Array.from(th.parentElement.children).indexOf(th);
+                    const dir = (currentSort.colIndex === colIndex) ? -currentSort.dir : 1;
+                    currentSort = { colIndex: colIndex, dir: dir };
+
+                    rows.sort(function (a, b) {
+                        const cellA = a.children[colIndex];
+                        const cellB = b.children[colIndex];
+                        const valA = (cellA && (cellA.dataset.sortValue ?? cellA.textContent) || '').trim();
+                        const valB = (cellB && (cellB.dataset.sortValue ?? cellB.textContent) || '').trim();
+                        const isNumeric = /^-?\d+(\.\d+)?$/;
+                        if (isNumeric.test(valA) && isNumeric.test(valB)) {
+                            return (parseFloat(valA) - parseFloat(valB)) * dir;
+                        }
+                        return valA.localeCompare(valB, 'vi') * dir;
+                    });
+
+                    rows.forEach(function (row) { tbody.appendChild(row); });
+
+                    headers.forEach(function (h) {
+                        const icon = h.querySelector('.sort-icon');
+                        if (icon) icon.remove();
+                    });
+                    const icon = document.createElement('i');
+                    icon.className = 'ti ' + (dir === 1 ? 'ti-sort-ascending' : 'ti-sort-descending') + ' sort-icon ml-1 text-xs align-middle';
+                    th.appendChild(icon);
+                });
+            });
+        }
+
         (function () {
             if (localStorage.getItem('sidebarCollapsed') === '1') {
                 const sidebar = document.getElementById('sidebar');

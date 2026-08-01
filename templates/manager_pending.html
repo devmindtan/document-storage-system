@@ -37,18 +37,40 @@
     </div>
 
     {% if documents %}
+        <div id="bulkActionBar"
+            class="hidden sticky top-0 z-20 bg-slate-900 text-white rounded-2xl px-5 py-3 flex flex-wrap items-center justify-between gap-3 shadow-lg">
+            <span class="text-sm font-semibold"><span id="bulkSelectedCount">0</span> <span data-i18n-key="bulkSelectedLabel">hồ sơ đã chọn</span></span>
+            <div class="flex items-center gap-2">
+                <button type="button" id="bulkApproveBtn"
+                    class="px-3.5 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 rounded-lg text-xs font-bold transition-colors">
+                    <i class="ti ti-check"></i> <span data-i18n-key="bulkApproveButton">Duyệt đã chọn</span>
+                </button>
+                <button type="button" id="bulkRejectBtn"
+                    class="px-3.5 py-1.5 bg-rose-500 hover:bg-rose-400 text-white rounded-lg text-xs font-bold transition-colors">
+                    <i class="ti ti-x"></i> <span data-i18n-key="bulkRejectButton">Từ chối đã chọn</span>
+                </button>
+                <button type="button" id="bulkExportBtn"
+                    class="px-3.5 py-1.5 bg-white/10 hover:bg-white/20 text-white rounded-lg text-xs font-bold transition-colors">
+                    <i class="ti ti-download"></i> <span data-i18n-key="bulkExportButton">Xuất CSV</span>
+                </button>
+            </div>
+        </div>
+
         <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm text-slate-600 whitespace-nowrap">
-                    <thead class="bg-slate-50 border-b border-slate-200 text-slate-700 uppercase font-semibold text-xs">
+            <div class="overflow-x-auto max-h-[70vh] overflow-y-auto">
+                <table id="pendingTable" class="w-full text-left text-sm text-slate-600 whitespace-nowrap">
+                    <thead class="sticky top-0 z-10 bg-slate-50 border-b border-slate-200 text-slate-700 uppercase font-semibold text-xs">
                         <tr>
-                            <th class="px-6 py-4" data-i18n-key="tableId">ID</th>
-                            <th class="px-6 py-4" data-i18n-key="fileName">Tên file</th>
-                            <th class="px-6 py-4" data-i18n-key="project">Project</th>
-                            <th class="px-6 py-4" data-i18n-key="type">Loại</th>
-                            <th class="px-6 py-4" data-i18n-key="submittedBy">Người gửi</th>
-                            <th class="px-6 py-4" data-i18n-key="submittedAt">Ngày gửi</th>
-                            <th class="px-6 py-4" data-i18n-key="fileSize">Dung lượng</th>
+                            <th class="sticky left-0 z-20 bg-slate-50 px-4 py-4 w-10">
+                                <input type="checkbox" id="selectAllCheckbox">
+                            </th>
+                            <th class="sticky left-10 z-20 bg-slate-50 px-6 py-4" data-sort-key="1" data-i18n-key="tableId">ID</th>
+                            <th class="px-6 py-4" data-sort-key="1" data-i18n-key="fileName">Tên file</th>
+                            <th class="px-6 py-4" data-sort-key="1" data-i18n-key="project">Project</th>
+                            <th class="px-6 py-4" data-sort-key="1" data-i18n-key="type">Loại</th>
+                            <th class="px-6 py-4" data-sort-key="1" data-i18n-key="submittedBy">Người gửi</th>
+                            <th class="px-6 py-4" data-sort-key="1" data-i18n-key="submittedAt">Ngày gửi</th>
+                            <th class="px-6 py-4" data-sort-key="1" data-i18n-key="fileSize">Dung lượng</th>
                             <th class="px-6 py-4" data-i18n-key="action">Thao tác</th>
                         </tr>
                     </thead>
@@ -56,7 +78,11 @@
                     <tbody class="divide-y divide-slate-100">
                         {% for document in documents %}
                             <tr class="hover:bg-slate-50 transition-colors align-top">
-                                <td class="px-6 py-4 font-mono text-brand-500 font-medium">{{ document['document_code'] or document['id'] }}</td>
+                                <td class="sticky left-0 z-10 bg-white px-4 py-4">
+                                    <input type="checkbox" class="js-row-select" value="{{ document['id'] }}">
+                                </td>
+
+                                <td class="sticky left-10 z-10 bg-white px-6 py-4 font-mono text-brand-500 font-medium">{{ document['document_code'] or document['id'] }}</td>
 
                                 <td class="px-6 py-4 font-medium text-slate-800">{{ document['original_name'] }}</td>
 
@@ -165,7 +191,11 @@
             rejectButton: "Từ chối",
             rejectReasonPlaceholder: "Lý do từ chối",
             confirmRejectButton: "Xác nhận",
-            emptyMessage: "Hiện chưa có hồ sơ nào đang chờ duyệt."
+            emptyMessage: "Hiện chưa có hồ sơ nào đang chờ duyệt.",
+            bulkSelectedLabel: "hồ sơ đã chọn",
+            bulkApproveButton: "Duyệt đã chọn",
+            bulkRejectButton: "Từ chối đã chọn",
+            bulkExportButton: "Xuất CSV"
         },
 
         en: {
@@ -188,7 +218,11 @@
             rejectButton: "Reject",
             rejectReasonPlaceholder: "Rejection reason",
             confirmRejectButton: "Confirm",
-            emptyMessage: "There are no pending documents."
+            emptyMessage: "There are no pending documents.",
+            bulkSelectedLabel: "selected",
+            bulkApproveButton: "Approve selected",
+            bulkRejectButton: "Reject selected",
+            bulkExportButton: "Export CSV"
         }
     };
 
@@ -267,8 +301,122 @@
         });
     }
 
+    function initBulkActions() {
+        const selectAll = document.getElementById("selectAllCheckbox");
+        const bar = document.getElementById("bulkActionBar");
+        const countEl = document.getElementById("bulkSelectedCount");
+        const approveBtn = document.getElementById("bulkApproveBtn");
+        const rejectBtn = document.getElementById("bulkRejectBtn");
+        const exportBtn = document.getElementById("bulkExportBtn");
+        if (!selectAll || !bar) return;
+
+        function getRowCheckboxes() {
+            return Array.from(document.querySelectorAll(".js-row-select"));
+        }
+
+        function getSelectedIds() {
+            return getRowCheckboxes().filter(function (cb) { return cb.checked; }).map(function (cb) { return cb.value; });
+        }
+
+        function updateBar() {
+            const selected = getSelectedIds();
+            countEl.textContent = selected.length;
+            bar.classList.toggle("hidden", selected.length === 0);
+        }
+
+        getRowCheckboxes().forEach(function (cb) { cb.addEventListener("change", updateBar); });
+
+        selectAll.addEventListener("change", function () {
+            getRowCheckboxes().forEach(function (cb) { cb.checked = selectAll.checked; });
+            updateBar();
+        });
+
+        async function bulkPost(ids, action, extraBody) {
+            let successCount = 0;
+            let failCount = 0;
+            for (const id of ids) {
+                try {
+                    const res = await fetch("/manager/documents/" + id + "/" + action, {
+                        method: "POST",
+                        headers: extraBody ? { "Content-Type": "application/x-www-form-urlencoded" } : undefined,
+                        body: extraBody || undefined,
+                    });
+                    const finalUrl = new URL(res.url);
+                    if (finalUrl.searchParams.has("error")) { failCount++; } else { successCount++; }
+                } catch (e) {
+                    failCount++;
+                }
+            }
+            return { successCount: successCount, failCount: failCount };
+        }
+
+        if (approveBtn) {
+            approveBtn.addEventListener("click", async function () {
+                const ids = getSelectedIds();
+                if (ids.length === 0) return;
+                if (!confirm("Duyệt " + ids.length + " hồ sơ đã chọn?")) return;
+                approveBtn.disabled = true;
+                const result = await bulkPost(ids, "approve");
+                if (window.showToast) {
+                    showToast(
+                        "Đã duyệt " + result.successCount + "/" + ids.length + " hồ sơ." + (result.failCount ? " " + result.failCount + " thất bại." : ""),
+                        result.failCount ? "error" : "success"
+                    );
+                }
+                setTimeout(function () { window.location.reload(); }, 1200);
+            });
+        }
+
+        if (rejectBtn) {
+            rejectBtn.addEventListener("click", async function () {
+                const ids = getSelectedIds();
+                if (ids.length === 0) return;
+                if (!confirm("Từ chối " + ids.length + " hồ sơ đã chọn?")) return;
+                rejectBtn.disabled = true;
+                const body = "rejection_reason=" + encodeURIComponent("Từ chối hàng loạt bởi quản lý.");
+                const result = await bulkPost(ids, "reject", body);
+                if (window.showToast) {
+                    showToast(
+                        "Đã từ chối " + result.successCount + "/" + ids.length + " hồ sơ." + (result.failCount ? " " + result.failCount + " thất bại." : ""),
+                        result.failCount ? "error" : "success"
+                    );
+                }
+                setTimeout(function () { window.location.reload(); }, 1200);
+            });
+        }
+
+        if (exportBtn) {
+            exportBtn.addEventListener("click", function () {
+                const selectedCheckboxes = getRowCheckboxes().filter(function (cb) { return cb.checked; });
+                const rows = selectedCheckboxes.length > 0
+                    ? selectedCheckboxes.map(function (cb) { return cb.closest("tr"); })
+                    : Array.from(document.querySelectorAll("#pendingTable tbody tr"));
+                const headerCells = Array.from(document.querySelectorAll("#pendingTable thead th")).slice(1, -1);
+                const escapeCsv = function (text) {
+                    return '"' + text.trim().replace(/\s+/g, " ").replace(/"/g, '""') + '"';
+                };
+                const lines = [headerCells.map(function (th) { return escapeCsv(th.textContent); }).join(",")];
+                rows.forEach(function (row) {
+                    const cells = Array.from(row.children).slice(1, -1);
+                    lines.push(cells.map(function (td) { return escapeCsv(td.textContent); }).join(","));
+                });
+                const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8;" });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = "pending_documents.csv";
+                a.click();
+                URL.revokeObjectURL(url);
+            });
+        }
+    }
+
     document.addEventListener("DOMContentLoaded", function () {
         bindRejectButtons();
+        initBulkActions();
+        if (window.initSortableTable) {
+            initSortableTable(document.getElementById("pendingTable"));
+        }
         applyManagerPendingLanguage(getPageLanguage());
 
         const languageButton = document.getElementById("languageToggle");
