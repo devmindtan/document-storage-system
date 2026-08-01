@@ -1,3 +1,4 @@
+import json
 import re
 import sqlite3
 import unicodedata
@@ -778,10 +779,18 @@ def build_upload_context(
     elif not selected_category_key or selected_category_key not in categories:
         selected_category_key = get_default_category_key(categories)
 
+    if current_user["category_permissions_enabled"]:
+        allowed_categories_json = json.dumps(
+            sorted(get_user_allowed_categories(current_user["id"]))
+        )
+    else:
+        allowed_categories_json = "null"
+
     return {
         "user": current_user,
         "projects": projects,
         "categories": categories,
+        "allowed_categories_json": allowed_categories_json,
         "error": error,
         "success": success,
         "selected_project_key": selected_project_key,

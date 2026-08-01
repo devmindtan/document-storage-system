@@ -23,6 +23,21 @@
         background-color: #f0f5fa;
         border-color: #3b82f6;
     }
+
+    .spinner {
+        width: 1rem;
+        height: 1rem;
+        border: 2px solid #cbd5e1;
+        border-top-color: #0f172a;
+        border-radius: 50%;
+        animation: spin .6s linear infinite;
+    }
+
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
 </style>
 {% endblock %}
 
@@ -57,154 +72,186 @@
             </div>
         </div>
 
-        <form action="/employee/upload" method="post" enctype="multipart/form-data" class="p-6 space-y-6">
-            <div class="flex items-center gap-2">
-                <span
-                    class="w-6 h-6 rounded-full bg-brand-900 text-white text-xs font-bold flex items-center justify-center shrink-0">1</span>
-                <h3 class="form-step-heading text-sm font-semibold text-slate-800 uppercase tracking-wide"
-                    data-i18n-key="step1Heading">Chọn vị trí
-                    lưu & Quản lý danh mục</h3>
-            </div>
+        <div id="noAllowedCategoriesBanner"
+            class="hidden mx-6 mt-6 px-4 py-3 rounded-xl bg-amber-50 border border-amber-200 text-sm text-amber-800 flex items-start gap-2.5">
+            <i class="ti ti-alert-triangle text-base shrink-0 mt-0.5"></i>
+            <span data-i18n-key="noAllowedCategoriesText">Bạn chưa được cấp quyền upload loại hồ sơ nào. Vui lòng liên
+                hệ quản lý để được cấp quyền.</span>
+        </div>
 
-            <div>
-                <div class="flex items-center justify-between mb-1.5">
-                    <label for="project_key" class="block text-sm font-medium text-slate-700"
-                        data-i18n-key="projectLabel">Project</label>
+        <form id="uploadForm" action="/employee/upload" method="post" enctype="multipart/form-data"
+            class="p-6 space-y-6">
+            <!-- Step 1 -->
+            <div class="rounded-xl border border-slate-200 p-5 space-y-4">
+                <div class="flex items-center gap-2">
+                    <span
+                        class="w-6 h-6 rounded-full bg-brand-900 text-white text-xs font-bold flex items-center justify-center shrink-0">1</span>
+                    <h3 class="form-step-heading text-sm font-semibold text-slate-800 uppercase tracking-wide"
+                        data-i18n-key="step1Heading">Chọn vị trí
+                        lưu & Quản lý danh mục</h3>
                 </div>
 
-                <select id="project_key" name="project_key" required
-                    class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-sm text-slate-800 bg-white outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
-                    {% for key, project in projects.items() %}
-                    {% if selected_project_key == key %}
-                    <option value="{{ key }}" selected>{{ project['label'] }}</option>
-                    {% else %}
-                    <option value="{{ key }}">{{ project['label'] }}</option>
-                    {% endif %}
-                    {% endfor %}
+                <div>
+                    <div class="flex items-center justify-between mb-1.5">
+                        <label for="project_key" class="block text-sm font-medium text-slate-700"
+                            data-i18n-key="projectLabel">Project</label>
+                    </div>
 
-                    {% if selected_project_key == new_project_key %}
-                    <option value="{{ new_project_key }}" selected>+ Tạo project mới</option>
-                    {% else %}
-                    <option value="{{ new_project_key }}">+ Tạo project mới</option>
-                    {% endif %}
-                </select>
+                    <select id="project_key" name="project_key" required
+                        class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 bg-white outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
+                        {% for key, project in projects.items() %}
+                        {% if selected_project_key == key %}
+                        <option value="{{ key }}" selected>{{ project['label'] }}</option>
+                        {% else %}
+                        <option value="{{ key }}">{{ project['label'] }}</option>
+                        {% endif %}
+                        {% endfor %}
 
-                <div id="newProjectBox"
-                    class="conditional-input-box mt-3 p-3.5 border border-dashed border-brand-200 rounded-lg bg-brand-50/40">
-                    <label for="new_project_name" class="block text-sm font-medium text-slate-700 mb-1.5">
-                        <span data-i18n-key="newProjectNameLabel">Tên project mới</span> <span
-                            class="required-star">*</span>
-                    </label>
-                    <input id="new_project_name" type="text" name="new_project_name" maxlength="50"
-                        placeholder="Nhập tên project mới" value="{{ new_project_name_value or '' }}"
-                        class="w-full border border-slate-300 rounded-lg px-3.5 py-2 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
-                    <p class="note-text text-xs text-slate-500 mt-1.5" data-i18n-key="newProjectNote">Project mới sẽ
-                        được gửi kèm hồ sơ và chờ quản lý
-                        duyệt một lần.</p>
-                </div>
-            </div>
+                        {% if selected_project_key == new_project_key %}
+                        <option value="{{ new_project_key }}" selected>+ Tạo project mới</option>
+                        {% else %}
+                        <option value="{{ new_project_key }}">+ Tạo project mới</option>
+                        {% endif %}
+                    </select>
 
-            <div>
-                <div class="flex items-center justify-between mb-1.5">
-                    <label for="category_key" class="block text-sm font-medium text-slate-700"
-                        data-i18n-key="categoryLabel">Loại hồ sơ</label>
-                </div>
-
-                <select id="category_key" name="category_key" required
-                    data-selected-category-key="{{ selected_category_key }}"
-                    class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-sm text-slate-800 bg-white outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
-                    <option value="">Đang tải file con...</option>
-                </select>
-
-                <div id="newCategoryBox"
-                    class="conditional-input-box mt-3 p-3.5 border border-dashed border-brand-200 rounded-lg bg-brand-50/40 space-y-3">
-                    <div>
-                        <label for="new_category_name" class="block text-sm font-medium text-slate-700 mb-1.5">
-                            <span data-i18n-key="newCategoryNameLabel">Tên file con mới</span> <span
+                    <div id="newProjectBox"
+                        class="conditional-input-box mt-3 p-3.5 border border-dashed border-brand-200 rounded-lg bg-brand-50/40">
+                        <label for="new_project_name" class="block text-sm font-medium text-slate-700 mb-1.5">
+                            <span data-i18n-key="newProjectNameLabel">Tên project mới</span> <span
                                 class="required-star">*</span>
                         </label>
-                        <input id="new_category_name" type="text" name="new_category_name" maxlength="50"
-                            placeholder="Nhập tên file con mới" value="{{ new_category_name_value or '' }}"
-                            class="w-full border border-slate-300 rounded-lg px-3.5 py-2 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
+                        <input id="new_project_name" type="text" name="new_project_name" maxlength="50"
+                            placeholder="Nhập tên project mới" value="{{ new_project_name_value or '' }}"
+                            class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
+                        <p class="note-text text-xs text-slate-500 mt-1.5" data-i18n-key="newProjectNote">Project mới sẽ
+                            được gửi kèm hồ sơ và chờ quản lý
+                            duyệt một lần.</p>
                     </div>
-
-                    <div>
-                        <label for="new_category_code" class="block text-sm font-medium text-slate-700 mb-1.5"
-                            data-i18n-key="categoryCodeLabel">Mã file
-                            con</label>
-                        <input id="new_category_code" type="text" name="new_category_code" maxlength="10"
-                            placeholder="Ví dụ: IR, QC, LEG" value="{{ new_category_code_value or '' }}"
-                            class="w-full border border-slate-300 rounded-lg px-3.5 py-2 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
-                    </div>
-
-                    <p class="note-text text-xs text-slate-500" data-i18n-key="categoryCodeNote">Nếu để trống mã file
-                        con, hệ thống sẽ tự tạo mã.</p>
                 </div>
 
-                <div id="codePreviewBox"
-                    class="hidden mt-3 px-3.5 py-2.5 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-500">
-                    <span data-i18n-key="codePreviewLabel">Mã hồ sơ dự kiến:</span> <span id="codePreviewText"
-                        class="font-mono font-semibold text-slate-700"></span>
-                    <span class="text-slate-400" data-i18n-key="codePreviewNote">(có thể thay đổi tại thời điểm tải
-                        lên)</span>
+                <div>
+                    <div class="flex items-center justify-between mb-1.5">
+                        <label for="category_key" class="block text-sm font-medium text-slate-700"
+                            data-i18n-key="categoryLabel">Loại hồ sơ</label>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <select id="category_key" name="category_key" required
+                            data-selected-category-key="{{ selected_category_key }}"
+                            class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 bg-white outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
+                            <option value="">Đang tải file con...</option>
+                        </select>
+                        <div id="categoryLoadingSpinner" class="spinner hidden shrink-0"></div>
+                    </div>
+
+                    <p id="restrictedCategoriesNote" class="hidden note-text text-xs text-brand-600 mt-1.5"
+                        data-i18n-key="restrictedCategoriesNote">Chỉ hiển thị các loại hồ sơ bạn được cấp quyền
+                        upload.</p>
+
+                    <div id="newCategoryBox"
+                        class="conditional-input-box mt-3 p-3.5 border border-dashed border-brand-200 rounded-lg bg-brand-50/40 space-y-3">
+                        <div>
+                            <label for="new_category_name" class="block text-sm font-medium text-slate-700 mb-1.5">
+                                <span data-i18n-key="newCategoryNameLabel">Tên file con mới</span> <span
+                                    class="required-star">*</span>
+                            </label>
+                            <input id="new_category_name" type="text" name="new_category_name" maxlength="50"
+                                placeholder="Nhập tên file con mới" value="{{ new_category_name_value or '' }}"
+                                class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
+                        </div>
+
+                        <div>
+                            <label for="new_category_code" class="block text-sm font-medium text-slate-700 mb-1.5"
+                                data-i18n-key="categoryCodeLabel">Mã file
+                                con</label>
+                            <input id="new_category_code" type="text" name="new_category_code" maxlength="10"
+                                placeholder="Ví dụ: IR, QC, LEG" value="{{ new_category_code_value or '' }}"
+                                class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
+                        </div>
+
+                        <p class="note-text text-xs text-slate-500" data-i18n-key="categoryCodeNote">Nếu để trống mã file
+                            con, hệ thống sẽ tự tạo mã.</p>
+                    </div>
+
+                    <div id="codePreviewBox"
+                        class="hidden mt-3 px-3.5 py-2.5 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-500">
+                        <span data-i18n-key="codePreviewLabel">Mã hồ sơ dự kiến:</span> <span id="codePreviewText"
+                            class="font-mono font-semibold text-slate-700"></span>
+                        <span class="text-slate-400" data-i18n-key="codePreviewNote">(có thể thay đổi tại thời điểm tải
+                            lên)</span>
+                    </div>
                 </div>
             </div>
 
-            <div class="flex items-center gap-2 pt-2">
-                <span
-                    class="w-6 h-6 rounded-full bg-brand-900 text-white text-xs font-bold flex items-center justify-center shrink-0">2</span>
-                <h3 class="form-step-heading text-sm font-semibold text-slate-800 uppercase tracking-wide"
-                    data-i18n-key="step2Heading">Chọn tệp</h3>
-            </div>
+            <!-- Step 2 -->
+            <div class="rounded-xl border border-slate-200 p-5 space-y-4">
+                <div class="flex items-center gap-2">
+                    <span
+                        class="w-6 h-6 rounded-full bg-brand-900 text-white text-xs font-bold flex items-center justify-center shrink-0">2</span>
+                    <h3 class="form-step-heading text-sm font-semibold text-slate-800 uppercase tracking-wide"
+                        data-i18n-key="step2Heading">Chọn tệp</h3>
+                </div>
 
-            <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1.5" data-i18n-key="chooseFileFieldLabel">Chọn
-                    file</label>
-                <div
-                    class="custom-file-upload border-2 border-dashed border-slate-300 rounded-xl bg-slate-50 hover:bg-brand-50 transition-colors flex flex-col items-center justify-center p-8 text-center cursor-pointer">
-                    <input id="uploaded_files" class="real-file-input hidden" type="file" name="uploaded_files" multiple
-                        required>
-                    <div class="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-sm mb-3">
-                        <i class="ti ti-cloud-upload text-2xl text-brand-500"></i>
-                    </div>
-                    <label
-                        class="custom-file-button cursor-pointer text-sm font-semibold text-brand-600 hover:text-brand-800 underline underline-offset-2"
-                        for="uploaded_files">
-                        <span data-i18n-key="chooseFileBtn">Chọn tệp</span>
+                <div>
+                    <label for="uploaded_files"
+                        class="custom-file-upload border-2 border-dashed border-slate-300 rounded-xl bg-slate-50 hover:bg-brand-50 transition-colors flex flex-col items-center justify-center p-8 text-center cursor-pointer">
+                        <input id="uploaded_files" class="real-file-input hidden" type="file" name="uploaded_files"
+                            multiple required>
+                        <div
+                            class="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-sm mb-3 pointer-events-none">
+                            <i class="ti ti-cloud-upload text-2xl text-brand-500"></i>
+                        </div>
+                        <p class="text-sm font-semibold text-slate-700 pointer-events-none" data-i18n-key="dragDropText">
+                            Kéo thả tệp vào đây, hoặc bấm để chọn</p>
+                        <p class="text-xs text-slate-400 mt-1 pointer-events-none" data-i18n-key="supportedFormats">Hỗ
+                            trợ nhiều tệp • PDF, DOCX, XLSX, JPG</p>
+                        <span
+                            class="custom-file-button text-sm font-semibold text-brand-600 underline underline-offset-2 mt-3 pointer-events-none">
+                            <span data-i18n-key="chooseFileBtn">Chọn tệp</span>
+                        </span>
+                        <span class="selected-file-text text-xs text-slate-500 mt-2 pointer-events-none"
+                            id="selectedFileText" data-i18n-key="noFileSelected">Không có tệp nào
+                            được chọn</span>
                     </label>
-                    <span class="selected-file-text text-xs text-slate-500 mt-2" id="selectedFileText"
-                        data-i18n-key="noFileSelected">Không có tệp nào
-                        được chọn</span>
                 </div>
             </div>
 
-            <div class="flex items-center gap-2 pt-2">
-                <span
-                    class="w-6 h-6 rounded-full bg-brand-900 text-white text-xs font-bold flex items-center justify-center shrink-0">3</span>
-                <h3 class="form-step-heading text-sm font-semibold text-slate-800 uppercase tracking-wide"
-                    data-i18n-key="step3Heading">Thông tin mô
-                    tả</h3>
+            <!-- Step 3 -->
+            <div class="rounded-xl border border-slate-200 p-5 space-y-4">
+                <div class="flex items-center gap-2">
+                    <span
+                        class="w-6 h-6 rounded-full bg-brand-900 text-white text-xs font-bold flex items-center justify-center shrink-0">3</span>
+                    <h3 class="form-step-heading text-sm font-semibold text-slate-800 uppercase tracking-wide"
+                        data-i18n-key="step3Heading">Thông tin mô
+                        tả</h3>
+                </div>
+
+                <div>
+                    <label for="description" class="block text-sm font-medium text-slate-700 mb-1.5">
+                        <span data-i18n-key="descriptionLabel">Mô tả</span> <span class="required-star">*</span>
+                    </label>
+                    <input id="description" type="text" name="description" maxlength="50" required
+                        placeholder="Nhập mô tả hồ sơ, tối đa 50 ký tự" value="{{ description_value or '' }}"
+                        class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
+                    <p class="note-text text-xs text-slate-500 mt-1" data-i18n-key="requiredNote">Bắt buộc nhập. Tối đa
+                        50 ký tự.</p>
+                </div>
+
+                <div>
+                    <label for="location" class="block text-sm font-medium text-slate-700 mb-1.5">
+                        <span data-i18n-key="locationLabel">Vị trí</span> <span class="required-star">*</span>
+                    </label>
+                    <input id="location" type="text" name="location" maxlength="50" required
+                        placeholder="Nhập vị trí hồ sơ, tối đa 50 ký tự" value="{{ location_value }}"
+                        class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
+                    <p class="note-text text-xs text-slate-500 mt-1" data-i18n-key="requiredNote">Bắt buộc nhập. Tối đa
+                        50 ký tự.</p>
+                </div>
             </div>
 
-            <label for="description" class="block text-sm font-medium text-slate-700 mb-1.5">
-                <span data-i18n-key="descriptionLabel">Mô tả</span> <span class="required-star">*</span>
-            </label>
-            <input id="description" type="text" name="description" maxlength="50" required
-                placeholder="Nhập mô tả hồ sơ, tối đa 50 ký tự" value="{{ description_value or '' }}"
-                class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
-            <p class="note-text text-xs text-slate-500" data-i18n-key="requiredNote">Bắt buộc nhập. Tối đa 50 ký tự.</p>
-
-            <label for="location" class="block text-sm font-medium text-slate-700 mb-1.5">
-                <span data-i18n-key="locationLabel">Vị trí</span> <span class="required-star">*</span>
-            </label>
-            <input id="location" type="text" name="location" maxlength="50" required
-                placeholder="Nhập vị trí hồ sơ, tối đa 50 ký tự" value="{{ location_value }}"
-                class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
-            <p class="note-text text-xs text-slate-500" data-i18n-key="requiredNote">Bắt buộc nhập. Tối đa 50 ký tự.</p>
-
-            <div class="pt-4 border-t border-slate-200 flex justify-end">
-                <button type="submit"
-                    class="primary-upload-button inline-flex items-center gap-2 px-5 py-2.5 bg-brand-900 text-white rounded-lg text-sm font-medium hover:bg-brand-800 transition-colors shadow-sm">
+            <div class="pt-2 flex justify-end">
+                <button type="submit" id="primaryUploadBtn"
+                    class="primary-upload-button inline-flex items-center gap-2 px-5 py-2.5 bg-brand-900 text-white rounded-xl text-sm font-medium hover:bg-brand-800 transition-colors shadow-sm">
                     <i class="ti ti-send"></i> <span data-i18n-key="submitBtn">Gửi hồ sơ cho quản lý duyệt</span>
                 </button>
             </div>
@@ -214,13 +261,20 @@
 {% endblock %}
 
 {% block extra_script %}
+<script id="allowedCategoriesJson" type="application/json">{{ allowed_categories_json | safe }}</script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const NEW_PROJECT_KEY = "__new_project__";
         const NEW_CATEGORY_KEY = "__new_category__";
         const DEFAULT_CATEGORY_PREFIX = "__default_category__:";
 
-        const defaultCategories = [
+        // null = không giới hạn, [] = bị giới hạn nhưng chưa được cấp loại nào,
+        // [...] = chỉ được phép upload các loại hồ sơ có tên trong danh sách.
+        const ALLOWED_CATEGORIES = JSON.parse(
+            document.getElementById("allowedCategoriesJson").textContent
+        );
+
+        const defaultCategoriesAll = [
             { id: DEFAULT_CATEGORY_PREFIX + "BC", label: "Business Case" },
             { id: DEFAULT_CATEGORY_PREFIX + "CAPEX", label: "CAPEX" },
             { id: DEFAULT_CATEGORY_PREFIX + "PTW", label: "PTW" },
@@ -234,15 +288,42 @@
             { id: DEFAULT_CATEGORY_PREFIX + "VM", label: "Vendor Manual" },
             { id: DEFAULT_CATEGORY_PREFIX + "OTH", label: "Others" }
         ];
+        const defaultCategories = ALLOWED_CATEGORIES === null
+            ? defaultCategoriesAll
+            : defaultCategoriesAll.filter(c => ALLOWED_CATEGORIES.includes(c.label));
 
         const projectSelect = document.getElementById("project_key");
         const categorySelect = document.getElementById("category_key");
+        const categoryLoadingSpinner = document.getElementById("categoryLoadingSpinner");
+        const restrictedCategoriesNote = document.getElementById("restrictedCategoriesNote");
         const newProjectBox = document.getElementById("newProjectBox");
         const newProjectInput = document.getElementById("new_project_name");
         const newCategoryBox = document.getElementById("newCategoryBox");
         const newCategoryNameInput = document.getElementById("new_category_name");
         const fileInput = document.getElementById("uploaded_files");
         const selectedFileText = document.getElementById("selectedFileText");
+        const uploadDropZone = document.querySelector(".custom-file-upload");
+        const descriptionInput = document.getElementById("description");
+        const locationInput = document.getElementById("location");
+        const primaryUploadBtn = document.getElementById("primaryUploadBtn");
+        const uploadForm = document.getElementById("uploadForm");
+        const noAllowedCategoriesBanner = document.getElementById("noAllowedCategoriesBanner");
+
+        if (restrictedCategoriesNote && ALLOWED_CATEGORIES !== null && ALLOWED_CATEGORIES.length > 0) {
+            restrictedCategoriesNote.classList.remove("hidden");
+        }
+
+        // Bị giới hạn nhưng chưa được cấp loại hồ sơ nào: khóa toàn bộ form,
+        // không có lựa chọn hợp lệ nào để chọn.
+        const hasNoAllowedCategories = ALLOWED_CATEGORIES !== null && ALLOWED_CATEGORIES.length === 0;
+        if (hasNoAllowedCategories) {
+            if (noAllowedCategoriesBanner) noAllowedCategoriesBanner.classList.remove("hidden");
+            if (uploadForm) {
+                uploadForm.querySelectorAll("input, select, button").forEach(function (el) {
+                    el.disabled = true;
+                });
+            }
+        }
 
         function setRequired(input, required) {
             if (!input) return;
@@ -253,10 +334,10 @@
             }
         }
 
-        function addOption(value, label, selectedValue) {
+        function addOption(value, label, selectedValue, code) {
             const option = document.createElement("option");
             option.value = value;
-            option.textContent = label;
+            option.textContent = code ? `${label} - Mã: ${code}` : label;
             if (String(value) === String(selectedValue)) {
                 option.selected = true;
             }
@@ -320,6 +401,8 @@
         }
 
         function updateCategoryDropdown() {
+            if (hasNoAllowedCategories) return;
+
             const projectId = projectSelect.value;
             const selectedCategoryKey = categorySelect.dataset.selectedCategoryKey || "";
 
@@ -339,6 +422,7 @@
             }
 
             addOption("", "Đang tải file con...", "");
+            if (categoryLoadingSpinner) categoryLoadingSpinner.classList.remove("hidden");
 
             fetch("/project-categories/" + projectId, {
                 method: "GET",
@@ -356,7 +440,7 @@
                     }
 
                     data.categories.forEach(function (category) {
-                        addOption(category.id, category.label, selectedCategoryKey);
+                        addOption(category.id, category.label, selectedCategoryKey, category.code);
                     });
                     addOption(NEW_CATEGORY_KEY, "+ Tạo file con mới", selectedCategoryKey);
                     categorySelect.disabled = false;
@@ -372,6 +456,9 @@
                     addOption("", "Không thể tải file con", "");
                     categorySelect.disabled = true;
                     updateNewCategoryBox();
+                })
+                .finally(() => {
+                    if (categoryLoadingSpinner) categoryLoadingSpinner.classList.add("hidden");
                 });
         }
 
@@ -399,6 +486,44 @@
 
             updateCategoryDropdown();
         }
+
+        // Drag & drop visual feedback
+        if (uploadDropZone && fileInput) {
+            ["dragenter", "dragover"].forEach(evt => {
+                uploadDropZone.addEventListener(evt, (e) => {
+                    e.preventDefault();
+                    uploadDropZone.classList.add("is-dragover");
+                });
+            });
+            ["dragleave", "drop"].forEach(evt => {
+                uploadDropZone.addEventListener(evt, (e) => {
+                    e.preventDefault();
+                    uploadDropZone.classList.remove("is-dragover");
+                });
+            });
+            uploadDropZone.addEventListener("drop", (e) => {
+                if (e.dataTransfer.files.length) {
+                    fileInput.files = e.dataTransfer.files;
+                    fileInput.dispatchEvent(new Event("change"));
+                }
+            });
+        }
+
+        // Disable primary submit until required fields are filled
+        if (primaryUploadBtn && fileInput && descriptionInput && locationInput) {
+            function refreshSubmitState() {
+                const hasFile = fileInput.files && fileInput.files.length > 0;
+                const hasDescription = descriptionInput.value.trim().length > 0;
+                const hasLocation = locationInput.value.trim().length > 0;
+                primaryUploadBtn.disabled = !(hasFile && hasDescription && hasLocation);
+                primaryUploadBtn.classList.toggle("opacity-40", primaryUploadBtn.disabled);
+                primaryUploadBtn.classList.toggle("cursor-not-allowed", primaryUploadBtn.disabled);
+            }
+            [fileInput, descriptionInput, locationInput].forEach(el => {
+                el.addEventListener("input", refreshSubmitState);
+            });
+            refreshSubmitState();
+        }
     });
 
     // ============================================================
@@ -422,10 +547,14 @@
                 newCategoryNameLabel: "Tên file con mới",
                 categoryCodeLabel: "Mã file con",
                 categoryCodeNote: "Nếu để trống mã file con, hệ thống sẽ tự tạo mã.",
+                restrictedCategoriesNote: "Chỉ hiển thị các loại hồ sơ bạn được cấp quyền upload.",
+                noAllowedCategoriesText: "Bạn chưa được cấp quyền upload loại hồ sơ nào. Vui lòng liên hệ quản lý để được cấp quyền.",
                 codePreviewLabel: "Mã hồ sơ dự kiến:",
                 codePreviewNote: "(có thể thay đổi tại thời điểm tải lên)",
                 step2Heading: "Chọn tệp",
                 chooseFileFieldLabel: "Chọn file",
+                dragDropText: "Kéo thả tệp vào đây, hoặc bấm để chọn",
+                supportedFormats: "Hỗ trợ nhiều tệp • PDF, DOCX, XLSX, JPG",
                 chooseFileBtn: "Chọn tệp",
                 noFileSelected: "Không có tệp nào được chọn",
                 step3Heading: "Thông tin mô tả",
@@ -448,10 +577,14 @@
                 newCategoryNameLabel: "New sub-file name",
                 categoryCodeLabel: "Sub-file code",
                 categoryCodeNote: "If left blank, the system will auto-generate the code.",
+                restrictedCategoriesNote: "Only showing document types you're permitted to upload.",
+                noAllowedCategoriesText: "You haven't been granted permission to upload any document type. Please contact your manager.",
                 codePreviewLabel: "Expected document code:",
                 codePreviewNote: "(may change at the time of upload)",
                 step2Heading: "Select file",
                 chooseFileFieldLabel: "Select file",
+                dragDropText: "Drag and drop a file here, or click to select",
+                supportedFormats: "Multiple files supported • PDF, DOCX, XLSX, JPG",
                 chooseFileBtn: "Choose file",
                 noFileSelected: "No file selected",
                 step3Heading: "Description details",

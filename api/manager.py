@@ -510,9 +510,15 @@ def project_categories_by_project(
             "categories": [],
         }
 
+    categories = get_project_category_json_list(project_id)
+
+    if current_user["category_permissions_enabled"]:
+        allowed_categories = get_user_allowed_categories(current_user["id"])
+        categories = [c for c in categories if c["label"] in allowed_categories]
+
     return {
         "success": True,
-        "categories": get_project_category_json_list(project_id),
+        "categories": categories,
     }
 
 
