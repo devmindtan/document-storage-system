@@ -6,6 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Document Storage System{% endblock %}</title>
 
+    <script>
+        // Áp dụng theme sớm nhất có thể (trước khi render) để tránh
+        // nháy sáng/tối khi chuyển trang — cùng cơ chế localStorage như
+        // ngôn ngữ (appLanguage), nhưng có fallback theo prefers-color-scheme.
+        (function () {
+            const saved = localStorage.getItem("theme");
+            const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+            if (saved === "dark" || (!saved && prefersDark)) {
+                document.documentElement.classList.add("dark");
+            }
+        })();
+    </script>
+
     <style>
         /* Chuyển trang mượt hơn (native, không cần JS): trình duyệt hỗ trợ
            View Transitions sẽ tự crossfade khi chuyển trang thường (a href,
@@ -138,7 +151,7 @@
 </head>
 
 <body
-    class="{% block body_class %}bg-slate-50{% endblock %} text-slate-800 font-sans {% if user %}h-screen overflow-hidden flex{% else %}min-h-screen{% endif %} relative">
+    class="{% block body_class %}bg-slate-50{% endblock %} text-slate-800 dark:text-slate-100 font-sans {% if user %}h-screen overflow-hidden flex{% else %}min-h-screen{% endif %} relative">
 
     {% if user %}
     <div id="toastHost"></div>
@@ -172,14 +185,14 @@
             </a>
 
             <button
-                class="lg:hidden ml-2 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 shrink-0 transition-colors outline-none"
-                onclick="toggleSidebar()">
+                class="lg:hidden ml-2 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 shrink-0 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+                onclick="toggleSidebar()" aria-label="Đóng menu">
                 <i class="ti ti-x text-xl"></i>
             </button>
 
             <button id="sidebarCollapseToggle"
-                class="hidden lg:flex ml-2 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 shrink-0 transition-colors outline-none"
-                onclick="toggleSidebarCollapse()" title="Thu gọn sidebar">
+                class="hidden lg:flex ml-2 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 shrink-0 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+                onclick="toggleSidebarCollapse()" title="Thu gọn sidebar" aria-label="Thu gọn sidebar">
                 <i class="ti ti-chevrons-left text-lg"></i>
             </button>
 
@@ -288,39 +301,39 @@
         </div>
     </aside>
 
-    <main class="flex-1 flex flex-col min-w-0 bg-slate-50 relative z-0">
+    <main class="flex-1 flex flex-col min-w-0 bg-slate-50 dark:bg-slate-950 relative z-0">
         <header
-            class="h-16 lg:h-[72px] bg-white/80 backdrop-blur-md border-b border-slate-200 flex items-center justify-between px-4 sm:px-6 lg:px-8 shrink-0 sticky top-0 z-30 transition-all">
+            class="h-16 lg:h-[72px] bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-4 sm:px-6 lg:px-8 shrink-0 sticky top-0 z-30 transition-all">
 
             <div class="flex items-center gap-4 min-w-0">
                 <button
-                    class="lg:hidden w-10 h-10 flex items-center justify-center rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 active:scale-95 transition-all shrink-0 outline-none"
-                    onclick="toggleSidebar()">
+                    class="lg:hidden w-10 h-10 flex items-center justify-center rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-95 transition-all shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+                    onclick="toggleSidebar()" aria-label="Mở menu">
                     <i class="ti ti-menu-2 text-2xl"></i>
                 </button>
 
                 <div
-                    class="hidden sm:flex w-11 h-11 rounded-xl bg-gradient-to-br from-white to-slate-50 border border-slate-200/80 text-slate-600 shadow-sm items-center justify-center shrink-0">
+                    class="hidden sm:flex w-11 h-11 rounded-xl bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-800 border border-slate-200/80 dark:border-slate-700 text-slate-600 dark:text-slate-300 shadow-sm items-center justify-center shrink-0">
                     <i class="ti {{ nav_icons.get(active_nav, 'ti-layout-dashboard') }} text-xl drop-shadow-sm"></i>
                 </div>
 
                 <div class="min-w-0 flex flex-col justify-center mt-0.5">
                     <nav aria-label="Breadcrumb"
-                        class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1.5 flex items-center gap-1.5">
+                        class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest leading-none mb-1.5 flex items-center gap-1.5">
                         <span class="w-1 h-1 rounded-full bg-amber-400 inline-block"></span>
                         <a href="{{ '/admin' if is_admin_section else ('/employee' if user.role == 'EMPLOYEE' else '/manager') }}"
                             data-i18n="{{ 'section.admin' if is_admin_section else 'section.workspace' }}"
-                            class="hover:text-slate-600 transition-colors">
+                            class="hover:text-slate-600 dark:hover:text-slate-300 transition-colors">
                             {{ 'Quản trị hệ thống' if is_admin_section else 'Quản lý hồ sơ' }}
                         </a>
                         {% if nav_titles.get(active_nav) %}
                         <i class="ti ti-chevron-right text-[10px]"></i>
-                        <span data-i18n="{{ active_nav }}" class="text-slate-500 truncate">{{
+                        <span data-i18n="{{ active_nav }}" class="text-slate-500 dark:text-slate-400 truncate">{{
                             nav_titles.get(active_nav, '') }}</span>
                         {% endif %}
                     </nav>
                     <h1 data-i18n="{{ active_nav }}"
-                        class="text-lg sm:text-xl font-extrabold text-slate-800 tracking-tight leading-none truncate">
+                        class="text-lg sm:text-xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight leading-none truncate">
                         {{ nav_titles.get(active_nav, '') }}
                     </h1>
                 </div>
@@ -332,8 +345,13 @@
                     <i class="ti ti-plus text-sm"></i>
                     <span data-i18n="upload">Gửi hồ sơ mới</span>
                 </a>
+                <button id="darkModeToggle" type="button" aria-label="Bật/tắt giao diện tối"
+                    class="w-8 h-8 flex items-center justify-center rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-brand-500">
+                    <i class="ti ti-moon text-base dark:hidden"></i>
+                    <i class="ti ti-sun hidden dark:inline text-base"></i>
+                </button>
                 <button id="languageToggle" type="button"
-                    class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300 transition-all text-xs font-bold shadow-sm outline-none group">
+                    class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white hover:border-slate-300 transition-all text-xs font-bold shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-brand-500 group">
                     <i
                         class="ti ti-language text-base text-slate-400 group-hover:text-amber-500 group-hover:rotate-12 transition-all"></i>
                     <span>VI</span>
@@ -349,6 +367,16 @@
     </main>
 
     <script>
+        (function () {
+            const darkModeToggle = document.getElementById("darkModeToggle");
+            if (darkModeToggle) {
+                darkModeToggle.addEventListener("click", function () {
+                    const isDark = document.documentElement.classList.toggle("dark");
+                    localStorage.setItem("theme", isDark ? "dark" : "light");
+                });
+            }
+        })();
+
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const backdrop = document.getElementById('sidebarBackdrop');

@@ -62,7 +62,7 @@
                     <thead class="sticky top-0 z-10 bg-slate-50 border-b border-slate-200 text-slate-700 uppercase font-semibold text-xs">
                         <tr>
                             <th class="sticky left-0 z-20 bg-slate-50 px-4 py-4 w-10">
-                                <input type="checkbox" id="selectAllCheckbox">
+                                <input type="checkbox" id="selectAllCheckbox" aria-label="Chọn tất cả hồ sơ">
                             </th>
                             <th class="sticky left-10 z-20 bg-slate-50 px-6 py-4" data-sort-key="1" data-i18n-key="tableId">ID</th>
                             <th class="px-6 py-4" data-sort-key="1" data-i18n-key="fileName">Tên file</th>
@@ -79,7 +79,8 @@
                         {% for document in documents %}
                             <tr class="hover:bg-slate-50 transition-colors align-top">
                                 <td class="sticky left-0 z-10 bg-white px-4 py-4">
-                                    <input type="checkbox" class="js-row-select" value="{{ document['id'] }}">
+                                    <input type="checkbox" class="js-row-select" value="{{ document['id'] }}"
+                                        aria-label="Chọn hồ sơ {{ document['original_name'] }}">
                                 </td>
 
                                 <td class="sticky left-10 z-10 bg-white px-6 py-4 font-mono text-brand-500 font-medium">{{ document['document_code'] or document['id'] }}</td>

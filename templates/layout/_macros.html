@@ -15,10 +15,10 @@
 {% macro button(label, variant="primary", size="md", icon=None, type="submit", i18n_key=None, extra_classes="", id=None) %}
 {% set color_classes = {
     "primary": "bg-brand-900 text-white hover:bg-brand-800 shadow-sm",
-    "secondary": "border border-slate-200 hover:bg-slate-50 text-slate-600 bg-white",
-    "success": "bg-success-100 text-success-700 hover:bg-success-200",
-    "danger": "bg-danger-100 text-danger-700 hover:bg-danger-200",
-    "warning": "bg-warning-100 text-warning-700 hover:bg-warning-200",
+    "secondary": "border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800",
+    "success": "bg-success-100 dark:bg-success-500/20 text-success-700 dark:text-success-400 hover:bg-success-200 dark:hover:bg-success-500/30",
+    "danger": "bg-danger-100 dark:bg-danger-500/20 text-danger-700 dark:text-danger-400 hover:bg-danger-200 dark:hover:bg-danger-500/30",
+    "warning": "bg-warning-100 dark:bg-warning-500/20 text-warning-700 dark:text-warning-400 hover:bg-warning-200 dark:hover:bg-warning-500/30",
 } %}
 {% set size_classes = {
     "sm": "px-3 py-1.5 rounded text-xs font-semibold gap-1",
@@ -33,12 +33,12 @@
 
 {% macro icon_button(icon, variant="ghost", title="", i18n_title_key=None, type="button") %}
 {% set color_classes = {
-    "ghost": "text-slate-400 hover:text-brand-600",
-    "ghost-danger": "text-slate-400 hover:text-danger-600",
-    "ghost-success": "text-slate-400 hover:text-success-600",
+    "ghost": "text-slate-400 dark:text-slate-500 hover:text-brand-600 dark:hover:text-brand-400",
+    "ghost-danger": "text-slate-400 dark:text-slate-500 hover:text-danger-600 dark:hover:text-danger-400",
+    "ghost-success": "text-slate-400 dark:text-slate-500 hover:text-success-600 dark:hover:text-success-400",
 } %}
 <button type="{{ type }}"
-    class="p-1.5 bg-white border border-slate-200 rounded shadow-sm transition-colors {{ color_classes[variant] }}"
+    class="p-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded shadow-sm transition-colors {{ color_classes[variant] }}"
     title="{{ title }}"{% if i18n_title_key %} data-i18n-title="{{ i18n_title_key }}"{% endif %}>
     <i class="ti {{ icon }} text-lg"></i>
 </button>
@@ -46,22 +46,22 @@
 
 {% macro badge(label, variant="neutral", i18n_key=None) %}
 {% set color_classes = {
-    "neutral": "bg-slate-100 text-slate-600",
-    "brand": "bg-blue-100 text-blue-700",
-    "purple": "bg-purple-100 text-purple-700",
-    "success": "bg-success-100 text-success-700",
-    "warning": "bg-warning-100 text-warning-700",
-    "danger": "bg-danger-100 text-danger-700",
+    "neutral": "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300",
+    "brand": "bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400",
+    "purple": "bg-purple-100 dark:bg-purple-500/20 text-purple-700 dark:text-purple-400",
+    "success": "bg-success-100 dark:bg-success-500/20 text-success-700 dark:text-success-400",
+    "warning": "bg-warning-100 dark:bg-warning-500/20 text-warning-700 dark:text-warning-400",
+    "danger": "bg-danger-100 dark:bg-danger-500/20 text-danger-700 dark:text-danger-400",
 } %}
 <span class="{{ color_classes[variant] }} px-2.5 py-1 rounded text-xs font-bold"{% if i18n_key %} data-i18n-key="{{ i18n_key }}"{% endif %}>{{ label }}</span>
 {% endmacro %}
 
 {% macro status_dot(label, variant="neutral", i18n_key=None) %}
 {% set dot_colors = {
-    "success": ("text-success-600", "bg-success-500"),
-    "warning": ("text-warning-600", "bg-warning-500"),
-    "danger": ("text-danger-600", "bg-danger-500"),
-    "neutral": ("text-slate-400", "bg-slate-300"),
+    "success": ("text-success-600 dark:text-success-400", "bg-success-500"),
+    "warning": ("text-warning-600 dark:text-warning-400", "bg-warning-500"),
+    "danger": ("text-danger-600 dark:text-danger-400", "bg-danger-500"),
+    "neutral": ("text-slate-400 dark:text-slate-500", "bg-slate-300 dark:bg-slate-600"),
 } %}
 {% set text_color, dot_color = dot_colors[variant] %}
 <span class="flex items-center gap-1.5 {{ text_color }} text-xs font-medium">
@@ -71,17 +71,17 @@
 {% endmacro %}
 
 {% macro card(title=None, subtitle=None, icon=None, body_class="p-6", title_i18n_key=None, subtitle_i18n_key=None) %}
-<div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+<div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
     {% if title %}
-    <div class="p-6 border-b border-slate-200 bg-slate-50/50 flex items-center gap-3">
+    <div class="p-6 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 flex items-center gap-3">
         {% if icon %}
-        <div class="w-10 h-10 rounded-lg bg-brand-50 text-brand-500 flex items-center justify-center shrink-0">
+        <div class="w-10 h-10 rounded-lg bg-brand-50 dark:bg-brand-500/20 text-brand-500 dark:text-brand-400 flex items-center justify-center shrink-0">
             <i class="ti {{ icon }} text-xl"></i>
         </div>
         {% endif %}
         <div>
-            <h2 class="text-card-title font-semibold text-slate-800"{% if title_i18n_key %} data-i18n-key="{{ title_i18n_key }}"{% endif %}>{{ title }}</h2>
-            {% if subtitle %}<p class="text-sm text-slate-500"{% if subtitle_i18n_key %} data-i18n-key="{{ subtitle_i18n_key }}"{% endif %}>{{ subtitle }}</p>{% endif %}
+            <h2 class="text-card-title font-semibold text-slate-800 dark:text-slate-100"{% if title_i18n_key %} data-i18n-key="{{ title_i18n_key }}"{% endif %}>{{ title }}</h2>
+            {% if subtitle %}<p class="text-sm text-slate-500 dark:text-slate-400"{% if subtitle_i18n_key %} data-i18n-key="{{ subtitle_i18n_key }}"{% endif %}>{{ subtitle }}</p>{% endif %}
         </div>
     </div>
     {% endif %}
@@ -92,15 +92,15 @@
 {% endmacro %}
 
 {% macro empty_state(text, icon="ti-inbox", i18n_key=None) %}
-<div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm text-sm text-slate-500 text-center">
-    <i class="ti {{ icon }} text-2xl block mb-2 text-slate-300"></i>
+<div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm text-sm text-slate-500 dark:text-slate-400 text-center">
+    <i class="ti {{ icon }} text-2xl block mb-2 text-slate-300 dark:text-slate-600"></i>
     <span{% if i18n_key %} data-i18n-key="{{ i18n_key }}"{% endif %}>{{ text }}</span>
 </div>
 {% endmacro %}
 
 {% macro select(id, name, required=False, extra_attrs="") %}
 <select id="{{ id }}" name="{{ name }}"{% if required %} required{% endif %} {{ extra_attrs|safe }}
-    class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 bg-white outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
+    class="w-full border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 dark:text-slate-100 bg-white dark:bg-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
     {{ caller() }}
 </select>
 {% endmacro %}
