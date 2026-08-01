@@ -70,18 +70,6 @@
                 <div class="flex items-center justify-between mb-1.5">
                     <label for="project_key" class="block text-sm font-medium text-slate-700"
                         data-i18n-key="projectLabel">Project</label>
-
-                    <div id="projectActionButtons" class="hidden items-center gap-2">
-                        <button type="button" onclick="openEditProjectModal()"
-                            class="text-xs font-semibold text-brand-600 hover:text-brand-800 inline-flex items-center gap-1">
-                            <i class="ti ti-edit"></i> <span data-i18n-key="editNameBtn">Sửa tên</span>
-                        </button>
-                        <span class="text-slate-300">|</span>
-                        <button type="button" onclick="openDeleteProjectModal()"
-                            class="text-xs font-semibold text-rose-500 hover:text-rose-700 inline-flex items-center gap-1">
-                            <i class="ti ti-trash"></i> <span data-i18n-key="deleteBtn">Xóa</span>
-                        </button>
-                    </div>
                 </div>
 
                 <select id="project_key" name="project_key" required
@@ -120,18 +108,6 @@
                 <div class="flex items-center justify-between mb-1.5">
                     <label for="category_key" class="block text-sm font-medium text-slate-700"
                         data-i18n-key="categoryLabel">Loại hồ sơ</label>
-
-                    <div id="categoryActionButtons" class="hidden items-center gap-2">
-                        <button type="button" onclick="openEditCategoryModal()"
-                            class="text-xs font-semibold text-brand-600 hover:text-brand-800 inline-flex items-center gap-1">
-                            <i class="ti ti-edit"></i> <span data-i18n-key="editNameBtn">Sửa tên</span>
-                        </button>
-                        <span class="text-slate-300">|</span>
-                        <button type="button" onclick="openDeleteCategoryModal()"
-                            class="text-xs font-semibold text-rose-500 hover:text-rose-700 inline-flex items-center gap-1">
-                            <i class="ti ti-trash"></i> <span data-i18n-key="deleteBtn">Xóa</span>
-                        </button>
-                    </div>
                 </div>
 
                 <select id="category_key" name="category_key" required
@@ -235,109 +211,10 @@
         </form>
     </div>
 </div>
-
-<div id="actionModal"
-    class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 hidden backdrop-blur-sm">
-    <div class="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl border border-slate-200 space-y-4">
-        <h3 id="modalTitle" class="text-lg font-bold text-slate-800">Tiêu đề modal</h3>
-        <p id="modalDesc" class="text-sm text-slate-500">Nội dung thông báo hoặc hướng dẫn.</p>
-
-        <div id="modalInputContainer" class="hidden">
-            <input id="modalInputField" type="text"
-                class="w-full border border-slate-300 rounded-lg px-3.5 py-2 text-sm outline-none focus:ring-2 focus:ring-brand-500"
-                placeholder="Nhập tên mới...">
-        </div>
-
-        <div class="flex justify-end gap-2 pt-2">
-            <button type="button" onclick="closeActionModal()" data-i18n-key="cancelBtn"
-                class="px-4 py-2 border border-slate-200 text-slate-600 rounded-xl text-sm font-semibold hover:bg-slate-50">Hủy</button>
-            <button type="button" id="modalConfirmBtn"
-                class="px-4 py-2 bg-brand-900 text-white rounded-xl text-sm font-semibold hover:bg-brand-800">Xác
-                nhận</button>
-        </div>
-    </div>
-</div>
 {% endblock %}
 
 {% block extra_script %}
 <script>
-    let currentModalAction = null;
-
-    function showModal(title, desc, showInput, confirmText, callback) {
-        document.getElementById("modalTitle").textContent = title;
-        document.getElementById("modalDesc").textContent = desc;
-
-        const inputContainer = document.getElementById("modalInputContainer");
-        const inputField = document.getElementById("modalInputField");
-        if (showInput) {
-            inputContainer.classList.remove("hidden");
-            inputField.value = showInput;
-        } else {
-            inputContainer.classList.add("hidden");
-        }
-
-        const confirmBtn = document.getElementById("modalConfirmBtn");
-        confirmBtn.textContent = confirmText;
-        confirmBtn.onclick = function () {
-            callback(inputField.value);
-            closeActionModal();
-        };
-
-        document.getElementById("actionModal").classList.remove("hidden");
-    }
-
-    function closeActionModal() {
-        document.getElementById("actionModal").classList.add("hidden");
-    }
-
-    // Các hàm mở Modal tương ứng cho Sửa/Xóa
-    function openEditProjectModal() {
-        const select = document.getElementById("project_key");
-        const selectedOption = select.options[select.selectedIndex];
-        if (!selectedOption || selectedOption.value === "__new_project__" || !selectedOption.value) return;
-
-        showModal("Sửa tên Project", "Nhập tên mới cho project này:", selectedOption.text, "Lưu thay đổi", function (newValue) {
-            if (!newValue.trim()) return;
-            selectedOption.text = newValue.trim();
-            selectedOption.value = newValue.trim().toLowerCase().replace(/\s+/g, "_"); // Cập nhật key tùy ý
-        });
-    }
-
-    function openDeleteProjectModal() {
-        const select = document.getElementById("project_key");
-        const selectedOption = select.options[select.selectedIndex];
-        if (!selectedOption || selectedOption.value === "__new_project__" || !selectedOption.value) return;
-
-        showModal("Xóa Project", `Bạn có chắc chắn muốn xóa project "${selectedOption.text}" khỏi danh sách chọn?`, false, "Xóa ngay", function () {
-            select.remove(select.selectedIndex);
-            select.value = "__new_project__";
-            select.dispatchEvent(new Event("change"));
-        });
-    }
-
-    function openEditCategoryModal() {
-        const select = document.getElementById("category_key");
-        const selectedOption = select.options[select.selectedIndex];
-        if (!selectedOption || selectedOption.value === "__new_category__" || !selectedOption.value) return;
-
-        showModal("Sửa tên Loại hồ sơ", "Nhập tên mới cho loại hồ sơ này:", selectedOption.text, "Lưu thay đổi", function (newValue) {
-            if (!newValue.trim()) return;
-            selectedOption.text = newValue.trim();
-        });
-    }
-
-    function openDeleteCategoryModal() {
-        const select = document.getElementById("category_key");
-        const selectedOption = select.options[select.selectedIndex];
-        if (!selectedOption || selectedOption.value === "__new_category__" || !selectedOption.value) return;
-
-        showModal("Xóa Loại hồ sơ", `Bạn có chắc chắn muốn xóa loại hồ sơ "${selectedOption.text}"?`, false, "Xóa ngay", function () {
-            select.remove(select.selectedIndex);
-            select.selectedIndex = 0;
-            select.dispatchEvent(new Event("change"));
-        });
-    }
-
     document.addEventListener("DOMContentLoaded", function () {
         const NEW_PROJECT_KEY = "__new_project__";
         const NEW_CATEGORY_KEY = "__new_category__";
@@ -366,8 +243,6 @@
         const newCategoryNameInput = document.getElementById("new_category_name");
         const fileInput = document.getElementById("uploaded_files");
         const selectedFileText = document.getElementById("selectedFileText");
-        const projectActionButtons = document.getElementById("projectActionButtons");
-        const categoryActionButtons = document.getElementById("categoryActionButtons");
 
         function setRequired(input, required) {
             if (!input) return;
@@ -388,27 +263,16 @@
             categorySelect.appendChild(option);
         }
 
-        function updateActionButtonsVisibility() {
-            // Chỉ hiện nút Sửa/Xóa nếu đang chọn mục có thật (không phải trống hay tạo mới)
-            const isProjectSelected = projectSelect.value && projectSelect.value !== NEW_PROJECT_KEY;
-            projectActionButtons.style.display = isProjectSelected ? "flex" : "none";
-
-            const isCategorySelected = categorySelect.value && categorySelect.value !== NEW_CATEGORY_KEY;
-            categoryActionButtons.style.display = isCategorySelected ? "flex" : "none";
-        }
-
         function updateNewProjectBox() {
             const isNewProject = projectSelect.value === NEW_PROJECT_KEY;
             newProjectBox.classList.toggle("is-visible", isNewProject);
             setRequired(newProjectInput, isNewProject);
-            updateActionButtonsVisibility();
         }
 
         function updateNewCategoryBox() {
             const isNewCategory = categorySelect.value === NEW_CATEGORY_KEY;
             newCategoryBox.classList.toggle("is-visible", isNewCategory);
             setRequired(newCategoryNameInput, isNewCategory);
-            updateActionButtonsVisibility();
             updateDocumentCodePreview();
         }
 
@@ -552,8 +416,6 @@
                 cardSubtitle: "Điền thông tin, quản lý danh mục và đính kèm tệp cần trình quản lý duyệt.",
                 step1Heading: "Chọn vị trí lưu & Quản lý danh mục",
                 projectLabel: "Project",
-                editNameBtn: "Sửa tên",
-                deleteBtn: "Xóa",
                 newProjectNameLabel: "Tên project mới",
                 newProjectNote: "Project mới sẽ được gửi kèm hồ sơ và chờ quản lý duyệt một lần.",
                 categoryLabel: "Loại hồ sơ",
@@ -570,8 +432,7 @@
                 descriptionLabel: "Mô tả",
                 requiredNote: "Bắt buộc nhập. Tối đa 50 ký tự.",
                 locationLabel: "Vị trí",
-                submitBtn: "Gửi hồ sơ cho quản lý duyệt",
-                cancelBtn: "Hủy"
+                submitBtn: "Gửi hồ sơ cho quản lý duyệt"
             },
             en: {
                 pageHeading: "SUBMIT DOCUMENT FOR APPROVAL",
@@ -581,8 +442,6 @@
                 cardSubtitle: "Fill in the details, manage the catalog and attach the file to send to your manager for approval.",
                 step1Heading: "Select storage location & manage catalog",
                 projectLabel: "Project",
-                editNameBtn: "Edit name",
-                deleteBtn: "Remove",
                 newProjectNameLabel: "New project name",
                 newProjectNote: "The new project will be submitted together with the document and await manager approval once.",
                 categoryLabel: "Document type",
@@ -599,8 +458,7 @@
                 descriptionLabel: "Description",
                 requiredNote: "Required. Maximum 50 characters.",
                 locationLabel: "Location",
-                submitBtn: "Submit document for approval",
-                cancelBtn: "Cancel"
+                submitBtn: "Submit document for approval"
             }
         };
 

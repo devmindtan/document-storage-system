@@ -57,13 +57,19 @@
                             {% elif account['is_admin'] %}
                                 <span class="text-xs text-slate-400 italic" data-i18n-key="adminText">Admin</span>
                             {% elif account['role'] == 'EMPLOYEE' %}
-                                <form action="/admin/users/{{ account['id'] }}/promote-manager" method="post">
+                                <form action="/admin/users/{{ account['id'] }}/promote-manager" method="post"
+                                    onsubmit="return confirm('Bạn có chắc muốn chuyển tài khoản \'{{ account['full_name'] }}\' thành quản lý không?');">
                                     <button type="submit" class="px-3 py-1.5 bg-emerald-100 text-emerald-700 hover:bg-emerald-200 rounded text-xs font-semibold inline-flex items-center gap-1 transition-colors">
                                         <i class="ti ti-arrow-up-circle"></i> <span data-i18n-key="promoteButton">Chuyển thành quản lý</span>
                                     </button>
                                 </form>
-                            {% else %}
-                                <span class="text-xs text-slate-400 italic" data-i18n-key="alreadyManager">Đã là quản lý</span>
+                            {% elif account['role'] == 'MANAGER' %}
+                                <form action="/admin/users/{{ account['id'] }}/demote-employee" method="post"
+                                    onsubmit="return confirm('Bạn có chắc muốn chuyển tài khoản \'{{ account['full_name'] }}\' về nhân viên không?');">
+                                    <button type="submit" class="px-3 py-1.5 bg-amber-100 text-amber-700 hover:bg-amber-200 rounded text-xs font-semibold inline-flex items-center gap-1 transition-colors">
+                                        <i class="ti ti-arrow-down-circle"></i> <span data-i18n-key="demoteButton">Chuyển về nhân viên</span>
+                                    </button>
+                                </form>
                             {% endif %}
                         </td>
                     </tr>
@@ -97,7 +103,7 @@
                 currentAdminAccount: "Tài khoản admin hiện tại",
                 adminText: "Admin",
                 promoteButton: "Chuyển thành quản lý",
-                alreadyManager: "Đã là quản lý",
+                demoteButton: "Chuyển về nhân viên",
                 noAccounts: "Chưa có tài khoản nào."
             },
             en: {
@@ -115,7 +121,7 @@
                 currentAdminAccount: "Current admin account",
                 adminText: "Admin",
                 promoteButton: "Promote to manager",
-                alreadyManager: "Already a manager",
+                demoteButton: "Demote to employee",
                 noAccounts: "No accounts yet."
             }
         };

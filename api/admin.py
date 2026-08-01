@@ -232,6 +232,69 @@ def promote_user_to_manager(
     return RedirectResponse("/admin/users", status_code=303)
 
 
+@router.post("/admin/users/{user_id}/demote-employee")
+def demote_user_to_employee(
+    request: Request,
+    user_id: int
+):
+    """
+    Admin chuyển tài khoản quản lý (không phải admin) trở về nhân viên.
+    Đảo ngược của promote-manager.
+    """
+
+    current_user = get_current_user(request)
+
+    if not current_user:
+        return RedirectResponse("/", status_code=303)
+
+    if not is_admin_user(current_user):
+        return RedirectResponse("/", status_code=303)
+
+    if user_id == current_user["id"]:
+        return RedirectResponse("/admin/users", status_code=303)
+
+    with get_connection() as conn:
+        target_user = conn.execute(
+            """
+            SELECT
+                id,
+                username,
+                full_name,
+                role,
+                COALESCE(is_admin, 0) AS is_admin
+            FROM users
+            WHERE id = ?
+            """,
+            (user_id,),
+        ).fetchone()
+
+        if not target_user:
+            return RedirectResponse("/admin/users", status_code=303)
+
+        if target_user["is_admin"] or target_user["role"] != ROLE_MANAGER:
+            return RedirectResponse("/admin/users", status_code=303)
+
+        conn.execute(
+            """
+            UPDATE users
+            SET role = 'EMPLOYEE'
+            WHERE id = ?
+            """,
+            (user_id,),
+        )
+
+    write_audit_log(
+        user=current_user,
+        action="DEMOTE_EMPLOYEE",
+        details=(
+            f"Admin chuyển tài khoản '{target_user['username']}' "
+            f"({target_user['full_name']}) về nhân viên."
+        ),
+    )
+
+    return RedirectResponse("/admin/users", status_code=303)
+
+
 @router.get("/admin/create-manager", response_class=HTMLResponse)
 def admin_create_manager_page(request: Request):
     """
