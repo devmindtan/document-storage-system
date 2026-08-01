@@ -93,39 +93,42 @@
                                         <i class="ti ti-shield-check text-lg"></i>
                                     </button>
                                     {% endif %}
-                                    <form method="post" action="/manager/users/{{ u.id }}/toggle-status">
+                                    <form id="form-toggle-status-{{ u.id }}" method="post"
+                                        action="/manager/users/{{ u.id }}/toggle-status" class="inline-block">
                                         {% if u.is_active %}
-                                        <button type="submit"
-                                            class="text-slate-400 hover:text-rose-500 p-1.5 bg-white border border-slate-200 rounded shadow-sm transition-colors"
+                                        <button type="button"
+                                            onclick="openConfirmModal('form-toggle-status-{{ u.id }}', 'Khóa tài khoản', 'Bạn có chắc chắn muốn khóa tài khoản {{ u.full_name|e }}? Người dùng này sẽ không thể đăng nhập vào hệ thống nữa.')"
+                                            class="text-slate-400 hover:text-rose-500 p-1.5 bg-white border border-slate-200 hover:border-rose-200 rounded shadow-sm transition-all duration-200"
                                             data-i18n-title="lockTitle" title="Khóa tài khoản">
                                             <i class="ti ti-lock text-lg"></i>
                                         </button>
                                         {% else %}
-                                        <button type="submit"
-                                            class="text-slate-400 hover:text-emerald-500 p-1.5 bg-white border border-slate-200 rounded shadow-sm transition-colors"
+                                        <button type="button"
+                                            onclick="openConfirmModal('form-toggle-status-{{ u.id }}', 'Mở khóa tài khoản', 'Bạn có muốn mở khóa cho tài khoản {{ u.full_name|e }} để họ có thể tiếp tục sử dụng hệ thống?')"
+                                            class="text-slate-400 hover:text-emerald-500 p-1.5 bg-white border border-slate-200 hover:border-emerald-200 rounded shadow-sm transition-all duration-200"
                                             data-i18n-title="unlockTitle" title="Mở khóa">
                                             <i class="ti ti-lock-open text-lg"></i>
                                         </button>
                                         {% endif %}
                                     </form>
                                     {% if u.role == 'EMPLOYEE' %}
-                                    <form method="post" action="/manager/users/{{ u.id }}/promote-manager"
-                                        onsubmit="return confirm('Bạn có chắc muốn chuyển tài khoản \'{{ u.full_name|e }}\' thành quản lý không?');">
-                                        <button type="submit"
-                                            class="px-3 py-1.5 bg-emerald-100 text-emerald-700 hover:bg-emerald-200 rounded text-xs font-semibold inline-flex items-center gap-1 transition-colors"
-                                            data-i18n-title="promoteTitle" title="Chuyển thành quản lý">
-                                            <i class="ti ti-arrow-up-circle"></i> <span
-                                                data-i18n-key="promoteButton">Thăng chức</span>
+                                    <form id="form-promote-{{ u.id }}" method="post"
+                                        action="/manager/users/{{ u.id }}/promote-manager" class="inline-block">
+                                        <button type="button"
+                                            onclick="openConfirmModal('form-promote-{{ u.id }}', 'Thăng chức quản lý', 'Bạn có chắc muốn cấp quyền Quản lý (Manager) cho tài khoản {{ u.full_name|e }}?')"
+                                            class="text-emerald-600 hover:text-emerald-700 p-1.5 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 rounded shadow-sm transition-all duration-200"
+                                            title="Thăng chức Quản lý">
+                                            <i class="ti ti-user-up text-lg"></i>
                                         </button>
                                     </form>
                                     {% else %}
-                                    <form method="post" action="/manager/users/{{ u.id }}/demote-employee"
-                                        onsubmit="return confirm('Bạn có chắc muốn chuyển tài khoản \'{{ u.full_name|e }}\' về nhân viên không?');">
-                                        <button type="submit"
-                                            class="px-3 py-1.5 bg-amber-100 text-amber-700 hover:bg-amber-200 rounded text-xs font-semibold inline-flex items-center gap-1 transition-colors"
-                                            data-i18n-title="demoteTitle" title="Chuyển về nhân viên">
-                                            <i class="ti ti-arrow-down-circle"></i> <span
-                                                data-i18n-key="demoteButton">Giáng chức</span>
+                                    <form id="form-demote-{{ u.id }}" method="post"
+                                        action="/manager/users/{{ u.id }}/demote-employee" class="inline-block">
+                                        <button type="button"
+                                            onclick="openConfirmModal('form-demote-{{ u.id }}', 'Giáng chức nhân viên', 'Bạn có chắc muốn rút quyền Quản lý của tài khoản {{ u.full_name|e }} và chuyển về Nhân viên?')"
+                                            class="text-amber-600 hover:text-amber-700 p-1.5 bg-amber-50 border border-amber-200 hover:bg-amber-100 rounded shadow-sm transition-all duration-200"
+                                            title="Giáng chức Nhân viên">
+                                            <i class="ti ti-user-down text-lg"></i>
                                         </button>
                                     </form>
                                     {% endif %}
@@ -202,13 +205,41 @@
                     Hủy bỏ
                 </button>
 
-                <button type="submit"
-                    class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold shadow-sm transition-all duration-200 flex items-center gap-2 cursor-pointer appearance-none border-0">
+                <button type="submit" style="background-color: #2563eb;"
+                    class="px-6 py-2 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold shadow-sm transition-all duration-200 flex items-center gap-2 cursor-pointer appearance-none border-0">
                     <i class="ti ti-device-floppy text-base text-white"></i>
                     <span data-i18n-key="savePermissionsButton">Lưu cấu hình</span>
                 </button>
             </div>
         </form>
+    </div>
+    <div id="customConfirmModal"
+        class="fixed inset-0 z-50 hidden flex items-center justify-center bg-slate-900/50 backdrop-blur-sm transition-opacity opacity-0">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 transform scale-95 transition-transform duration-200"
+            id="customConfirmModalContent">
+            <div class="flex items-center gap-4 mb-4">
+                <div
+                    class="w-10 h-10 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center shrink-0">
+                    <i class="ti ti-alert-triangle text-xl"></i>
+                </div>
+                <h3 id="confirmModalTitle" class="text-lg font-bold text-slate-800">Xác nhận thao tác</h3>
+            </div>
+
+            <p id="confirmModalMessage" class="text-sm text-slate-600 mb-6 ml-14">
+                Bạn có chắc chắn muốn thực hiện hành động này không?
+            </p>
+
+            <div class="flex items-center justify-end gap-3">
+                <button type="button" onclick="closeConfirmModal()"
+                    class="px-4 py-2 border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-xl text-sm font-medium transition-colors">
+                    Hủy bỏ
+                </button>
+                <button type="button" id="confirmModalBtn"
+                    class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-sm font-semibold shadow-sm transition-colors">
+                    Xác nhận
+                </button>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -432,6 +463,51 @@
             });
         });
     })();
+    let pendingFormId = null;
+
+    window.openConfirmModal = function (formId, title, message) {
+        pendingFormId = formId;
+
+        // Set nội dung
+        document.getElementById('confirmModalTitle').innerText = title;
+        document.getElementById('confirmModalMessage').innerText = message;
+
+        // Hiển thị modal với animation
+        const modal = document.getElementById('customConfirmModal');
+        const modalContent = document.getElementById('customConfirmModalContent');
+
+        modal.classList.remove('hidden');
+        // Trễ 1 chút để browser kịp render display:block trước khi apply opacity
+        setTimeout(() => {
+            modal.classList.remove('opacity-0');
+            modalContent.classList.remove('scale-95');
+        }, 10);
+    };
+
+    window.closeConfirmModal = function () {
+        pendingFormId = null;
+        const modal = document.getElementById('customConfirmModal');
+        const modalContent = document.getElementById('customConfirmModalContent');
+
+        // Chạy animation ẩn
+        modal.classList.add('opacity-0');
+        modalContent.classList.add('scale-95');
+
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 200); // Đợi animation css chạy xong (duration-200)
+    };
+
+    // Lắng nghe sự kiện click nút Xác nhận trong Modal
+    document.getElementById('confirmModalBtn').addEventListener('click', function () {
+        if (pendingFormId) {
+            const form = document.getElementById(pendingFormId);
+            if (form) {
+                form.submit();
+            }
+        }
+        closeConfirmModal();
+    });
 </script>
 
 <style>
