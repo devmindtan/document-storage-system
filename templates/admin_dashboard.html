@@ -14,7 +14,8 @@
 
         <div class="relative z-10">
             <h2 class="text-xl md:text-2xl font-bold tracking-tight text-white">
-                <span data-i18n-key="welcomeGreeting">Xin chào,</span> {{ user.full_name }} 👋</h2>
+                <span data-i18n-key="welcomeGreeting">Xin chào,</span> {{ user.full_name }} 👋
+            </h2>
             <p class="text-slate-400 text-sm mt-1.5 max-w-xl leading-relaxed" data-i18n-key="adminWelcomeText">
                 Bảng điều khiển quản trị hệ thống. Bạn có toàn quyền quản lý nhân sự, phân quyền và giám sát hoạt động
                 của kho lưu trữ.
@@ -23,19 +24,22 @@
     </div>
 
     <div>
-        <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4" data-i18n-key="systemToolsHeading">Công cụ hệ thống</h3>
+        <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4"
+            data-i18n-key="systemToolsHeading">Công cụ hệ thống</h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
 
-            <a href="/manager/users"
+            <a href="/admin/users"
                 class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-brand-500/40 hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-4 group">
                 <div
                     class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center group-hover:bg-brand-900 group-hover:text-white transition-colors shrink-0 shadow-sm">
                     <i class="ti ti-shield-check text-xl"></i>
                 </div>
                 <div>
-                    <h4 class="font-semibold text-slate-800 group-hover:text-brand-900 transition-colors" data-i18n-key="permissionsTitle">Quản lý phân
+                    <h4 class="font-semibold text-slate-800 group-hover:text-brand-900 transition-colors"
+                        data-i18n-key="permissionsTitle">Quản lý phân
                         quyền</h4>
-                    <p class="text-xs text-slate-500 mt-0.5 line-clamp-1" data-i18n-key="permissionsDesc">Chỉnh sửa quyền hạn tài khoản.</p>
+                    <p class="text-xs text-slate-500 mt-0.5 line-clamp-1" data-i18n-key="permissionsDesc">Chỉnh sửa
+                        quyền hạn tài khoản.</p>
                 </div>
             </a>
 
@@ -46,9 +50,11 @@
                     <i class="ti ti-users text-xl"></i>
                 </div>
                 <div>
-                    <h4 class="font-semibold text-slate-800 group-hover:text-brand-900 transition-colors" data-i18n-key="accountApprovalTitle">Duyệt tài
+                    <h4 class="font-semibold text-slate-800 group-hover:text-brand-900 transition-colors"
+                        data-i18n-key="accountApprovalTitle">Duyệt tài
                         khoản</h4>
-                    <p class="text-xs text-slate-500 mt-0.5 line-clamp-1" data-i18n-key="accountApprovalDesc">Xem, khóa hoặc mở lại người dùng.</p>
+                    <p class="text-xs text-slate-500 mt-0.5 line-clamp-1" data-i18n-key="accountApprovalDesc">Xem, khóa
+                        hoặc mở lại người dùng.</p>
                 </div>
             </a>
 
@@ -59,9 +65,11 @@
                     <i class="ti ti-user-plus text-xl"></i>
                 </div>
                 <div>
-                    <h4 class="font-semibold text-slate-800 group-hover:text-brand-900 transition-colors" data-i18n-key="createManagerTitle">Tạo tài khoản
+                    <h4 class="font-semibold text-slate-800 group-hover:text-brand-900 transition-colors"
+                        data-i18n-key="createManagerTitle">Tạo tài khoản
                         Quản lý</h4>
-                    <p class="text-xs text-slate-500 mt-0.5 line-clamp-1" data-i18n-key="createManagerDesc">Tạo mới tài khoản cấp quản lý.</p>
+                    <p class="text-xs text-slate-500 mt-0.5 line-clamp-1" data-i18n-key="createManagerDesc">Tạo mới tài
+                        khoản cấp quản lý.</p>
                 </div>
             </a>
 
@@ -72,9 +80,11 @@
                     <i class="ti ti-user-plus text-xl"></i>
                 </div>
                 <div>
-                    <h4 class="font-semibold text-slate-800 group-hover:text-brand-900 transition-colors" data-i18n-key="createEmployeeTitle">Tạo tài khoản
+                    <h4 class="font-semibold text-slate-800 group-hover:text-brand-900 transition-colors"
+                        data-i18n-key="createEmployeeTitle">Tạo tài khoản
                         Nhân viên</h4>
-                    <p class="text-xs text-slate-500 mt-0.5 line-clamp-1" data-i18n-key="createEmployeeDesc">Tạo mới tài khoản nhân viên, duyệt sẵn.</p>
+                    <p class="text-xs text-slate-500 mt-0.5 line-clamp-1" data-i18n-key="createEmployeeDesc">Tạo mới tài
+                        khoản nhân viên, duyệt sẵn.</p>
                 </div>
             </a>
 
@@ -85,9 +95,11 @@
                     <i class="ti ti-history text-xl"></i>
                 </div>
                 <div>
-                    <h4 class="font-semibold text-slate-800 group-hover:text-brand-900 transition-colors" data-i18n-key="auditLogsTitle">Nhật ký hoạt
+                    <h4 class="font-semibold text-slate-800 group-hover:text-brand-900 transition-colors"
+                        data-i18n-key="auditLogsTitle">Nhật ký hoạt
                         động</h4>
-                    <p class="text-xs text-slate-500 mt-0.5 line-clamp-1" data-i18n-key="auditLogsDesc">Giám sát upload, duyệt và tải về.</p>
+                    <p class="text-xs text-slate-500 mt-0.5 line-clamp-1" data-i18n-key="auditLogsDesc">Giám sát upload,
+                        duyệt và tải về.</p>
                 </div>
             </a>
 
@@ -98,8 +110,10 @@
                     <i class="ti ti-chart-bar text-xl"></i>
                 </div>
                 <div>
-                    <h4 class="font-semibold text-slate-800 group-hover:text-brand-900 transition-colors" data-i18n-key="statisticsTitle">Thống kê</h4>
-                    <p class="text-xs text-slate-500 mt-0.5 line-clamp-1" data-i18n-key="statisticsDesc">Xem báo cáo tổng quan hệ thống.</p>
+                    <h4 class="font-semibold text-slate-800 group-hover:text-brand-900 transition-colors"
+                        data-i18n-key="statisticsTitle">Thống kê</h4>
+                    <p class="text-xs text-slate-500 mt-0.5 line-clamp-1" data-i18n-key="statisticsDesc">Xem báo cáo
+                        tổng quan hệ thống.</p>
                 </div>
             </a>
 
