@@ -78,6 +78,7 @@ from services.projects import (
     get_or_create_active_category_by_label,
     ensure_approved_project_and_category_for_document,
     resolve_upload_selection,
+    get_user_allowed_categories,
 )
 from services.documents import (
     write_audit_log,
@@ -891,7 +892,8 @@ def manager_users_page(request: Request):
     role,
     created_at,
     COALESCE(is_active, 1) AS is_active,
-    COALESCE(approval_status, 'APPROVED') AS approval_status
+    COALESCE(approval_status, 'APPROVED') AS approval_status,
+    COALESCE(category_permissions_enabled, 0) AS category_permissions_enabled
 FROM users
             ORDER BY
     CASE
@@ -903,12 +905,23 @@ FROM users
             """
         ).fetchall()
 
+    permissions_by_user = {
+        str(u["id"]): {
+            "enabled": bool(u["category_permissions_enabled"]),
+            "categories": sorted(get_user_allowed_categories(u["id"])),
+        }
+        for u in users
+        if u["role"] == ROLE_EMPLOYEE
+    }
+
     return templates.TemplateResponse(
         request=request,
         name="manager_users.html",
         context={
             "user": current_user,
             "users": users,
+            "categories": CATEGORY_MAP,
+            "permissions_by_user_json": json.dumps(permissions_by_user),
         }
     )
 
