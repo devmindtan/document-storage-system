@@ -108,6 +108,31 @@
                 transform: translateY(0);
             }
         }
+
+        /* ---- Sidebar thu gọn (chỉ icon), chỉ áp dụng ở desktop (lg+) ---- */
+        @media (min-width: 1024px) {
+            #sidebar.sidebar-collapsed {
+                width: 4.5rem;
+            }
+
+            #sidebar.sidebar-collapsed .sidebar-hide-collapsed {
+                display: none !important;
+            }
+
+            #sidebar.sidebar-collapsed .sidebar-collapsed-mark {
+                display: flex !important;
+            }
+
+            #sidebar.sidebar-collapsed .sidebar-nav-anchor {
+                justify-content: center;
+            }
+
+            #sidebar.sidebar-collapsed .sidebar-cta-anchor {
+                justify-content: center;
+                padding-left: 0;
+                padding-right: 0;
+            }
+        }
     </style>
     {% block extra_style %}{% endblock %}
 </head>
@@ -122,13 +147,13 @@
         onclick="toggleSidebar()"></div>
 
     <aside id="sidebar"
-        class="fixed inset-y-0 left-0 z-50 w-64 bg-[#0b1329] text-slate-300 flex flex-col transition-transform duration-300 transform -translate-x-full lg:translate-x-0 lg:static lg:flex-shrink-0 border-r border-slate-800/60 font-sans">
+        class="fixed inset-y-0 left-0 z-50 w-64 bg-[#0b1329] text-slate-300 flex flex-col transition-[transform,width] duration-300 transform -translate-x-full lg:translate-x-0 lg:static lg:flex-shrink-0 border-r border-slate-800/60 font-sans">
 
         <!-- AkzoNobel ở sidebar, Amata Engineering ở các trang Tổng quan -->
         <div class="h-14 flex items-center justify-between px-4 shrink-0 border-b border-slate-800/60 bg-[#0b1329]">
 
             <a href="/"
-                class="flex-1 flex items-center justify-center gap-2 whitespace-nowrap transition-transform duration-200 hover:scale-[1.01]">
+                class="sidebar-hide-collapsed flex-1 flex items-center justify-center gap-2 whitespace-nowrap transition-transform duration-200 hover:scale-[1.01]">
 
                 <span class="text-lg sm:text-xl font-semibold text-white tracking-tight">AkzoNobel</span>
 
@@ -140,10 +165,22 @@
                 </span>
             </a>
 
+            <a href="/"
+                class="sidebar-collapsed-mark hidden flex-1 items-center justify-center">
+                <span
+                    class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-amber-500 text-slate-950 font-black text-sm flex items-center justify-center">A</span>
+            </a>
+
             <button
                 class="lg:hidden ml-2 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 shrink-0 transition-colors outline-none"
                 onclick="toggleSidebar()">
                 <i class="ti ti-x text-xl"></i>
+            </button>
+
+            <button id="sidebarCollapseToggle"
+                class="hidden lg:flex ml-2 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 shrink-0 transition-colors outline-none"
+                onclick="toggleSidebarCollapse()" title="Thu gọn sidebar">
+                <i class="ti ti-chevrons-left text-lg"></i>
             </button>
 
         </div>
@@ -164,15 +201,16 @@
         <!-- Macro dùng lại cho mọi nav item: 1 active state duy nhất (thanh trái vàng + nền nhạt) -->
         {% macro nav_link(href, key, icon, label) %}
         <a href="{{ href }}"
-            class="group relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors
+            class="sidebar-nav-anchor group relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors
             {{ 'text-white bg-white/[0.06] font-semibold' if active_nav == key else 'text-slate-400 hover:text-white hover:bg-white/[0.04] font-medium' }}">
             {% if active_nav == key %}<span
                 class="absolute left-0 top-1.5 bottom-1.5 w-[3px] bg-amber-400 rounded-full"></span>{% endif %}
             <i
                 class="ti {{ icon }} text-lg shrink-0 {{ 'text-amber-400' if active_nav == key else 'opacity-80 group-hover:opacity-100' }}"></i>
-            <span data-i18n="{{ key }}" class="truncate">{{ label }}</span>
+            <span data-i18n="{{ key }}" class="sidebar-hide-collapsed truncate">{{ label }}</span>
             {% if key == 'pending' and pending_count is defined and pending_count %}
-            <span class="ml-auto bg-amber-500 text-slate-950 text-xs font-bold px-1.5 py-0.5 rounded shrink-0">{{
+            <span
+                class="sidebar-hide-collapsed ml-auto bg-amber-500 text-slate-950 text-xs font-bold px-1.5 py-0.5 rounded shrink-0">{{
                 pending_count }}</span>
             {% endif %}
         </a>
@@ -181,11 +219,11 @@
         <!-- CTA: tách khỏi logo, khoảng cách rõ -->
         <div class="px-4 py-3 shrink-0">
             <a href="{{ '/employee/upload' if user.role == 'EMPLOYEE' else '/manager/upload' }}"
-                class="relative flex items-center justify-center gap-2 w-full py-2.5 rounded-xl font-bold text-sm text-amber-950 bg-amber-400 hover:bg-amber-300 overflow-hidden transition-all shadow-[0_4px_10px_rgba(251,191,36,0.15),inset_0_1px_1px_rgba(255,255,255,0.7)] border border-amber-500/50 active:scale-[0.98]">
+                class="sidebar-cta-anchor relative flex items-center justify-center gap-2 w-full py-2.5 rounded-xl font-bold text-sm text-amber-950 bg-amber-400 hover:bg-amber-300 overflow-hidden transition-all shadow-[0_4px_10px_rgba(251,191,36,0.15),inset_0_1px_1px_rgba(255,255,255,0.7)] border border-amber-500/50 active:scale-[0.98]">
                 <div class="absolute inset-0 bg-gradient-to-t from-black/[0.03] to-transparent pointer-events-none">
                 </div>
                 <i class="ti ti-plus text-lg relative z-10"></i>
-                <span class="relative z-10 tracking-wide" data-i18n="upload">Gửi hồ sơ mới</span>
+                <span class="sidebar-hide-collapsed relative z-10 tracking-wide" data-i18n="upload">Gửi hồ sơ mới</span>
             </a>
         </div>
 
@@ -194,7 +232,8 @@
 
             <div class="space-y-0.5">
                 <p data-i18n="section.workspace"
-                    class="px-3 mb-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Quản lý hồ sơ</p>
+                    class="sidebar-hide-collapsed px-3 mb-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                    Quản lý hồ sơ</p>
 
                 {% if user.role == 'EMPLOYEE' %}
                 {{ nav_link('/employee', 'dashboard', 'ti-layout-dashboard', 'Tổng quan') }}
@@ -215,7 +254,8 @@
             {% if user.is_admin %}
             <div class="space-y-0.5">
                 <p data-i18n="section.admin"
-                    class="px-3 mb-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Quản trị hệ thống
+                    class="sidebar-hide-collapsed px-3 mb-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                    Quản trị hệ thống
                 </p>
 
                 {{ nav_link('/admin', 'admin_dashboard', 'ti-settings-automation', 'Admin Dashboard') }}
@@ -233,14 +273,14 @@
                 <img src="https://ui-avatars.com/api/?name={{ (user.full_name or user.username) | urlencode }}&background=1b4d78&color=fff&bold=true"
                     alt="{{ user.full_name }}" class="w-9 h-9 rounded-lg border border-white/10 object-cover shrink-0">
 
-                <div class="flex-1 min-w-0">
+                <div class="sidebar-hide-collapsed flex-1 min-w-0">
                     <p class="text-xs font-bold text-slate-100 truncate">{{ user.full_name or user.username }}</p>
                     <p class="text-[10px] text-slate-500 truncate font-mono mt-0.5 tracking-wide font-semibold">{{
                         'ADMIN' if user.is_admin else ('MANAGER' if user.role == 'MANAGER' else 'EMPLOYEE') }}</p>
                 </div>
 
                 <a href="/logout" data-i18n-title="logout"
-                    class="text-slate-400 hover:text-rose-400 p-1.5 rounded-lg hover:bg-rose-500/10 transition-colors shrink-0"
+                    class="sidebar-hide-collapsed text-slate-400 hover:text-rose-400 p-1.5 rounded-lg hover:bg-rose-500/10 transition-colors shrink-0"
                     title="Đăng xuất">
                     <i class="ti ti-logout text-lg"></i>
                 </a>
@@ -265,11 +305,20 @@
                 </div>
 
                 <div class="min-w-0 flex flex-col justify-center mt-0.5">
-                    <p data-i18n="{{ 'section.admin' if is_admin_section else 'section.workspace' }}"
+                    <nav aria-label="Breadcrumb"
                         class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1.5 flex items-center gap-1.5">
                         <span class="w-1 h-1 rounded-full bg-amber-400 inline-block"></span>
-                        {{ 'Quản trị hệ thống' if is_admin_section else 'Quản lý hồ sơ' }}
-                    </p>
+                        <a href="{{ '/admin' if is_admin_section else ('/employee' if user.role == 'EMPLOYEE' else '/manager') }}"
+                            data-i18n="{{ 'section.admin' if is_admin_section else 'section.workspace' }}"
+                            class="hover:text-slate-600 transition-colors">
+                            {{ 'Quản trị hệ thống' if is_admin_section else 'Quản lý hồ sơ' }}
+                        </a>
+                        {% if nav_titles.get(active_nav) %}
+                        <i class="ti ti-chevron-right text-[10px]"></i>
+                        <span data-i18n="{{ active_nav }}" class="text-slate-500 truncate">{{
+                            nav_titles.get(active_nav, '') }}</span>
+                        {% endif %}
+                    </nav>
                     <h1 data-i18n="{{ active_nav }}"
                         class="text-lg sm:text-xl font-extrabold text-slate-800 tracking-tight leading-none truncate">
                         {{ nav_titles.get(active_nav, '') }}
@@ -278,6 +327,11 @@
             </div>
 
             <div class="flex items-center gap-3 shrink-0">
+                <a href="{{ '/employee/upload' if user.role == 'EMPLOYEE' else '/manager/upload' }}"
+                    class="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-brand-900 text-white hover:bg-brand-800 transition-all text-xs font-bold shadow-sm">
+                    <i class="ti ti-plus text-sm"></i>
+                    <span data-i18n="upload">Gửi hồ sơ mới</span>
+                </a>
                 <button id="languageToggle" type="button"
                     class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300 transition-all text-xs font-bold shadow-sm outline-none group">
                     <i
@@ -305,6 +359,25 @@
                 backdrop.classList.remove('hidden'); backdrop.classList.add('block');
             }
         }
+
+        function toggleSidebarCollapse() {
+            const sidebar = document.getElementById('sidebar');
+            const collapsed = sidebar.classList.toggle('sidebar-collapsed');
+            localStorage.setItem('sidebarCollapsed', collapsed ? '1' : '0');
+            const toggleIcon = document.querySelector('#sidebarCollapseToggle i');
+            if (toggleIcon) {
+                toggleIcon.className = collapsed ? 'ti ti-chevrons-right text-lg' : 'ti ti-chevrons-left text-lg';
+            }
+        }
+
+        (function () {
+            if (localStorage.getItem('sidebarCollapsed') === '1') {
+                const sidebar = document.getElementById('sidebar');
+                if (sidebar) sidebar.classList.add('sidebar-collapsed');
+                const toggleIcon = document.querySelector('#sidebarCollapseToggle i');
+                if (toggleIcon) toggleIcon.className = 'ti ti-chevrons-right text-lg';
+            }
+        })();
     </script>
 
     <script>
