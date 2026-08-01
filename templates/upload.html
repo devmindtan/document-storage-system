@@ -11,14 +11,6 @@
         margin-left: 4px;
     }
 
-    .conditional-input-box {
-        display: none;
-    }
-
-    .conditional-input-box.is-visible {
-        display: block;
-    }
-
     .custom-file-upload.is-dragover {
         background-color: #f0f5fa;
         border-color: #3b82f6;
@@ -106,27 +98,7 @@
                         <option value="{{ key }}">{{ project['label'] }}</option>
                         {% endif %}
                         {% endfor %}
-
-                        {% if selected_project_key == new_project_key %}
-                        <option value="{{ new_project_key }}" selected>+ Tạo project mới</option>
-                        {% else %}
-                        <option value="{{ new_project_key }}">+ Tạo project mới</option>
-                        {% endif %}
                     </select>
-
-                    <div id="newProjectBox"
-                        class="conditional-input-box mt-3 p-3.5 border border-dashed border-brand-200 rounded-lg bg-brand-50/40">
-                        <label for="new_project_name" class="block text-sm font-medium text-slate-700 mb-1.5">
-                            <span data-i18n-key="newProjectNameLabel">Tên project mới</span> <span
-                                class="required-star">*</span>
-                        </label>
-                        <input id="new_project_name" type="text" name="new_project_name" maxlength="50"
-                            placeholder="Nhập tên project mới" value="{{ new_project_name_value or '' }}"
-                            class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
-                        <p class="note-text text-xs text-slate-500 mt-1.5" data-i18n-key="newProjectNote">Project mới sẽ
-                            được gửi kèm hồ sơ và chờ quản lý
-                            duyệt một lần.</p>
-                    </div>
                 </div>
 
                 <div>
@@ -147,31 +119,6 @@
                     <p id="restrictedCategoriesNote" class="hidden note-text text-xs text-brand-600 mt-1.5"
                         data-i18n-key="restrictedCategoriesNote">Chỉ hiển thị các loại hồ sơ bạn được cấp quyền
                         upload.</p>
-
-                    <div id="newCategoryBox"
-                        class="conditional-input-box mt-3 p-3.5 border border-dashed border-brand-200 rounded-lg bg-brand-50/40 space-y-3">
-                        <div>
-                            <label for="new_category_name" class="block text-sm font-medium text-slate-700 mb-1.5">
-                                <span data-i18n-key="newCategoryNameLabel">Tên file con mới</span> <span
-                                    class="required-star">*</span>
-                            </label>
-                            <input id="new_category_name" type="text" name="new_category_name" maxlength="50"
-                                placeholder="Nhập tên file con mới" value="{{ new_category_name_value or '' }}"
-                                class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
-                        </div>
-
-                        <div>
-                            <label for="new_category_code" class="block text-sm font-medium text-slate-700 mb-1.5"
-                                data-i18n-key="categoryCodeLabel">Mã file
-                                con</label>
-                            <input id="new_category_code" type="text" name="new_category_code" maxlength="10"
-                                placeholder="Ví dụ: IR, QC, LEG" value="{{ new_category_code_value or '' }}"
-                                class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
-                        </div>
-
-                        <p class="note-text text-xs text-slate-500" data-i18n-key="categoryCodeNote">Nếu để trống mã file
-                            con, hệ thống sẽ tự tạo mã.</p>
-                    </div>
 
                     <div id="codePreviewBox"
                         class="hidden mt-3 px-3.5 py-2.5 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-500">
@@ -264,42 +211,16 @@
 <script id="allowedCategoriesJson" type="application/json">{{ allowed_categories_json | safe }}</script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const NEW_PROJECT_KEY = "__new_project__";
-        const NEW_CATEGORY_KEY = "__new_category__";
-        const DEFAULT_CATEGORY_PREFIX = "__default_category__:";
-
         // null = không giới hạn, [] = bị giới hạn nhưng chưa được cấp loại nào,
         // [...] = chỉ được phép upload các loại hồ sơ có tên trong danh sách.
         const ALLOWED_CATEGORIES = JSON.parse(
             document.getElementById("allowedCategoriesJson").textContent
         );
 
-        const defaultCategoriesAll = [
-            { id: DEFAULT_CATEGORY_PREFIX + "BC", label: "Business Case" },
-            { id: DEFAULT_CATEGORY_PREFIX + "CAPEX", label: "CAPEX" },
-            { id: DEFAULT_CATEGORY_PREFIX + "PTW", label: "PTW" },
-            { id: DEFAULT_CATEGORY_PREFIX + "JSA", label: "JSA" },
-            { id: DEFAULT_CATEGORY_PREFIX + "RAHS", label: "Risk Assessment / Hazard Study" },
-            { id: DEFAULT_CATEGORY_PREFIX + "DWG", label: "Drawings" },
-            { id: DEFAULT_CATEGORY_PREFIX + "FSH", label: "FAT / SAT / Handover" },
-            { id: DEFAULT_CATEGORY_PREFIX + "PHOTO", label: "Photos" },
-            { id: DEFAULT_CATEGORY_PREFIX + "TSOP", label: "Training / SOP" },
-            { id: DEFAULT_CATEGORY_PREFIX + "LEG", label: "Legal" },
-            { id: DEFAULT_CATEGORY_PREFIX + "VM", label: "Vendor Manual" },
-            { id: DEFAULT_CATEGORY_PREFIX + "OTH", label: "Others" }
-        ];
-        const defaultCategories = ALLOWED_CATEGORIES === null
-            ? defaultCategoriesAll
-            : defaultCategoriesAll.filter(c => ALLOWED_CATEGORIES.includes(c.label));
-
         const projectSelect = document.getElementById("project_key");
         const categorySelect = document.getElementById("category_key");
         const categoryLoadingSpinner = document.getElementById("categoryLoadingSpinner");
         const restrictedCategoriesNote = document.getElementById("restrictedCategoriesNote");
-        const newProjectBox = document.getElementById("newProjectBox");
-        const newProjectInput = document.getElementById("new_project_name");
-        const newCategoryBox = document.getElementById("newCategoryBox");
-        const newCategoryNameInput = document.getElementById("new_category_name");
         const fileInput = document.getElementById("uploaded_files");
         const selectedFileText = document.getElementById("selectedFileText");
         const uploadDropZone = document.querySelector(".custom-file-upload");
@@ -325,15 +246,6 @@
             }
         }
 
-        function setRequired(input, required) {
-            if (!input) return;
-            if (required) {
-                input.setAttribute("required", "required");
-            } else {
-                input.removeAttribute("required");
-            }
-        }
-
         function addOption(value, label, selectedValue, code) {
             const option = document.createElement("option");
             option.value = value;
@@ -344,19 +256,6 @@
             categorySelect.appendChild(option);
         }
 
-        function updateNewProjectBox() {
-            const isNewProject = projectSelect.value === NEW_PROJECT_KEY;
-            newProjectBox.classList.toggle("is-visible", isNewProject);
-            setRequired(newProjectInput, isNewProject);
-        }
-
-        function updateNewCategoryBox() {
-            const isNewCategory = categorySelect.value === NEW_CATEGORY_KEY;
-            newCategoryBox.classList.toggle("is-visible", isNewCategory);
-            setRequired(newCategoryNameInput, isNewCategory);
-            updateDocumentCodePreview();
-        }
-
         function updateDocumentCodePreview() {
             const box = document.getElementById("codePreviewBox");
             const text = document.getElementById("codePreviewText");
@@ -365,7 +264,7 @@
             const projectId = projectSelect.value;
             const categoryKey = categorySelect.value;
 
-            if (!projectId || projectId === NEW_PROJECT_KEY || !categoryKey || categoryKey === NEW_CATEGORY_KEY) {
+            if (!projectId || !categoryKey) {
                 box.classList.add("hidden");
                 return;
             }
@@ -386,38 +285,17 @@
                 .catch(() => box.classList.add("hidden"));
         }
 
-        function loadDefaultCategoriesForNewProject(selectedCategoryKey) {
-            categorySelect.innerHTML = "";
-            defaultCategories.forEach(function (category) {
-                addOption(category.id, category.label, selectedCategoryKey);
-            });
-            addOption(NEW_CATEGORY_KEY, "+ Tạo file con mới", selectedCategoryKey);
-            categorySelect.disabled = false;
-            if (!categorySelect.value && categorySelect.options.length > 0) {
-                categorySelect.selectedIndex = 0;
-            }
-            categorySelect.dataset.selectedCategoryKey = categorySelect.value;
-            updateNewCategoryBox();
-        }
-
         function updateCategoryDropdown() {
             if (hasNoAllowedCategories) return;
 
             const projectId = projectSelect.value;
             const selectedCategoryKey = categorySelect.dataset.selectedCategoryKey || "";
 
-            updateNewProjectBox();
-
-            if (projectId === NEW_PROJECT_KEY) {
-                loadDefaultCategoriesForNewProject(selectedCategoryKey);
-                return;
-            }
-
             categorySelect.innerHTML = "";
             if (!projectId) {
                 addOption("", "Không có file con", "");
                 categorySelect.disabled = true;
-                updateNewCategoryBox();
+                updateDocumentCodePreview();
                 return;
             }
 
@@ -433,29 +311,27 @@
                     categorySelect.innerHTML = "";
                     if (!data.success || !data.categories || data.categories.length === 0) {
                         addOption("", "Không có file con", "");
-                        addOption(NEW_CATEGORY_KEY, "+ Tạo file con mới", selectedCategoryKey);
-                        categorySelect.disabled = false;
-                        updateNewCategoryBox();
+                        categorySelect.disabled = true;
+                        updateDocumentCodePreview();
                         return;
                     }
 
                     data.categories.forEach(function (category) {
                         addOption(category.id, category.label, selectedCategoryKey, category.code);
                     });
-                    addOption(NEW_CATEGORY_KEY, "+ Tạo file con mới", selectedCategoryKey);
                     categorySelect.disabled = false;
 
                     if (!categorySelect.value && categorySelect.options.length > 0) {
                         categorySelect.selectedIndex = 0;
                     }
                     categorySelect.dataset.selectedCategoryKey = categorySelect.value;
-                    updateNewCategoryBox();
+                    updateDocumentCodePreview();
                 })
                 .catch(() => {
                     categorySelect.innerHTML = "";
                     addOption("", "Không thể tải file con", "");
                     categorySelect.disabled = true;
-                    updateNewCategoryBox();
+                    updateDocumentCodePreview();
                 })
                 .finally(() => {
                     if (categoryLoadingSpinner) categoryLoadingSpinner.classList.add("hidden");
@@ -481,7 +357,7 @@
 
             categorySelect.addEventListener("change", function () {
                 categorySelect.dataset.selectedCategoryKey = categorySelect.value;
-                updateNewCategoryBox();
+                updateDocumentCodePreview();
             });
 
             updateCategoryDropdown();
@@ -541,12 +417,7 @@
                 cardSubtitle: "Điền thông tin, quản lý danh mục và đính kèm tệp cần trình quản lý duyệt.",
                 step1Heading: "Chọn vị trí lưu & Quản lý danh mục",
                 projectLabel: "Project",
-                newProjectNameLabel: "Tên project mới",
-                newProjectNote: "Project mới sẽ được gửi kèm hồ sơ và chờ quản lý duyệt một lần.",
                 categoryLabel: "Loại hồ sơ",
-                newCategoryNameLabel: "Tên file con mới",
-                categoryCodeLabel: "Mã file con",
-                categoryCodeNote: "Nếu để trống mã file con, hệ thống sẽ tự tạo mã.",
                 restrictedCategoriesNote: "Chỉ hiển thị các loại hồ sơ bạn được cấp quyền upload.",
                 noAllowedCategoriesText: "Bạn chưa được cấp quyền upload loại hồ sơ nào. Vui lòng liên hệ quản lý để được cấp quyền.",
                 codePreviewLabel: "Mã hồ sơ dự kiến:",
@@ -571,12 +442,7 @@
                 cardSubtitle: "Fill in the details, manage the catalog and attach the file to send to your manager for approval.",
                 step1Heading: "Select storage location & manage catalog",
                 projectLabel: "Project",
-                newProjectNameLabel: "New project name",
-                newProjectNote: "The new project will be submitted together with the document and await manager approval once.",
                 categoryLabel: "Document type",
-                newCategoryNameLabel: "New sub-file name",
-                categoryCodeLabel: "Sub-file code",
-                categoryCodeNote: "If left blank, the system will auto-generate the code.",
                 restrictedCategoriesNote: "Only showing document types you're permitted to upload.",
                 noAllowedCategoriesText: "You haven't been granted permission to upload any document type. Please contact your manager.",
                 codePreviewLabel: "Expected document code:",

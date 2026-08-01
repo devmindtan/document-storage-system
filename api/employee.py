@@ -251,6 +251,11 @@ async def employee_upload_file(
             error="Vị trí không được vượt quá 50 ký tự."
         )
 
+    if project_key == NEW_PROJECT_KEY or category_key == NEW_CATEGORY_KEY:
+        return show_upload_page(
+            error="Nhân viên chỉ được chọn project và loại hồ sơ có sẵn."
+        )
+
     ok, selection, selection_error = resolve_upload_selection(
         project_key=project_key,
         category_key=category_key,
