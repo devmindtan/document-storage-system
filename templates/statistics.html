@@ -9,67 +9,67 @@
 <div class="space-y-6 animate-fade-in">
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         <div
-            class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center gap-4 group hover:border-blue-300 transition-colors">
+            class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm flex items-center gap-4 group hover:border-blue-300 dark:hover:border-blue-500/50 transition-colors">
             <div
-                class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 shadow-sm group-hover:scale-110 transition-transform">
+                class="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 shadow-sm group-hover:scale-110 transition-transform">
                 <i class="ti ti-files text-xl"></i>
             </div>
             <div>
-                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider" data-i18n-key="totalLabel">Tổng
+                <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-i18n-key="totalLabel">Tổng
                     số tài liệu</p>
-                <h3 class="text-2xl font-bold text-slate-800 tracking-tight mt-0.5">{{ total_uploaded_documents |
+                <h3 class="text-2xl font-bold text-slate-800 dark:text-slate-100 tracking-tight mt-0.5">{{ total_uploaded_documents |
                     default(0) }}</h3>
             </div>
         </div>
 
         <div
-            class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center gap-4 group hover:border-emerald-300 transition-colors">
+            class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm flex items-center gap-4 group hover:border-emerald-300 dark:hover:border-emerald-500/50 transition-colors">
             <div
-                class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 shadow-sm group-hover:scale-110 transition-transform">
+                class="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 shadow-sm group-hover:scale-110 transition-transform">
                 <i class="ti ti-circle-check text-xl"></i>
             </div>
             <div>
-                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider" data-i18n-key="approvedLabel">
+                <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-i18n-key="approvedLabel">
                     Đã duyệt</p>
-                <h3 class="text-2xl font-bold text-slate-800 tracking-tight mt-0.5">{{ total_approved_documents |
+                <h3 class="text-2xl font-bold text-slate-800 dark:text-slate-100 tracking-tight mt-0.5">{{ total_approved_documents |
                     default(0) }}</h3>
             </div>
         </div>
 
         <div
-            class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center gap-4 group hover:border-amber-300 transition-colors">
+            class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm flex items-center gap-4 group hover:border-amber-300 dark:hover:border-amber-500/50 transition-colors">
             <div
-                class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 shadow-sm group-hover:scale-110 transition-transform">
+                class="w-12 h-12 rounded-xl bg-amber-50 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 shadow-sm group-hover:scale-110 transition-transform">
                 <i class="ti ti-clock-shield text-xl"></i>
             </div>
             <div>
-                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider" data-i18n-key="pendingLabel">
+                <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-i18n-key="pendingLabel">
                     Chờ duyệt</p>
-                <h3 class="text-2xl font-bold text-slate-800 tracking-tight mt-0.5">{{ total_pending_documents |
+                <h3 class="text-2xl font-bold text-slate-800 dark:text-slate-100 tracking-tight mt-0.5">{{ total_pending_documents |
                     default(0) }}</h3>
             </div>
         </div>
 
         <div
-            class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center gap-4 group hover:border-rose-300 transition-colors">
+            class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm flex items-center gap-4 group hover:border-rose-300 dark:hover:border-rose-500/50 transition-colors">
             <div
-                class="w-12 h-12 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center shrink-0 shadow-sm group-hover:scale-110 transition-transform">
+                class="w-12 h-12 rounded-xl bg-rose-50 dark:bg-rose-500/20 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0 shadow-sm group-hover:scale-110 transition-transform">
                 <i class="ti ti-circle-x text-xl"></i>
             </div>
             <div>
-                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider" data-i18n-key="rejectedLabel">
+                <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-i18n-key="rejectedLabel">
                     Từ chối</p>
-                <h3 class="text-2xl font-bold text-slate-800 tracking-tight mt-0.5">{{ total_rejected_documents |
+                <h3 class="text-2xl font-bold text-slate-800 dark:text-slate-100 tracking-tight mt-0.5">{{ total_rejected_documents |
                     default(0) }}</h3>
             </div>
         </div>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm lg:col-span-2">
+        <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm lg:col-span-2">
             <div class="flex items-center gap-2 mb-6">
                 <div class="w-2 h-6 bg-brand-500 rounded-full"></div>
-                <h2 class="text-lg font-bold text-slate-800 tracking-tight" data-i18n-key="monthlyChartTitle">Tài liệu
+                <h2 class="text-lg font-bold text-slate-800 dark:text-slate-100 tracking-tight" data-i18n-key="monthlyChartTitle">Tài liệu
                     upload theo tháng</h2>
             </div>
             <div class="relative h-72 w-full">
@@ -77,10 +77,10 @@
             </div>
         </div>
 
-        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+        <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
             <div class="flex items-center gap-2 mb-6">
                 <div class="w-2 h-6 bg-purple-500 rounded-full"></div>
-                <h2 class="text-lg font-bold text-slate-800 tracking-tight" data-i18n-key="statusChartTitle">Tỉ lệ theo
+                <h2 class="text-lg font-bold text-slate-800 dark:text-slate-100 tracking-tight" data-i18n-key="statusChartTitle">Tỉ lệ theo
                     trạng thái</h2>
             </div>
             <div class="relative h-64 w-full flex justify-center">
@@ -89,17 +89,17 @@
         </div>
     </div>
 
-    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        <div class="px-6 py-5 border-b border-slate-100 flex items-center gap-2">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+        <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-800 flex items-center gap-2">
             <div class="w-2 h-6 bg-blue-500 rounded-full"></div>
-            <h2 class="text-lg font-bold text-slate-800 tracking-tight" data-i18n-key="userTableTitle">Thống kê tài liệu
+            <h2 class="text-lg font-bold text-slate-800 dark:text-slate-100 tracking-tight" data-i18n-key="userTableTitle">Thống kê tài liệu
                 theo user</h2>
         </div>
 
         <div class="overflow-x-auto">
-            <table class="w-full text-left text-sm text-slate-600 whitespace-nowrap">
+            <table class="w-full text-left text-sm text-slate-600 dark:text-slate-300 whitespace-nowrap">
                 <thead
-                    class="bg-slate-50 border-b border-slate-200 text-slate-700 uppercase font-bold text-[11px] tracking-wider">
+                    class="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 uppercase font-bold text-[11px] tracking-wider">
                     <tr>
                         <th class="px-6 py-4" data-i18n-key="colStt">STT</th>
                         <th class="px-6 py-4" data-i18n-key="colFullName">Họ tên</th>
@@ -110,14 +110,14 @@
                         <th class="px-6 py-4" data-i18n-key="colRejected">Từ chối</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100">
+                <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
                     {% if user_rows %}
                     {% for row in user_rows %}
-                    <tr class="hover:bg-slate-50/80 transition-colors group">
-                        <td class="px-6 py-4 text-slate-400 font-mono text-xs">{{ loop.index }}</td>
-                        <td class="px-6 py-4 font-semibold text-slate-800">{{ row['full_name'] }}</td>
-                        <td class="px-6 py-4 text-slate-500">{{ row['username'] }}</td>
-                        <td class="px-6 py-4 font-bold text-slate-700">{{ row['total_documents'] | default(0) }}</td>
+                    <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/60 transition-colors group">
+                        <td class="px-6 py-4 text-slate-400 dark:text-slate-500 font-mono text-xs">{{ loop.index }}</td>
+                        <td class="px-6 py-4 font-semibold text-slate-800 dark:text-slate-100">{{ row['full_name'] }}</td>
+                        <td class="px-6 py-4 text-slate-500 dark:text-slate-400">{{ row['username'] }}</td>
+                        <td class="px-6 py-4 font-bold text-slate-700 dark:text-slate-300">{{ row['total_documents'] | default(0) }}</td>
                         <td class="px-6 py-4">
                             {{ macros.badge(row['approved_documents'] | default(0), variant="success") }}
                         </td>
@@ -131,7 +131,7 @@
                     {% endfor %}
                     {% else %}
                     <tr>
-                        <td colspan="7" class="px-6 py-12 text-center text-slate-400" data-i18n-key="emptyMessage">
+                        <td colspan="7" class="px-6 py-12 text-center text-slate-400 dark:text-slate-500" data-i18n-key="emptyMessage">
                             Chưa có tài liệu nào được upload.
                         </td>
                     </tr>
@@ -149,18 +149,27 @@
     const monthlyLabels = {{ monthly_labels_json | default ('[]') | safe }};
     const monthlyValues = {{ monthly_values_json | default ('[]') | safe }};
 
+    function isDarkMode() {
+        return document.documentElement.classList.contains("dark");
+    }
+
     document.addEventListener("DOMContentLoaded", function () {
+        const dark = isDarkMode();
+        const tickColor = dark ? "#94a3b8" : "#64748b";
+        const gridColor = dark ? "#334155" : "#f1f5f9";
+        const legendColor = dark ? "#cbd5e1" : "#475569";
+
         // BIỂU ĐỒ CỘT (Bar Chart)
         const ctxBar = document.getElementById("barChartCanvas").getContext("2d");
-        new Chart(ctxBar, {
+        window.statsBarChart = new Chart(ctxBar, {
             type: "bar",
             data: {
                 labels: monthlyLabels,
                 datasets: [{
                     label: "Số hồ sơ",
                     data: monthlyValues,
-                    backgroundColor: "#1b4d78",
-                    hoverBackgroundColor: "#3b82f6",
+                    backgroundColor: dark ? "#3b82f6" : "#1b4d78",
+                    hoverBackgroundColor: "#60a5fa",
                     borderRadius: 6,
                     barThickness: "flex",
                     maxBarThickness: 40
@@ -173,11 +182,13 @@
                 scales: {
                     y: {
                         beginAtZero: true,
-                        grid: { color: "#f1f5f9", drawBorder: false },
-                        border: { dash: [4, 4] }
+                        grid: { color: gridColor, drawBorder: false },
+                        border: { dash: [4, 4] },
+                        ticks: { color: tickColor }
                     },
                     x: {
-                        grid: { display: false, drawBorder: false }
+                        grid: { display: false, drawBorder: false },
+                        ticks: { color: tickColor }
                     }
                 }
             }
@@ -193,7 +204,7 @@
                 datasets: [{
                     data: [
                         {{ total_approved_documents | default(0)
-                }}, 
+                }},
                         {{ total_pending_documents | default(0) }},
         {{ total_rejected_documents | default(0) }}
                     ],
@@ -209,11 +220,36 @@
         plugins: {
             legend: {
                 position: "bottom",
-                labels: { padding: 20, usePointStyle: true, pointStyle: "circle", font: { family: "'Plus Jakarta Sans', sans-serif" } }
+                labels: { padding: 20, usePointStyle: true, pointStyle: "circle", color: legendColor, font: { family: "'Plus Jakarta Sans', sans-serif" } }
             }
         }
     }
         });
+
+        // Cập nhật màu chart ngay khi người dùng đổi theme trên chính trang này
+        const darkModeToggleBtn = document.getElementById("darkModeToggle");
+        if (darkModeToggleBtn) {
+            darkModeToggleBtn.addEventListener("click", function () {
+                setTimeout(function () {
+                    const nowDark = isDarkMode();
+                    const newTick = nowDark ? "#94a3b8" : "#64748b";
+                    const newGrid = nowDark ? "#334155" : "#f1f5f9";
+                    const newLegend = nowDark ? "#cbd5e1" : "#475569";
+
+                    if (window.statsBarChart) {
+                        window.statsBarChart.data.datasets[0].backgroundColor = nowDark ? "#3b82f6" : "#1b4d78";
+                        window.statsBarChart.options.scales.y.grid.color = newGrid;
+                        window.statsBarChart.options.scales.y.ticks.color = newTick;
+                        window.statsBarChart.options.scales.x.ticks.color = newTick;
+                        window.statsBarChart.update();
+                    }
+                    if (window.statsDoughnutChart) {
+                        window.statsDoughnutChart.options.plugins.legend.labels.color = newLegend;
+                        window.statsDoughnutChart.update();
+                    }
+                }, 50);
+            });
+        }
     });
 </script>
 
