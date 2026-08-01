@@ -114,6 +114,44 @@ def force_delete_file(file_path: Path) -> bool:
     return False
 
 
+def recover_stuck_document_deletions():
+    """
+    Chạy khi khởi động app.
+
+    Nếu process bị crash/kill giữa lúc đang xóa hồ sơ, status sẽ kẹt ở
+    "DELETING_FROM_<trạng_thái_cũ>". Khôi phục lại đúng trạng thái cũ
+    để hồ sơ không biến mất khỏi hệ thống một cách âm thầm.
+    """
+
+    with get_connection() as conn:
+        stuck_rows = conn.execute(
+            """
+            SELECT id, status
+            FROM documents
+            WHERE status LIKE 'DELETING_FROM_%'
+            """
+        ).fetchall()
+
+        for row in stuck_rows:
+            previous_status = row["status"].removeprefix("DELETING_FROM_")
+
+            conn.execute(
+                """
+                UPDATE documents
+                SET status = ?
+                WHERE id = ?
+                """,
+                (previous_status, row["id"]),
+            )
+
+    for row in stuck_rows:
+        previous_status = row["status"].removeprefix("DELETING_FROM_")
+        print(
+            f"[recover_stuck_document_deletions] Document {row['id']} "
+            f"was stuck in '{row['status']}', restored to '{previous_status}'."
+        )
+
+
 def try_delete_folder(folder_path: Path) -> bool:
     """
     Cố gắng xóa folder OneDrive.

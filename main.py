@@ -15,6 +15,7 @@ from database.schema import (
     initialize_user_category_permissions,
 )
 from api import auth, employee, manager, documents, admin, statistics
+from services.documents import recover_stuck_document_deletions
 
 app = FastAPI()
 
@@ -48,3 +49,4 @@ def startup():
     initialize_admin_status()
     initialize_user_sessions()
     initialize_user_category_permissions()
+    recover_stuck_document_deletions()

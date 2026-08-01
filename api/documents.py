@@ -491,6 +491,36 @@ def delete_approved_document_web(
             status_code=303,
         )
 
+    previous_status = document["status"]
+
+    if previous_status not in ("APPROVED", "REJECTED"):
+        return RedirectResponse(
+            "/documents/approved?error=Hồ+sơ+này+không+ở+trạng+thái+có+thể+xóa+"
+            "(có+thể+đang+được+xử+lý).",
+            status_code=303,
+        )
+
+    deleting_status = f"DELETING_FROM_{previous_status}"
+
+    # Claim hồ sơ trước khi đụng vào file thật, tránh 2 request cùng xóa
+    # 1 hồ sơ song song.
+    with get_connection() as conn:
+        claim = conn.execute(
+            """
+            UPDATE documents
+            SET status = ?
+            WHERE id = ? AND status = ?
+            """,
+            (deleting_status, document_id, previous_status),
+        )
+
+    if claim.rowcount == 0:
+        return RedirectResponse(
+            "/documents/approved?error=Hồ+sơ+đang+được+xử+lý+bởi+người+khác,+"
+            "vui+lòng+tải+lại+trang.",
+            status_code=303,
+        )
+
     deleted_file_count = 0
     file_paths_to_delete = set()
 
@@ -518,6 +548,36 @@ def delete_approved_document_web(
             if force_delete_file(file_path):
                 deleted_file_count += 1
 
+        still_present = [p for p in file_paths_to_delete if p.exists()]
+
+        if still_present:
+            with get_connection() as conn:
+                conn.execute(
+                    """
+                    UPDATE documents
+                    SET status = ?
+                    WHERE id = ?
+                    """,
+                    (previous_status, document_id),
+                )
+
+            write_audit_log(
+                user=current_user,
+                action="DELETE_DOCUMENT_FAILED",
+                document_id=document_id,
+                details=(
+                    f"Xóa file thất bại cho hồ sơ '{document['original_name']}' "
+                    f"({len(still_present)} file còn sót lại). "
+                    f"Đã khôi phục trạng thái về {previous_status}."
+                ),
+            )
+
+            return RedirectResponse(
+                "/documents/approved?error=Xóa+file+thất+bại,+hồ+sơ+đã+được+"
+                "khôi+phục.+Vui+lòng+thử+lại.",
+                status_code=303,
+            )
+
         # Xóa hồ sơ khỏi database
         with get_connection() as conn:
             conn.execute(
@@ -544,6 +604,16 @@ def delete_approved_document_web(
         )
 
     except Exception as error:
+        with get_connection() as conn:
+            conn.execute(
+                """
+                UPDATE documents
+                SET status = ?
+                WHERE id = ?
+                """,
+                (previous_status, document_id),
+            )
+
         return RedirectResponse(
             f"/documents/approved?error=Không+thể+xóa+hồ+sơ:+{quote(str(error))}",
             status_code=303,

@@ -768,20 +768,26 @@ def approve_project_request(
                 status_code=303,
             )
 
-        conn.execute(
+        claim = conn.execute(
             """
             UPDATE projects
             SET status = 'APPROVED',
                 reviewed_by = ?,
                 reviewed_at = ?,
                 rejection_reason = NULL
-            WHERE id = ?
+            WHERE id = ? AND status = 'PENDING'
             """,
             (
                 current_user["full_name"],
                 reviewed_at,
                 project_id,
             ),
+        )
+
+    if claim.rowcount == 0:
+        return RedirectResponse(
+            "/manager/project-requests?error=Project+đã+được+xử+lý+bởi+người+khác.",
+            status_code=303,
         )
 
     create_project_storage_folders(project["folder"])
@@ -840,14 +846,14 @@ def reject_project_request(
                 status_code=303,
             )
 
-        conn.execute(
+        claim = conn.execute(
             """
             UPDATE projects
             SET status = 'REJECTED',
                 reviewed_by = ?,
                 reviewed_at = ?,
                 rejection_reason = ?
-            WHERE id = ?
+            WHERE id = ? AND status = 'PENDING'
             """,
             (
                 current_user["full_name"],
@@ -855,6 +861,12 @@ def reject_project_request(
                 reason,
                 project_id,
             ),
+        )
+
+    if claim.rowcount == 0:
+        return RedirectResponse(
+            "/manager/project-requests?error=Project+đã+được+xử+lý+bởi+người+khác.",
+            status_code=303,
         )
 
     write_audit_log(
@@ -1046,14 +1058,20 @@ def approve_user_account(
         if target_user["role"] == ROLE_MANAGER:
             return RedirectResponse("/manager/users", status_code=303)
 
-        conn.execute(
+        claim = conn.execute(
             """
             UPDATE users
             SET approval_status = 'APPROVED',
                 is_active = 1
-            WHERE id = ?
+            WHERE id = ? AND approval_status = 'PENDING'
             """,
             (user_id,),
+        )
+
+    if claim.rowcount == 0:
+        return RedirectResponse(
+            "/manager/users?error=Tài+khoản+đã+được+xử+lý+bởi+người+khác.",
+            status_code=303,
         )
 
     write_audit_log(
@@ -1106,14 +1124,20 @@ def reject_user_account(
         if target_user["role"] == ROLE_MANAGER:
             return RedirectResponse("/manager/users", status_code=303)
 
-        conn.execute(
+        claim = conn.execute(
             """
             UPDATE users
             SET approval_status = 'REJECTED',
                 is_active = 0
-            WHERE id = ?
+            WHERE id = ? AND approval_status = 'PENDING'
             """,
             (user_id,),
+        )
+
+    if claim.rowcount == 0:
+        return RedirectResponse(
+            "/manager/users?error=Tài+khoản+đã+được+xử+lý+bởi+người+khác.",
+            status_code=303,
         )
 
     write_audit_log(
@@ -1168,9 +1192,39 @@ def approve_document_on_web(
             status_code=303,
         )
 
+    # Claim hồ sơ trước khi đụng vào file thật, tránh 2 quản lý cùng
+    # duyệt 1 hồ sơ song song.
+    with get_connection() as conn:
+        claim = conn.execute(
+            """
+            UPDATE documents
+            SET status = 'APPROVING'
+            WHERE id = ? AND status = 'PENDING'
+            """,
+            (document_id,),
+        )
+
+    if claim.rowcount == 0:
+        return RedirectResponse(
+            "/manager/pending?error=Hồ+sơ+đã+được+xử+lý+bởi+người+khác.",
+            status_code=303,
+        )
+
+    def rollback_to_pending():
+        with get_connection() as conn:
+            conn.execute(
+                """
+                UPDATE documents
+                SET status = 'PENDING'
+                WHERE id = ?
+                """,
+                (document_id,),
+            )
+
     source = Path(document["file_path"])
 
     if not source.exists():
+        rollback_to_pending()
         return RedirectResponse(
             "/manager/pending?error=Không+tìm+thấy+file+thật+trong+pending.",
             status_code=303,
@@ -1184,6 +1238,7 @@ def approve_document_on_web(
             current_user=current_user,
         )
     except Exception as error:
+        rollback_to_pending()
         return RedirectResponse(
             f"/manager/pending?error=Không+thể+tạo+project/file+con+khi+duyệt:+{quote(str(error))}",
             status_code=303,
@@ -1225,7 +1280,7 @@ def approve_document_on_web(
                     reviewed_at = ?,
                     reviewed_by = ?,
                     rejection_reason = NULL
-                WHERE id = ?
+                WHERE id = ? AND status = 'APPROVING'
                 """,
                 (
                     document_code,
@@ -1258,6 +1313,8 @@ def approve_document_on_web(
         # thử chuyển file về lại pending.
         if destination.exists() and not source.exists():
             shutil.move(str(destination), str(source))
+
+        rollback_to_pending()
 
         return RedirectResponse(
             f"/manager/pending?error=Lỗi+khi+duyệt+hồ+sơ:+{str(error)}",
@@ -1306,9 +1363,39 @@ def reject_document_on_web(
             status_code=303,
         )
 
+    # Claim hồ sơ trước khi đụng vào file thật, tránh 2 quản lý cùng
+    # từ chối 1 hồ sơ song song.
+    with get_connection() as conn:
+        claim = conn.execute(
+            """
+            UPDATE documents
+            SET status = 'REJECTING'
+            WHERE id = ? AND status = 'PENDING'
+            """,
+            (document_id,),
+        )
+
+    if claim.rowcount == 0:
+        return RedirectResponse(
+            "/manager/pending?error=Hồ+sơ+đã+được+xử+lý+bởi+người+khác.",
+            status_code=303,
+        )
+
+    def rollback_to_pending():
+        with get_connection() as conn:
+            conn.execute(
+                """
+                UPDATE documents
+                SET status = 'PENDING'
+                WHERE id = ?
+                """,
+                (document_id,),
+            )
+
     source = Path(document["file_path"])
 
     if not source.exists():
+        rollback_to_pending()
         return RedirectResponse(
             "/manager/pending?error=Không+tìm+thấy+file+thật+trong+pending.",
             status_code=303,
@@ -1337,7 +1424,7 @@ def reject_document_on_web(
                     reviewed_at = ?,
                     reviewed_by = ?,
                     rejection_reason = ?
-                WHERE id = ?
+                WHERE id = ? AND status = 'REJECTING'
                 """,
                 (
                     str(destination),
@@ -1367,6 +1454,8 @@ def reject_document_on_web(
         # Nếu database lỗi, cố gắng đưa file về pending.
         if destination.exists() and not source.exists():
             shutil.move(str(destination), str(source))
+
+        rollback_to_pending()
 
         return RedirectResponse(
             f"/manager/pending?error=Lỗi+khi+từ+chối+hồ+sơ:+{str(error)}",
