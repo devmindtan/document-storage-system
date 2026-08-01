@@ -7,6 +7,7 @@
 {% block active_nav %}manager_users{% endblock %}
 
 {% block content %}
+{% import "layout/_macros.html" as macros %}
 <div class="space-y-6 relative">
 
     <div id="mainView" class="space-y-6">
@@ -31,34 +32,23 @@
                             <td class="px-6 py-4">{{ u.username }}</td>
                             <td class="px-6 py-4">
                                 {% if u.is_admin %}
-                                <span
-                                    class="bg-purple-100 text-purple-700 px-2.5 py-1 rounded text-xs font-bold">ADMIN</span>
+                                {{ macros.badge("ADMIN", variant="purple") }}
                                 {% elif u.role == 'MANAGER' %}
-                                <span
-                                    class="bg-blue-100 text-blue-700 px-2.5 py-1 rounded text-xs font-bold">MANAGER</span>
+                                {{ macros.badge("MANAGER", variant="brand") }}
                                 {% else %}
-                                <span
-                                    class="bg-slate-100 text-slate-600 px-2.5 py-1 rounded text-xs font-bold">EMPLOYEE</span>
+                                {{ macros.badge("EMPLOYEE", variant="neutral") }}
                                 {% endif %}
                             </td>
                             <td class="px-6 py-4">{{ u.created_at }}</td>
                             <td class="px-6 py-4">
                                 {% if u.approval_status == 'PENDING' %}
-                                <span class="flex items-center gap-1.5 text-amber-600 text-xs font-medium"><span
-                                        class="w-2 h-2 rounded-full bg-amber-500"></span> <span
-                                        data-i18n-key="pendingStatus">Chờ duyệt</span></span>
+                                {{ macros.status_dot("Chờ duyệt", variant="warning", i18n_key="pendingStatus") }}
                                 {% elif u.approval_status == 'REJECTED' %}
-                                <span class="flex items-center gap-1.5 text-rose-600 text-xs font-medium"><span
-                                        class="w-2 h-2 rounded-full bg-rose-500"></span> <span
-                                        data-i18n-key="rejectedStatus">Đã từ chối</span></span>
+                                {{ macros.status_dot("Đã từ chối", variant="danger", i18n_key="rejectedStatus") }}
                                 {% elif u.is_active %}
-                                <span class="flex items-center gap-1.5 text-emerald-600 text-xs font-medium"><span
-                                        class="w-2 h-2 rounded-full bg-emerald-500"></span> <span
-                                        data-i18n-key="activeStatus">Đang hoạt động</span></span>
+                                {{ macros.status_dot("Đang hoạt động", variant="success", i18n_key="activeStatus") }}
                                 {% else %}
-                                <span class="flex items-center gap-1.5 text-slate-400 text-xs font-medium"><span
-                                        class="w-2 h-2 rounded-full bg-slate-300"></span> <span
-                                        data-i18n-key="lockedStatus">Đã khóa</span></span>
+                                {{ macros.status_dot("Đã khóa", variant="neutral", i18n_key="lockedStatus") }}
                                 {% endif %}
                             </td>
                             <td class="px-6 py-4 text-right">
@@ -142,9 +132,7 @@
             </div>
         </div>
         {% else %}
-        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm text-sm text-slate-500 text-center">
-            <span data-i18n-key="noAccounts">Chưa có tài khoản nào trong hệ thống.</span>
-        </div>
+        {{ macros.empty_state("Chưa có tài khoản nào trong hệ thống.", icon="ti-users", i18n_key="noAccounts") }}
         {% endif %}
     </div>
 

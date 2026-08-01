@@ -51,19 +51,7 @@
     {{ macros.banner('error', error) }}
     {{ macros.banner('success', success) }}
 
-    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        <div class="p-6 border-b border-slate-200 bg-slate-50/50 flex items-center gap-3">
-            <div class="w-10 h-10 rounded-lg bg-brand-50 text-brand-500 flex items-center justify-center shrink-0">
-                <i class="ti ti-cloud-upload text-xl"></i>
-            </div>
-            <div>
-                <h2 class="text-lg font-semibold text-slate-800" data-i18n-key="cardTitle">Gửi hồ sơ mới</h2>
-                <p class="text-sm text-slate-500" data-i18n-key="cardSubtitle">Điền thông tin, quản lý danh mục và đính
-                    kèm tệp cần trình quản lý
-                    duyệt.</p>
-            </div>
-        </div>
-
+    {% call macros.card(title="Gửi hồ sơ mới", subtitle="Điền thông tin, quản lý danh mục và đính kèm tệp cần trình quản lý duyệt.", icon="ti-cloud-upload", body_class="", title_i18n_key="cardTitle", subtitle_i18n_key="cardSubtitle") %}
         <div id="noAllowedCategoriesBanner"
             class="hidden mx-6 mt-6 px-4 py-3 rounded-xl bg-amber-50 border border-amber-200 text-sm text-amber-800 flex items-start gap-2.5">
             <i class="ti ti-alert-triangle text-base shrink-0 mt-0.5"></i>
@@ -197,13 +185,10 @@
             </div>
 
             <div class="pt-2 flex justify-end">
-                <button type="submit" id="primaryUploadBtn"
-                    class="primary-upload-button inline-flex items-center gap-2 px-5 py-2.5 bg-brand-900 text-white rounded-xl text-sm font-medium hover:bg-brand-800 transition-colors shadow-sm">
-                    <i class="ti ti-send"></i> <span data-i18n-key="submitBtn">Gửi hồ sơ cho quản lý duyệt</span>
-                </button>
+                {{ macros.button("Gửi hồ sơ cho quản lý duyệt", variant="primary", icon="ti-send", i18n_key="submitBtn", id="primaryUploadBtn") }}
             </div>
         </form>
-    </div>
+    {% endcall %}
 </div>
 {% endblock %}
 
