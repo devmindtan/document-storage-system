@@ -119,54 +119,7 @@ def admin_dashboard(request: Request):
     )
 
 
-@router.get("/admin/users", response_class=HTMLResponse)
-def admin_users_page(request: Request):
-    """
-    Admin xem danh sách user để nâng quyền nhân viên thành quản lý.
-    """
-
-    current_user = get_current_user(request)
-
-    if not current_user:
-        return RedirectResponse("/", status_code=303)
-
-    if not is_admin_user(current_user):
-        return RedirectResponse("/", status_code=303)
-
-    with get_connection() as conn:
-        users = conn.execute(
-            """
-            SELECT
-                id,
-                username,
-                full_name,
-                role,
-                created_at,
-                COALESCE(is_active, 1) AS is_active,
-                COALESCE(approval_status, 'APPROVED') AS approval_status,
-                COALESCE(is_admin, 0) AS is_admin
-            FROM users
-            ORDER BY
-                CASE
-                    WHEN is_admin = 1 THEN 0
-                    WHEN role = 'MANAGER' THEN 1
-                    ELSE 2
-                END,
-                id DESC
-            """
-        ).fetchall()
-
-    return templates.TemplateResponse(
-        request=request,
-        name="admin_users.html",
-        context={
-            "user": current_user,
-            "users": users,
-        }
-    )
-
-
-@router.post("/admin/users/{user_id}/promote-manager")
+@router.post("/manager/users/{user_id}/promote-manager")
 def promote_user_to_manager(
     request: Request,
     user_id: int
@@ -184,7 +137,7 @@ def promote_user_to_manager(
         return RedirectResponse("/", status_code=303)
 
     if user_id == current_user["id"]:
-        return RedirectResponse("/admin/users", status_code=303)
+        return RedirectResponse("/manager/users", status_code=303)
 
     with get_connection() as conn:
         target_user = conn.execute(
@@ -202,10 +155,10 @@ def promote_user_to_manager(
         ).fetchone()
 
         if not target_user:
-            return RedirectResponse("/admin/users", status_code=303)
+            return RedirectResponse("/manager/users", status_code=303)
 
         if target_user["is_admin"]:
-            return RedirectResponse("/admin/users", status_code=303)
+            return RedirectResponse("/manager/users", status_code=303)
 
         conn.execute(
             """
@@ -227,10 +180,10 @@ def promote_user_to_manager(
         ),
     )
 
-    return RedirectResponse("/admin/users", status_code=303)
+    return RedirectResponse("/manager/users", status_code=303)
 
 
-@router.post("/admin/users/{user_id}/demote-employee")
+@router.post("/manager/users/{user_id}/demote-employee")
 def demote_user_to_employee(
     request: Request,
     user_id: int
@@ -249,7 +202,7 @@ def demote_user_to_employee(
         return RedirectResponse("/", status_code=303)
 
     if user_id == current_user["id"]:
-        return RedirectResponse("/admin/users", status_code=303)
+        return RedirectResponse("/manager/users", status_code=303)
 
     with get_connection() as conn:
         target_user = conn.execute(
@@ -267,10 +220,10 @@ def demote_user_to_employee(
         ).fetchone()
 
         if not target_user:
-            return RedirectResponse("/admin/users", status_code=303)
+            return RedirectResponse("/manager/users", status_code=303)
 
         if target_user["is_admin"] or target_user["role"] != ROLE_MANAGER:
-            return RedirectResponse("/admin/users", status_code=303)
+            return RedirectResponse("/manager/users", status_code=303)
 
         conn.execute(
             """
@@ -290,7 +243,7 @@ def demote_user_to_employee(
         ),
     )
 
-    return RedirectResponse("/admin/users", status_code=303)
+    return RedirectResponse("/manager/users", status_code=303)
 
 
 @router.get("/admin/create-manager", response_class=HTMLResponse)

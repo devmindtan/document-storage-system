@@ -30,7 +30,10 @@
                             <td class="px-6 py-4 font-medium text-slate-800">{{ u.full_name }}</td>
                             <td class="px-6 py-4">{{ u.username }}</td>
                             <td class="px-6 py-4">
-                                {% if u.role == 'MANAGER' %}
+                                {% if u.is_admin %}
+                                <span
+                                    class="bg-purple-100 text-purple-700 px-2.5 py-1 rounded text-xs font-bold">ADMIN</span>
+                                {% elif u.role == 'MANAGER' %}
                                 <span
                                     class="bg-blue-100 text-blue-700 px-2.5 py-1 rounded text-xs font-bold">MANAGER</span>
                                 {% else %}
@@ -62,6 +65,8 @@
                                 {% if u.id == user.id %}
                                 <span class="text-xs text-slate-400 italic" data-i18n-key="currentAccount">Tài khoản
                                     hiện tại</span>
+                                {% elif u.is_admin %}
+                                <span class="text-xs text-slate-400 italic" data-i18n-key="adminText">Admin</span>
                                 {% elif u.approval_status == 'PENDING' %}
                                 <div class="flex items-center justify-end gap-2">
                                     <form method="post" action="/manager/users/{{ u.id }}/approve">
@@ -103,6 +108,27 @@
                                         </button>
                                         {% endif %}
                                     </form>
+                                    {% if u.role == 'EMPLOYEE' %}
+                                    <form method="post" action="/manager/users/{{ u.id }}/promote-manager"
+                                        onsubmit="return confirm('Bạn có chắc muốn chuyển tài khoản \'{{ u.full_name|e }}\' thành quản lý không?');">
+                                        <button type="submit"
+                                            class="px-3 py-1.5 bg-emerald-100 text-emerald-700 hover:bg-emerald-200 rounded text-xs font-semibold inline-flex items-center gap-1 transition-colors"
+                                            data-i18n-title="promoteTitle" title="Chuyển thành quản lý">
+                                            <i class="ti ti-arrow-up-circle"></i> <span
+                                                data-i18n-key="promoteButton">Thăng chức</span>
+                                        </button>
+                                    </form>
+                                    {% else %}
+                                    <form method="post" action="/manager/users/{{ u.id }}/demote-employee"
+                                        onsubmit="return confirm('Bạn có chắc muốn chuyển tài khoản \'{{ u.full_name|e }}\' về nhân viên không?');">
+                                        <button type="submit"
+                                            class="px-3 py-1.5 bg-amber-100 text-amber-700 hover:bg-amber-200 rounded text-xs font-semibold inline-flex items-center gap-1 transition-colors"
+                                            data-i18n-title="demoteTitle" title="Chuyển về nhân viên">
+                                            <i class="ti ti-arrow-down-circle"></i> <span
+                                                data-i18n-key="demoteButton">Giáng chức</span>
+                                        </button>
+                                    </form>
+                                    {% endif %}
                                 </div>
                                 {% endif %}
                             </td>
@@ -175,8 +201,9 @@
                     data-i18n-key="cancelButton">
                     Hủy bỏ
                 </button>
+
                 <button type="submit"
-                    class="min-w-[120px] px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold shadow-sm transition-colors flex items-center justify-center gap-2">
+                    class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold shadow-sm transition-all duration-200 flex items-center gap-2 cursor-pointer appearance-none border-0">
                     <i class="ti ti-device-floppy text-base text-white"></i>
                     <span data-i18n-key="savePermissionsButton">Lưu cấu hình</span>
                 </button>
@@ -203,11 +230,16 @@
                 activeStatus: "Đang hoạt động",
                 lockedStatus: "Đã khóa",
                 currentAccount: "Tài khoản hiện tại",
+                adminText: "Admin",
                 approveButton: "Duyệt tài khoản",
                 rejectButton: "Từ chối",
                 permissionsTitle: "Phân quyền",
                 lockTitle: "Khóa tài khoản",
                 unlockTitle: "Mở khóa",
+                promoteButton: "Thăng chức",
+                promoteTitle: "Chuyển thành quản lý",
+                demoteButton: "Giáng chức",
+                demoteTitle: "Chuyển về nhân viên",
                 noAccounts: "Chưa có tài khoản nào trong hệ thống.",
                 backButton: "Quay lại danh sách",
                 permissionFor: "Phân quyền cho:",
@@ -231,11 +263,16 @@
                 activeStatus: "Active",
                 lockedStatus: "Locked",
                 currentAccount: "Current account",
+                adminText: "Admin",
                 approveButton: "Approve account",
                 rejectButton: "Reject",
                 permissionsTitle: "Permissions",
                 lockTitle: "Lock account",
                 unlockTitle: "Unlock",
+                promoteButton: "Promote",
+                promoteTitle: "Promote to manager",
+                demoteButton: "Demote",
+                demoteTitle: "Demote to employee",
                 noAccounts: "No accounts in the system yet.",
                 backButton: "Back to list",
                 permissionFor: "Permissions for:",

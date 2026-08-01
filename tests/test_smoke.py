@@ -126,7 +126,6 @@ GET_ROUTES_NO_PARAMS = [
     "/documents/approved",
     "/manager/audit-logs",
     "/admin",
-    "/admin/users",
     "/admin/create-manager",
 ]
 
@@ -156,7 +155,6 @@ MANAGER_ONLY_GET = [
 # (app.py:4374, app.py:4440) — không phải mọi manager thường đều vào được.
 ADMIN_ONLY_GET = [
     "/admin",
-    "/admin/users",
     "/admin/create-manager",
     "/manager/users",
     "/manager/audit-logs",
@@ -226,7 +224,8 @@ MUTATING_ROUTES_MANAGER_ONLY = [
 ]
 
 MUTATING_ROUTES_ADMIN_ONLY = [
-    ("post", "/admin/users/{id}/promote-manager"),
+    ("post", "/manager/users/{id}/promote-manager"),
+    ("post", "/manager/users/{id}/demote-employee"),
 ]
 
 DOWNLOAD_DELETE_SHARED = [

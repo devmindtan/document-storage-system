@@ -893,7 +893,8 @@ def manager_users_page(request: Request):
     created_at,
     COALESCE(is_active, 1) AS is_active,
     COALESCE(approval_status, 'APPROVED') AS approval_status,
-    COALESCE(category_permissions_enabled, 0) AS category_permissions_enabled
+    COALESCE(category_permissions_enabled, 0) AS category_permissions_enabled,
+    COALESCE(is_admin, 0) AS is_admin
 FROM users
             ORDER BY
     CASE

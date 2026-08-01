@@ -150,15 +150,15 @@
         {% set active_nav = self.active_nav() %}
         {% set nav_titles = {'dashboard': 'Tổng quan', 'upload': 'Gửi hồ sơ mới', 'pending': 'Chờ phê duyệt',
         'my_documents': 'Hồ sơ của tôi', 'approved': 'Kho hồ sơ đã duyệt', 'project_requests': 'Dự án chờ duyệt',
-        'statistics': 'Thống kê', 'admin_dashboard': 'Admin Dashboard', 'admin_users': 'Phân quyền', 'manager_users':
-        'Duyệt tài khoản', 'create_manager': 'Tạo tài khoản Quản lý', 'create_employee': 'Tạo tài khoản Nhân viên',
+        'statistics': 'Thống kê', 'admin_dashboard': 'Admin Dashboard', 'manager_users':
+        'Quản lý tài khoản', 'create_manager': 'Tạo tài khoản Quản lý', 'create_employee': 'Tạo tài khoản Nhân viên',
         'audit_logs': 'Nhật ký hoạt động'} %}
         {% set nav_icons = {'dashboard': 'ti-layout-dashboard', 'upload': 'ti-cloud-upload', 'pending':
         'ti-bell-ringing', 'my_documents': 'ti-folder', 'approved': 'ti-lock-square', 'project_requests':
-        'ti-git-pull-request', 'statistics': 'ti-chart-pie', 'admin_dashboard': 'ti-settings-automation', 'admin_users':
-        'ti-fingerprint', 'manager_users': 'ti-users-group', 'create_manager': 'ti-user-plus', 'create_employee':
+        'ti-git-pull-request', 'statistics': 'ti-chart-pie', 'admin_dashboard': 'ti-settings-automation',
+        'manager_users': 'ti-users-group', 'create_manager': 'ti-user-plus', 'create_employee':
         'ti-user-plus', 'audit_logs': 'ti-activity-heartbeat'} %}
-        {% set is_admin_section = active_nav in ['admin_dashboard', 'admin_users', 'manager_users', 'create_manager',
+        {% set is_admin_section = active_nav in ['admin_dashboard', 'manager_users', 'create_manager',
         'create_employee', 'audit_logs'] %}
 
         <!-- Macro dùng lại cho mọi nav item: 1 active state duy nhất (thanh trái vàng + nền nhạt) -->
@@ -219,8 +219,7 @@
                 </p>
 
                 {{ nav_link('/admin', 'admin_dashboard', 'ti-settings-automation', 'Admin Dashboard') }}
-                {{ nav_link('/admin/users', 'admin_users', 'ti-fingerprint', 'Phân quyền') }}
-                {{ nav_link('/manager/users', 'manager_users', 'ti-users-group', 'Duyệt tài khoản') }}
+                {{ nav_link('/manager/users', 'manager_users', 'ti-users-group', 'Quản lý tài khoản') }}
                 {{ nav_link('/admin/create-manager', 'create_manager', 'ti-user-plus', 'Tạo tài khoản Quản lý') }}
                 {{ nav_link('/admin/create-employee', 'create_employee', 'ti-user-plus', 'Tạo tài khoản Nhân viên') }}
                 {{ nav_link('/manager/audit-logs', 'audit_logs', 'ti-activity-heartbeat', 'Nhật ký hoạt động') }}
@@ -365,8 +364,8 @@
                     'section.workspace': 'Quản lý hồ sơ', 'section.admin': 'Quản trị hệ thống',
                     dashboard: 'Tổng quan', upload: 'Gửi hồ sơ mới', pending: 'Chờ phê duyệt',
                     my_documents: 'Hồ sơ của tôi', approved: 'Hồ sơ đã duyệt', project_requests: 'Dự án chờ duyệt',
-                    statistics: 'Thống kê', admin_dashboard: 'Admin Dashboard', admin_users: 'Phân quyền',
-                    manager_users: 'Duyệt tài khoản', create_manager: 'Tạo tài khoản Quản lý',
+                    statistics: 'Thống kê', admin_dashboard: 'Admin Dashboard',
+                    manager_users: 'Quản lý tài khoản', create_manager: 'Tạo tài khoản Quản lý',
                     create_employee: 'Tạo tài khoản Nhân viên',
                     audit_logs: 'Nhật ký hoạt động', logout: 'Đăng xuất'
                 },
@@ -374,8 +373,8 @@
                     'section.workspace': 'Document Workspace', 'section.admin': 'Administration',
                     dashboard: 'Overview', upload: 'Upload New Document', pending: 'Pending Approval',
                     my_documents: 'My Documents', approved: 'Approved Archive', project_requests: 'Project Requests',
-                    statistics: 'Statistics', admin_dashboard: 'Admin Dashboard', admin_users: 'Permissions',
-                    manager_users: 'Account Approval', create_manager: 'Create Manager Account',
+                    statistics: 'Statistics', admin_dashboard: 'Admin Dashboard',
+                    manager_users: 'Account Management', create_manager: 'Create Manager Account',
                     create_employee: 'Create Employee Account',
                     audit_logs: 'Activity Log', logout: 'Log out'
                 }
