@@ -264,6 +264,16 @@ def make_unique_category_folder(conn, project_id: int, category_label: str) -> s
         counter += 1
 
 
+def get_canonical_category_project_id(conn) -> int:
+    """
+    Trả về id của project được dùng làm nguồn danh sách "Loại hồ sơ" dùng
+    chung cho toàn bộ hệ thống (thay vì mỗi project có danh sách riêng).
+    Luôn là project có id nhỏ nhất — ổn định vì project không có tính năng xóa.
+    """
+    row = conn.execute("SELECT MIN(id) AS id FROM projects").fetchone()
+    return row["id"]
+
+
 def seed_project_default_categories(conn, project_id: int, created_at: str | None = None):
     """
     Seed danh sách file con mặc định cho một project.

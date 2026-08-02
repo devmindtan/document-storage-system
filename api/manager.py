@@ -55,6 +55,7 @@ from services.projects import (
     make_category_folder_from_label,
     make_category_code_from_label,
     make_unique_category_folder,
+    get_canonical_category_project_id,
     seed_project_default_categories,
     get_active_categories_for_project_key,
     get_all_active_categories,
@@ -503,14 +504,17 @@ def project_categories_by_project(
             (project_id,),
         ).fetchone()
 
-    if not project:
-        return {
-            "success": False,
-            "message": "Project không hợp lệ.",
-            "categories": [],
-        }
+        if not project:
+            return {
+                "success": False,
+                "message": "Project không hợp lệ.",
+                "categories": [],
+            }
 
-    categories = get_project_category_json_list(project_id)
+        canonical_project_id = get_canonical_category_project_id(conn)
+
+    # "Loại hồ sơ" dùng chung cho mọi project, không còn tách riêng theo project_id.
+    categories = get_project_category_json_list(canonical_project_id)
 
     if current_user["category_permissions_enabled"]:
         allowed_categories = get_user_allowed_categories(current_user["id"])
@@ -551,7 +555,9 @@ def document_code_preview(
         default_category = get_default_category_from_special_key(category_key)
         category_label = default_category["label"] if default_category else None
     else:
-        category_row = get_project_category_by_key(category_key, project_id)
+        with get_connection() as conn:
+            canonical_project_id = get_canonical_category_project_id(conn)
+        category_row = get_project_category_by_key(category_key, canonical_project_id)
         category_label = category_row["label"] if category_row else None
 
     if not category_label:
@@ -582,8 +588,13 @@ def manager_add_project_category(
     if current_user["role"] != ROLE_MANAGER:
         return RedirectResponse("/employee", status_code=303)
 
+    # "Loại hồ sơ" dùng chung cho mọi project — thêm mới luôn ghi vào project
+    # canonical bất kể đang mở catalog của project nào trên UI.
+    with get_connection() as conn:
+        canonical_project_key = str(get_canonical_category_project_id(conn))
+
     success, message = create_project_category_for_manager(
-        project_key=project_key,
+        project_key=canonical_project_key,
         category_label=category_label,
         category_code=category_code,
         current_user=current_user,
@@ -615,9 +626,14 @@ def manager_delete_project_category(
     if current_user["role"] != ROLE_MANAGER:
         return RedirectResponse("/employee", status_code=303)
 
+    # "Loại hồ sơ" dùng chung cho mọi project — file con luôn thực sự nằm ở
+    # project canonical, bất kể form gửi lên project_key nào.
+    with get_connection() as conn:
+        canonical_project_key = str(get_canonical_category_project_id(conn))
+
     success, message, fallback_project_key = delete_project_category_for_manager(
         category_id=category_id,
-        project_key=project_key,
+        project_key=canonical_project_key,
         current_user=current_user,
     )
 

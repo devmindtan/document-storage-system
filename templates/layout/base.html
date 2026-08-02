@@ -155,13 +155,14 @@
             <a href="/"
                 class="sidebar-hide-collapsed flex-1 flex items-center justify-center gap-2 whitespace-nowrap transition-transform duration-200 hover:scale-[1.01]">
 
-                <span class="text-lg sm:text-xl font-semibold text-white tracking-tight">AkzoNobel</span>
+                <span class="bg-white rounded-md px-2 py-1 flex items-center shrink-0 shadow-sm">
+                    <img src="/static/images/AkzoNobel_RGB.png" alt="AkzoNobel" class="h-4 w-auto object-contain">
+                </span>
 
                 <span class="w-[1.5px] h-4 bg-slate-700/80 rounded-full"></span>
 
-                <span
-                    class="text-lg sm:text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-500 tracking-wider uppercase">
-                    ANATA
+                <span class="bg-white rounded-md px-2 py-1 flex items-center shrink-0 shadow-sm">
+                    <img src="/static/images/amata_engineering_logo.png" alt="Amata Engineering" class="h-4 w-auto object-contain">
                 </span>
             </a>
 
@@ -298,6 +299,15 @@
                     onclick="toggleSidebar()" aria-label="Mở menu">
                     <i class="ti ti-menu-2 text-2xl"></i>
                 </button>
+
+                {% if active_nav not in ['dashboard', 'admin_dashboard'] %}
+                <a href="{{ '/admin' if is_admin_section else ('/employee' if user.role == 'EMPLOYEE' else '/manager') }}"
+                    class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300 active:scale-95 transition-all text-sm font-semibold shadow-sm shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+                    aria-label="Quay lại" title="Quay lại">
+                    <i class="ti ti-arrow-left text-base"></i>
+                    <span class="hidden sm:inline" data-i18n="backButton">Quay lại</span>
+                </a>
+                {% endif %}
 
                 <div
                     class="hidden sm:flex w-11 h-11 rounded-xl bg-gradient-to-br from-white to-slate-50 border border-slate-200/80 text-slate-600 shadow-sm items-center justify-center shrink-0">
@@ -477,7 +487,7 @@
                     statistics: 'Thống kê', admin_dashboard: 'Admin Dashboard',
                     manager_users: 'Quản lý tài khoản', create_manager: 'Tạo tài khoản Quản lý',
                     create_employee: 'Tạo tài khoản Nhân viên',
-                    audit_logs: 'Nhật ký hoạt động', logout: 'Đăng xuất'
+                    audit_logs: 'Nhật ký hoạt động', logout: 'Đăng xuất', backButton: 'Quay lại'
                 },
                 en: {
                     'section.workspace': 'Document Workspace', 'section.admin': 'Administration',
@@ -486,7 +496,7 @@
                     statistics: 'Statistics', admin_dashboard: 'Admin Dashboard',
                     manager_users: 'Account Management', create_manager: 'Create Manager Account',
                     create_employee: 'Create Employee Account',
-                    audit_logs: 'Activity Log', logout: 'Log out'
+                    audit_logs: 'Activity Log', logout: 'Log out', backButton: 'Back'
                 }
             };
 

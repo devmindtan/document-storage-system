@@ -165,11 +165,6 @@
         <p class="text-sm text-slate-500">
             <span data-i18n-key="managerLabel">Quản lý:</span> <strong class="text-slate-800 font-semibold">{{ user['full_name'] }}</strong>
         </p>
-
-        <a class="back-link inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600 transition-colors"
-            href="/manager">
-            <i class="ti ti-arrow-left"></i> <span data-i18n-key="backButton">Quay lại</span>
-        </a>
     </div>
 
     {{ macros.banner('error', error) }}
@@ -386,7 +381,7 @@
                 <div class="p-3 border-b border-slate-100 shrink-0">
                     <div class="flex items-center justify-between gap-2 flex-wrap">
                         <h4 class="font-bold text-slate-700 text-xs uppercase tracking-wide">
-                            <span data-i18n-key="categoriesOfLabel">Loại hồ sơ của:</span> <span id="catalogActiveProjectName" class="text-brand-600">--</span>
+                            <span data-i18n-key="categoriesOfLabel">Loại hồ sơ (dùng chung cho mọi project)</span>
                         </h4>
                         <button type="button" onclick="openCategoryModal('add')"
                             class="btn-secondary text-xs font-semibold px-3 py-1.5 inline-flex items-center gap-1">
@@ -576,11 +571,9 @@
 
         const activeOpt = select.options[select.selectedIndex];
         if (activeOpt) {
-            document.getElementById("catalogActiveProjectName").textContent = activeOpt.text;
             document.getElementById("statActiveProject").textContent = activeOpt.text;
             renderCatalogCategoriesFiltered();
         } else {
-            document.getElementById("catalogActiveProjectName").textContent = "--";
             document.getElementById("statActiveProject").textContent = "--";
         }
     }
@@ -1043,11 +1036,11 @@
                 catalogModalTitle: "Quản lý kho Project & Danh mục",
                 catalogModalSubtitle: "Tìm kiếm, thêm, sửa, xóa project và loại hồ sơ.",
                 totalProjectsLabel: "Tổng project",
-                totalCategoriesLabel: "Loại hồ sơ (project đang chọn)",
+                totalCategoriesLabel: "Tổng loại hồ sơ",
                 activeProjectLabel: "Project đang chọn",
                 projectsHeading: "Projects",
                 addBtn: "Thêm",
-                categoriesOfLabel: "Loại hồ sơ của:",
+                categoriesOfLabel: "Loại hồ sơ (dùng chung cho mọi project)",
                 addCategoryModalBtn: "Thêm loại hồ sơ",
                 categoryNameHeader: "Tên loại hồ sơ",
                 codeHeader: "Mã",
@@ -1088,11 +1081,11 @@
                 catalogModalTitle: "Manage Project & Category catalog",
                 catalogModalSubtitle: "Search, add, edit, and delete projects and document types.",
                 totalProjectsLabel: "Total projects",
-                totalCategoriesLabel: "Document types (selected project)",
+                totalCategoriesLabel: "Total document types",
                 activeProjectLabel: "Selected project",
                 projectsHeading: "Projects",
                 addBtn: "Add",
-                categoriesOfLabel: "Document types of:",
+                categoriesOfLabel: "Document types (shared across all projects)",
                 addCategoryModalBtn: "Add document type",
                 categoryNameHeader: "Document type name",
                 codeHeader: "Code",

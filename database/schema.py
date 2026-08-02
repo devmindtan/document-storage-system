@@ -9,7 +9,10 @@ from core.config import (
     DOWNLOADS_DIR,
 )
 from database.connection import get_connection
-from services.projects import seed_project_default_categories
+from services.projects import (
+    get_canonical_category_project_id,
+    seed_project_default_categories,
+)
 
 
 def initialize_projects():
@@ -216,6 +219,44 @@ def initialize_project_categories():
                 project_id=project["id"],
                 created_at=now,
             )
+
+        consolidate_categories_to_canonical_project(conn)
+
+
+def consolidate_categories_to_canonical_project(conn):
+    """
+    Trước đây mỗi project có danh sách "Loại hồ sơ" riêng (bật/tắt độc lập),
+    khiến người dùng thấy danh sách khác nhau tuỳ project đang chọn. Gộp về
+    một danh sách dùng chung: với mỗi category_key, project canonical (id
+    nhỏ nhất) được bật nếu category đó đang bật ở BẤT KỲ project nào (union,
+    không làm mất loại hồ sơ mà ai đó đã thấy/dùng), sau đó xoá các dòng
+    trùng lặp của những project khác. An toàn vì documents.category lưu
+    dạng text tự do, không tham chiếu khoá ngoại tới project_categories.id.
+    Idempotent — chạy lại mỗi lần khởi động không gây tác dụng phụ.
+    """
+    canonical_id = get_canonical_category_project_id(conn)
+
+    active_keys = {
+        row["category_key"]
+        for row in conn.execute(
+            "SELECT DISTINCT category_key FROM project_categories WHERE is_active = 1"
+        ).fetchall()
+    }
+
+    if active_keys:
+        conn.executemany(
+            """
+            UPDATE project_categories
+            SET is_active = 1
+            WHERE project_id = ? AND category_key = ?
+            """,
+            [(canonical_id, key) for key in active_keys],
+        )
+
+    conn.execute(
+        "DELETE FROM project_categories WHERE project_id != ?",
+        (canonical_id,),
+    )
 
 
 def initialize_audit_logs():
