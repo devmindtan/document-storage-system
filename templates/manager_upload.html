@@ -373,28 +373,22 @@
             </button>
         </div>
 
-        <!-- Quick stats — chỉ 2 chỉ số luôn đúng cho cả 2 tab. Bỏ "Project
-             đang chọn" vì Loại hồ sơ giờ dùng chung mọi project, không còn
-             gắn với 1 project cụ thể nào để "đang chọn" nữa. -->
-        <div class="px-6 py-4 border-b border-slate-200 grid grid-cols-2 gap-3 shrink-0 bg-white">
-            <div class="rounded-xl border border-slate-200 p-3 flex items-center gap-3">
-                <div class="w-9 h-9 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-                    <i class="ti ti-briefcase text-base"></i>
-                </div>
-                <div class="min-w-0">
-                    <p class="text-xs text-slate-500" data-i18n-key="totalProjectsLabel">Tổng project</p>
-                    <p id="statTotalProjects" class="text-xl font-bold text-slate-800">--</p>
-                </div>
-            </div>
-            <div class="rounded-xl border border-slate-200 p-3 flex items-center gap-3">
-                <div class="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-                    <i class="ti ti-tags text-base"></i>
-                </div>
-                <div class="min-w-0">
-                    <p class="text-xs text-slate-500" data-i18n-key="totalCategoriesLabel">Tổng loại hồ sơ</p>
-                    <p id="statTotalCategories" class="text-xl font-bold text-slate-800">--</p>
-                </div>
-            </div>
+        <!-- Quick stats — gọn thành 1 dải mỏng thay vì 2 card to, chỉ 2 chỉ
+             số luôn đúng cho cả 2 cột. Bỏ "Project đang chọn" vì Loại hồ sơ
+             giờ dùng chung mọi project, không còn gắn với 1 project cụ thể
+             nào để "đang chọn" nữa. -->
+        <div class="px-6 py-2.5 border-b border-slate-200 flex items-center gap-4 shrink-0 bg-slate-50/60 text-xs">
+            <span class="flex items-center gap-1.5 text-slate-600">
+                <i class="ti ti-briefcase text-sm text-blue-600"></i>
+                <span data-i18n-key="totalProjectsLabel">Tổng project</span>:
+                <strong id="statTotalProjects" class="text-slate-800">--</strong>
+            </span>
+            <span class="w-px h-3 bg-slate-300"></span>
+            <span class="flex items-center gap-1.5 text-slate-600">
+                <i class="ti ti-tags text-sm text-emerald-600"></i>
+                <span data-i18n-key="totalCategoriesLabel">Tổng loại hồ sơ</span>:
+                <strong id="statTotalCategories" class="text-slate-800">--</strong>
+            </span>
         </div>
 
         <!-- Không dùng tab: Project và Loại hồ sơ là 2 khái niệm khác nhau
@@ -412,8 +406,8 @@
                             <span data-i18n-key="projectsHeading">Projects</span>
                         </p>
                         <button type="button" onclick="openProjectModal('add')"
-                            class="btn-ghost text-brand-600 text-xs font-semibold px-2 py-1 inline-flex items-center gap-1 shrink-0">
-                            <i class="ti ti-plus text-sm"></i> <span data-i18n-key="addBtn">Thêm</span>
+                            class="btn-secondary text-xs font-semibold px-3 py-1.5 inline-flex items-center gap-1 shrink-0">
+                            <i class="ti ti-plus text-sm"></i> <span data-i18n-key="addBtn">Thêm project</span>
                         </button>
                     </div>
                     <p class="text-xs text-slate-500" data-i18n-key="projectsTabDesc">Quản lý danh sách project —
@@ -1181,9 +1175,8 @@
                 catalogModalSubtitle: "Tìm kiếm, thêm, sửa, xóa project và loại hồ sơ.",
                 totalProjectsLabel: "Tổng project",
                 totalCategoriesLabel: "Tổng loại hồ sơ",
-                activeProjectLabel: "Project đang chọn",
                 projectsHeading: "Projects",
-                addBtn: "Thêm",
+                addBtn: "Thêm project",
                 categoriesTabLabel: "Loại hồ sơ",
                 projectsTabDesc: "Quản lý danh sách project — mỗi project có thư mục lưu trữ riêng.",
                 categoriesTabDesc: "Metadata phân loại gán vào hồ sơ khi upload — dùng chung cho mọi project.",
@@ -1228,9 +1221,8 @@
                 catalogModalSubtitle: "Search, add, edit, and delete projects and document types.",
                 totalProjectsLabel: "Total projects",
                 totalCategoriesLabel: "Total document types",
-                activeProjectLabel: "Selected project",
                 projectsHeading: "Projects",
-                addBtn: "Add",
+                addBtn: "Add project",
                 categoriesTabLabel: "Document types",
                 projectsTabDesc: "Manage the project list — each project has its own storage folder.",
                 categoriesTabDesc: "Classification metadata attached to a document on upload — shared across all projects.",
