@@ -328,14 +328,6 @@
             </div>
 
             <div class="flex items-center gap-3 shrink-0">
-                {% if active_nav not in ['dashboard', 'admin_dashboard'] %}
-                <a href="{{ '/admin' if is_admin_section else ('/employee' if user.role == 'EMPLOYEE' else '/manager') }}"
-                    class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300 active:scale-95 transition-all text-sm font-semibold shadow-sm shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
-                    aria-label="Quay lại" title="Quay lại">
-                    <i class="ti ti-arrow-left text-base"></i>
-                    <span class="hidden sm:inline" data-i18n="backButton">Quay lại</span>
-                </a>
-                {% endif %}
                 <button id="languageToggle" type="button"
                     class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300 transition-all text-xs font-bold shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-brand-500 group">
                     <i
@@ -347,6 +339,16 @@
 
         <div class="flex-1 overflow-auto p-4 sm:p-6 lg:p-8">
             <div class="max-w-7xl mx-auto">
+                {% if active_nav not in ['dashboard', 'admin_dashboard'] %}
+                <div class="flex justify-end mb-4">
+                    <a href="{{ '/admin' if is_admin_section else ('/employee' if user.role == 'EMPLOYEE' else '/manager') }}"
+                        class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 text-white hover:bg-slate-700 active:scale-95 transition-all text-sm font-semibold shadow-sm shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+                        aria-label="Quay lại" title="Quay lại">
+                        <i class="ti ti-arrow-left text-base"></i>
+                        <span data-i18n="backButton">Quay lại</span>
+                    </a>
+                </div>
+                {% endif %}
                 {% block content %}{% endblock %}
             </div>
         </div>
