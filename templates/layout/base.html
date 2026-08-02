@@ -300,15 +300,6 @@
                     <i class="ti ti-menu-2 text-2xl"></i>
                 </button>
 
-                {% if active_nav not in ['dashboard', 'admin_dashboard'] %}
-                <a href="{{ '/admin' if is_admin_section else ('/employee' if user.role == 'EMPLOYEE' else '/manager') }}"
-                    class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300 active:scale-95 transition-all text-sm font-semibold shadow-sm shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
-                    aria-label="Quay lại" title="Quay lại">
-                    <i class="ti ti-arrow-left text-base"></i>
-                    <span class="hidden sm:inline" data-i18n="backButton">Quay lại</span>
-                </a>
-                {% endif %}
-
                 <div
                     class="hidden sm:flex w-11 h-11 rounded-xl bg-gradient-to-br from-white to-slate-50 border border-slate-200/80 text-slate-600 shadow-sm items-center justify-center shrink-0">
                     <i class="ti {{ nav_icons.get(active_nav, 'ti-layout-dashboard') }} text-xl drop-shadow-sm"></i>
@@ -337,6 +328,14 @@
             </div>
 
             <div class="flex items-center gap-3 shrink-0">
+                {% if active_nav not in ['dashboard', 'admin_dashboard'] %}
+                <a href="{{ '/admin' if is_admin_section else ('/employee' if user.role == 'EMPLOYEE' else '/manager') }}"
+                    class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300 active:scale-95 transition-all text-sm font-semibold shadow-sm shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+                    aria-label="Quay lại" title="Quay lại">
+                    <i class="ti ti-arrow-left text-base"></i>
+                    <span class="hidden sm:inline" data-i18n="backButton">Quay lại</span>
+                </a>
+                {% endif %}
                 <button id="languageToggle" type="button"
                     class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300 transition-all text-xs font-bold shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-brand-500 group">
                     <i

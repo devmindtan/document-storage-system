@@ -73,6 +73,21 @@
         border-color: #93c5fd;
     }
 
+    /* ---- Catalog modal tabs (Project vs Loại hồ sơ) ---- */
+    .catalog-tab-btn {
+        border-color: transparent;
+        color: #64748b;
+    }
+
+    .catalog-tab-btn:hover {
+        color: #1e293b;
+    }
+
+    .catalog-tab-btn.is-active {
+        border-color: #1b4d78;
+        color: #1b4d78;
+    }
+
     .workspace-row:hover {
         background: #f8fafc;
     }
@@ -352,21 +367,32 @@
             </div>
         </div>
 
-        <!-- Sidebar + Panel -->
-        <div class="flex-1 flex min-h-0 flex-col md:flex-row">
+        <!-- Tabs: Project vs Loại hồ sơ (2 khái niệm khác nhau — Project quản lý thư mục lưu trữ,
+             Loại hồ sơ chỉ là metadata phân loại gán vào hồ sơ khi upload, dùng chung cho mọi project) -->
+        <div class="px-6 pt-3 border-b border-slate-200 flex items-center gap-1 shrink-0 bg-white">
+            <button type="button" id="catalogTabBtnProjects" onclick="switchCatalogTab('projects')"
+                class="catalog-tab-btn px-4 py-2.5 text-sm font-semibold border-b-2 -mb-px transition-colors">
+                <i class="ti ti-briefcase text-base mr-1"></i> <span data-i18n-key="projectsHeading">Projects</span>
+            </button>
+            <button type="button" id="catalogTabBtnCategories" onclick="switchCatalogTab('categories')"
+                class="catalog-tab-btn px-4 py-2.5 text-sm font-semibold border-b-2 -mb-px transition-colors">
+                <i class="ti ti-tags text-base mr-1"></i> <span data-i18n-key="categoriesTabLabel">Loại hồ sơ</span>
+            </button>
+        </div>
 
-            <!-- Sidebar: Projects -->
-            <div
-                class="w-full md:w-64 border-b md:border-b-0 md:border-r border-slate-200 flex flex-col min-h-0 shrink-0">
+        <div class="flex-1 flex min-h-0 flex-col">
+
+            <!-- Tab panel: Projects -->
+            <div id="catalogPanelProjects" class="flex-1 flex flex-col min-h-0">
                 <div class="p-3 border-b border-slate-100 space-y-2 shrink-0">
                     <div class="flex items-center justify-between">
-                        <h4 class="font-bold text-slate-700 text-xs uppercase tracking-wide" data-i18n-key="projectsHeading">Projects</h4>
+                        <p class="text-xs text-slate-500" data-i18n-key="projectsTabDesc">Quản lý danh sách project — mỗi project có thư mục lưu trữ riêng.</p>
                         <button type="button" onclick="openProjectModal('add')"
-                            class="btn-ghost text-brand-600 text-xs font-semibold px-2 py-1 inline-flex items-center gap-1">
+                            class="btn-ghost text-brand-600 text-xs font-semibold px-2 py-1 inline-flex items-center gap-1 shrink-0">
                             <i class="ti ti-plus text-sm"></i> <span data-i18n-key="addBtn">Thêm</span>
                         </button>
                     </div>
-                    <div class="relative">
+                    <div class="relative max-w-xs">
                         <i class="ti ti-search absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
                         <input id="projectSearchInput" type="text" placeholder="Tìm project..."
                             oninput="renderCatalogProjects()"
@@ -376,19 +402,17 @@
                 <div id="catalogProjectList" class="flex-1 overflow-y-auto divide-y divide-slate-100"></div>
             </div>
 
-            <!-- Content Panel: Categories -->
-            <div class="flex-1 flex flex-col min-h-0">
+            <!-- Tab panel: Loại hồ sơ (Type) -->
+            <div id="catalogPanelCategories" class="hidden flex-1 flex flex-col min-h-0">
                 <div class="p-3 border-b border-slate-100 shrink-0">
                     <div class="flex items-center justify-between gap-2 flex-wrap">
-                        <h4 class="font-bold text-slate-700 text-xs uppercase tracking-wide">
-                            <span data-i18n-key="categoriesOfLabel">Loại hồ sơ (dùng chung cho mọi project)</span>
-                        </h4>
+                        <p class="text-xs text-slate-500" data-i18n-key="categoriesTabDesc">Metadata phân loại gán vào hồ sơ khi upload — dùng chung cho mọi project.</p>
                         <button type="button" onclick="openCategoryModal('add')"
-                            class="btn-secondary text-xs font-semibold px-3 py-1.5 inline-flex items-center gap-1">
+                            class="btn-secondary text-xs font-semibold px-3 py-1.5 inline-flex items-center gap-1 shrink-0">
                             <i class="ti ti-plus text-sm"></i> <span data-i18n-key="addCategoryModalBtn">Thêm loại hồ sơ</span>
                         </button>
                     </div>
-                    <div class="relative max-w-xs">
+                    <div class="relative max-w-xs mt-2">
                         <i class="ti ti-search absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
                         <input id="categorySearchInput" type="text" placeholder="Tìm loại hồ sơ..."
                             oninput="renderCatalogCategoriesFiltered()"
@@ -521,11 +545,24 @@
         document.getElementById("projectSearchInput").value = "";
         document.getElementById("categorySearchInput").value = "";
         renderCatalogProjects();
+        renderCatalogCategoriesFiltered();
+        switchCatalogTab("projects");
         document.getElementById("masterCatalogModal").classList.remove("hidden");
     }
 
     function closeMasterCatalogModal() {
         document.getElementById("masterCatalogModal").classList.add("hidden");
+    }
+
+    /* Project và Loại hồ sơ là 2 khái niệm khác nhau (Project = thư mục lưu
+       trữ, Loại hồ sơ = metadata phân loại dùng chung mọi project) nên tách
+       thành 2 tab riêng biệt thay vì hiện chung 1 màn hình như trước. */
+    function switchCatalogTab(tab) {
+        const isProjects = tab === "projects";
+        document.getElementById("catalogPanelProjects").classList.toggle("hidden", !isProjects);
+        document.getElementById("catalogPanelCategories").classList.toggle("hidden", isProjects);
+        document.getElementById("catalogTabBtnProjects").classList.toggle("is-active", isProjects);
+        document.getElementById("catalogTabBtnCategories").classList.toggle("is-active", !isProjects);
     }
 
     function renderCatalogProjects() {
@@ -590,7 +627,7 @@
         const filtered = validOptions.filter(opt => opt.textContent.toLowerCase().includes(searchTerm));
 
         if (!catSelect.options.length || !validOptions.length) {
-            container.innerHTML = '<tr><td colspan="3" class="p-6 text-center text-slate-400 text-xs">Chưa có file con hoặc chưa chọn project</td></tr>';
+            container.innerHTML = '<tr><td colspan="3" class="p-6 text-center text-slate-400 text-xs">Chưa có loại hồ sơ nào</td></tr>';
             return;
         }
 
@@ -1040,7 +1077,9 @@
                 activeProjectLabel: "Project đang chọn",
                 projectsHeading: "Projects",
                 addBtn: "Thêm",
-                categoriesOfLabel: "Loại hồ sơ (dùng chung cho mọi project)",
+                categoriesTabLabel: "Loại hồ sơ",
+                projectsTabDesc: "Quản lý danh sách project — mỗi project có thư mục lưu trữ riêng.",
+                categoriesTabDesc: "Metadata phân loại gán vào hồ sơ khi upload — dùng chung cho mọi project.",
                 addCategoryModalBtn: "Thêm loại hồ sơ",
                 categoryNameHeader: "Tên loại hồ sơ",
                 codeHeader: "Mã",
@@ -1085,7 +1124,9 @@
                 activeProjectLabel: "Selected project",
                 projectsHeading: "Projects",
                 addBtn: "Add",
-                categoriesOfLabel: "Document types (shared across all projects)",
+                categoriesTabLabel: "Document types",
+                projectsTabDesc: "Manage the project list — each project has its own storage folder.",
+                categoriesTabDesc: "Classification metadata attached to a document on upload — shared across all projects.",
                 addCategoryModalBtn: "Add document type",
                 categoryNameHeader: "Document type name",
                 codeHeader: "Code",
