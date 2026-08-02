@@ -4,6 +4,7 @@
 {% block page_title %}<span data-i18n-key="pageHeading">GỬI HỒ SƠ CHỜ DUYỆT</span>{% endblock %}
 {% block active_nav %}upload{% endblock %}
 {% block content_max_width %}max-w-4xl{% endblock %}
+{% block inline_back_button %}true{% endblock %}
 {% block extra_style %}
 <style>
     .required-star {
@@ -67,6 +68,12 @@
             <span data-i18n-key="employeeLabel">Nhân viên:</span> <strong class="text-slate-800 font-semibold">{{
                 user['full_name'] }}</strong>
         </p>
+        <a href="/employee"
+            class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 text-white hover:bg-slate-700 active:scale-95 transition-all text-sm font-semibold shadow-sm shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+            aria-label="Quay lại" title="Quay lại">
+            <i class="ti ti-arrow-left text-base"></i>
+            <span data-i18n="backButton">Quay lại</span>
+        </a>
     </div>
 
     {{ macros.banner('error', error) }}

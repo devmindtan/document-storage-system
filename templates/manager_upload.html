@@ -4,6 +4,7 @@
 {% block page_title %}<span data-i18n-key="pageHeading">QUẢN LÝ UPLOAD HỒ SƠ</span>{% endblock %}
 {% block active_nav %}upload{% endblock %}
 {% block content_max_width %}max-w-5xl{% endblock %}
+{% block inline_back_button %}true{% endblock %}
 {% block extra_style %}
 <style>
     .required-star {
@@ -194,6 +195,12 @@
             <span data-i18n-key="managerLabel">Quản lý:</span> <strong class="text-slate-800 font-semibold">{{
                 user['full_name'] }}</strong>
         </p>
+        <a href="/manager"
+            class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 text-white hover:bg-slate-700 active:scale-95 transition-all text-sm font-semibold shadow-sm shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+            aria-label="Quay lại" title="Quay lại">
+            <i class="ti ti-arrow-left text-base"></i>
+            <span data-i18n="backButton">Quay lại</span>
+        </a>
     </div>
 
     {{ macros.banner('error', error) }}
@@ -381,8 +388,10 @@
             </button>
         </div>
 
-        <!-- Quick stats -->
-        <div class="px-6 py-4 border-b border-slate-200 grid grid-cols-2 sm:grid-cols-3 gap-3 shrink-0 bg-white">
+        <!-- Quick stats — chỉ 2 chỉ số luôn đúng cho cả 2 tab. Bỏ "Project
+             đang chọn" vì Loại hồ sơ giờ dùng chung mọi project, không còn
+             gắn với 1 project cụ thể nào để "đang chọn" nữa. -->
+        <div class="px-6 py-4 border-b border-slate-200 grid grid-cols-2 gap-3 shrink-0 bg-white">
             <div class="rounded-xl border border-slate-200 p-3 flex items-center gap-3">
                 <div class="w-9 h-9 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
                     <i class="ti ti-briefcase text-base"></i>
@@ -399,15 +408,6 @@
                 <div class="min-w-0">
                     <p class="text-xs text-slate-500" data-i18n-key="totalCategoriesLabel">Tổng loại hồ sơ</p>
                     <p id="statTotalCategories" class="text-xl font-bold text-slate-800">--</p>
-                </div>
-            </div>
-            <div class="rounded-xl border border-slate-200 p-3 hidden sm:flex items-center gap-3">
-                <div class="w-9 h-9 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
-                    <i class="ti ti-focus-2 text-base"></i>
-                </div>
-                <div class="min-w-0">
-                    <p class="text-xs text-slate-500" data-i18n-key="activeProjectLabel">Project đang chọn</p>
-                    <p id="statActiveProject" class="text-sm font-bold text-brand-600 truncate">--</p>
                 </div>
             </div>
         </div>
@@ -640,38 +640,22 @@
             options.forEach(opt => {
                 const isActive = opt.value === select.value;
                 const div = document.createElement("div");
-                div.className = `workspace-sidebar-item flex items-center justify-between px-3 py-2.5 cursor-pointer border-l-2 border-transparent hover:bg-slate-50 transition-colors ${isActive ? 'is-active border-l-2' : ''}`;
+                div.className = `workspace-sidebar-item flex items-center justify-between px-3 py-2.5 hover:bg-slate-50 transition-colors ${isActive ? 'is-active border-l-2' : 'border-l-2 border-transparent'}`;
                 div.innerHTML = `
-                    <span class="text-sm font-semibold text-slate-700 truncate pr-2">${opt.text}</span>
-                    <div class="flex items-center gap-1 shrink-0">
-                        <button type="button" class="p-1 rounded-md text-slate-400 hover:text-brand-600 hover:bg-brand-50" title="Sửa tên">
-                            <i class="ti ti-edit text-sm"></i>
-                        </button>
-                        <button type="button" class="p-1 rounded-md text-slate-400 hover:text-rose-600 hover:bg-rose-50" title="Xóa">
-                            <i class="ti ti-trash text-sm"></i>
-                        </button>
-                    </div>
+                    <span class="flex items-center gap-2.5 text-sm font-semibold text-slate-700 truncate pr-2">
+                        <i class="ti ti-briefcase text-slate-400 text-sm shrink-0"></i>
+                        <span class="truncate">${opt.text}</span>
+                    </span>
+                    <button type="button" class="p-1.5 rounded-md text-slate-400 hover:text-rose-600 hover:bg-rose-50 shrink-0" title="Xóa">
+                        <i class="ti ti-trash text-sm"></i>
+                    </button>
                 `;
-                div.addEventListener("click", (e) => {
-                    if (e.target.closest("button")) return;
-                    select.value = opt.value;
-                    select.dispatchEvent(new Event("change"));
-                    renderCatalogProjects();
-                });
-                const [editBtn, delBtn] = div.querySelectorAll("button");
-                editBtn.addEventListener("click", () => editCatalogProject(opt.value));
-                delBtn.addEventListener("click", () => deleteCatalogProject(opt.value));
+                div.querySelector("button").addEventListener("click", () => deleteCatalogProject(opt.value));
                 container.appendChild(div);
             });
         }
 
-        const activeOpt = select.options[select.selectedIndex];
-        if (activeOpt) {
-            document.getElementById("statActiveProject").textContent = activeOpt.text;
-            renderCatalogCategoriesFiltered();
-        } else {
-            document.getElementById("statActiveProject").textContent = "--";
-        }
+        renderCatalogCategoriesFiltered();
     }
 
     function renderCatalogCategoriesFiltered() {
@@ -702,17 +686,12 @@
             tr.className = "workspace-row transition-colors";
             tr.innerHTML = `
                 <td class="px-4 py-2.5 text-slate-700 font-medium">${name}</td>
-                <td class="px-4 py-2.5 text-slate-500">${code}</td>
+                <td class="px-4 py-2.5 text-slate-500 font-mono text-xs">${code}</td>
                 <td class="px-4 py-2.5 text-right">
-                    <div class="inline-flex items-center gap-1">
-                        <button type="button" class="btn-ghost p-1.5 text-emerald-600" title="Sửa"><i class="ti ti-edit text-sm"></i></button>
-                        <button type="button" class="btn-ghost p-1.5 text-rose-600" title="Xóa"><i class="ti ti-trash text-sm"></i></button>
-                    </div>
+                    <button type="button" class="btn-ghost p-1.5 text-rose-600" title="Xóa"><i class="ti ti-trash text-sm"></i></button>
                 </td>
             `;
-            const [editBtn, delBtn] = tr.querySelectorAll("button");
-            editBtn.addEventListener("click", () => editCatalogCategory(opt.value));
-            delBtn.addEventListener("click", () => deleteCatalogCategory(opt.value));
+            tr.querySelector("button").addEventListener("click", () => deleteCatalogCategory(opt.value));
             container.appendChild(tr);
         });
     }
@@ -737,12 +716,6 @@
         toggleSaveDisabled('projectInputName', 'projectSaveBtn');
         document.getElementById("projectModal").classList.remove("hidden");
         input.focus();
-    }
-
-    function editCatalogProject(valKey) {
-        const select = document.getElementById("project_key");
-        select.value = valKey;
-        openProjectModal('edit');
     }
 
     function closeProjectModal() {
@@ -867,12 +840,6 @@
         toggleSaveDisabled('categoryInputName', 'categorySaveBtn');
         document.getElementById("categoryModal").classList.remove("hidden");
         inputName.focus();
-    }
-
-    function editCatalogCategory(valKey) {
-        const select = document.getElementById("category_key");
-        select.value = valKey;
-        openCategoryModal('edit');
     }
 
     function closeCategoryModal() {
