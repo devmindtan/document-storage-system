@@ -3,10 +3,11 @@
 {% block title %}Hồ sơ của tôi{% endblock %}
 {% block page_title %}<span data-i18n-key="myDocumentsTitle">Hồ sơ của tôi</span>{% endblock %}
 {% block active_nav %}my_documents{% endblock %}
+{% block inline_back_button %}true{% endblock %}
 
 {% block content %}
 <div class="space-y-6 animate-fade-in">
-    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
+    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between gap-3">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-full bg-brand-50 text-brand-600 flex items-center justify-center shrink-0">
                 <i class="ti ti-user text-xl"></i>
@@ -17,6 +18,12 @@
                 <p class="font-bold text-slate-800">{{ user['full_name'] }}</p>
             </div>
         </div>
+        <a href="/employee"
+            class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 text-white hover:bg-slate-700 active:scale-95 transition-all text-sm font-semibold shadow-sm shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+            aria-label="Quay lại" title="Quay lại">
+            <i class="ti ti-arrow-left text-base"></i>
+            <span data-i18n="backButton">Quay lại</span>
+        </a>
     </div>
 
     {% if documents %}

@@ -5,37 +5,48 @@
 <span id="pageTitleText" data-i18n-key="pageTitleApproval">Duyệt tài khoản</span>
 {% endblock %}
 {% block active_nav %}manager_users{% endblock %}
+{% block inline_back_button %}true{% endblock %}
 
 {% block content %}
 {% import "layout/_macros.html" as macros %}
 <div class="space-y-6 relative">
 
     <div id="mainView" class="space-y-6">
-        {% if users %}
-        <div class="flex justify-end">
-            <div class="relative">
-                <button type="button" id="columnToggleBtn"
-                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-colors">
-                    <i class="ti ti-columns text-sm"></i>
-                    <span data-i18n-key="columnsButton">Cột hiển thị</span>
-                </button>
-                <div id="columnToggleMenu"
-                    class="hidden absolute right-0 mt-1.5 w-48 bg-white border border-slate-200 rounded-xl shadow-lg z-20 p-2 space-y-0.5">
-                    <label class="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-slate-50 text-xs text-slate-600 cursor-pointer">
-                        <input type="checkbox" class="js-col-toggle" data-col="account" checked> <span data-i18n-key="accountHeader">Tài khoản</span>
-                    </label>
-                    <label class="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-slate-50 text-xs text-slate-600 cursor-pointer">
-                        <input type="checkbox" class="js-col-toggle" data-col="role" checked> <span data-i18n-key="roleHeader">Phân quyền</span>
-                    </label>
-                    <label class="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-slate-50 text-xs text-slate-600 cursor-pointer">
-                        <input type="checkbox" class="js-col-toggle" data-col="created" checked> <span data-i18n-key="createdAtHeader">Ngày tạo</span>
-                    </label>
-                    <label class="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-slate-50 text-xs text-slate-600 cursor-pointer">
-                        <input type="checkbox" class="js-col-toggle" data-col="status" checked> <span data-i18n-key="statusHeader">Trạng thái</span>
-                    </label>
+        <div class="top-bar flex flex-wrap items-center justify-between gap-3">
+            <div>
+                {% if users %}
+                <div class="relative">
+                    <button type="button" id="columnToggleBtn"
+                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-colors">
+                        <i class="ti ti-columns text-sm"></i>
+                        <span data-i18n-key="columnsButton">Cột hiển thị</span>
+                    </button>
+                    <div id="columnToggleMenu"
+                        class="hidden absolute right-0 mt-1.5 w-48 bg-white border border-slate-200 rounded-xl shadow-lg z-20 p-2 space-y-0.5">
+                        <label class="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-slate-50 text-xs text-slate-600 cursor-pointer">
+                            <input type="checkbox" class="js-col-toggle" data-col="account" checked> <span data-i18n-key="accountHeader">Tài khoản</span>
+                        </label>
+                        <label class="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-slate-50 text-xs text-slate-600 cursor-pointer">
+                            <input type="checkbox" class="js-col-toggle" data-col="role" checked> <span data-i18n-key="roleHeader">Phân quyền</span>
+                        </label>
+                        <label class="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-slate-50 text-xs text-slate-600 cursor-pointer">
+                            <input type="checkbox" class="js-col-toggle" data-col="created" checked> <span data-i18n-key="createdAtHeader">Ngày tạo</span>
+                        </label>
+                        <label class="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-slate-50 text-xs text-slate-600 cursor-pointer">
+                            <input type="checkbox" class="js-col-toggle" data-col="status" checked> <span data-i18n-key="statusHeader">Trạng thái</span>
+                        </label>
+                    </div>
                 </div>
+                {% endif %}
             </div>
+            <a href="/admin"
+                class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 text-white hover:bg-slate-700 active:scale-95 transition-all text-sm font-semibold shadow-sm shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+                aria-label="Quay lại" title="Quay lại">
+                <i class="ti ti-arrow-left text-base"></i>
+                <span data-i18n="backButton">Quay lại</span>
+            </a>
         </div>
+        {% if users %}
         <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
             <div class="overflow-x-auto max-h-[70vh] overflow-y-auto">
                 <table id="usersTable" class="w-full text-left text-sm text-slate-600 whitespace-nowrap">
