@@ -225,23 +225,38 @@ def initialize_project_categories():
 
 def consolidate_categories_to_canonical_project(conn):
     """
-    Trước đây mỗi project có danh sách "Loại hồ sơ" riêng (bật/tắt độc lập),
-    khiến người dùng thấy danh sách khác nhau tuỳ project đang chọn. Gộp về
-    một danh sách dùng chung: với mỗi category_key, project canonical (id
-    nhỏ nhất) được bật nếu category đó đang bật ở BẤT KỲ project nào (union,
-    không làm mất loại hồ sơ mà ai đó đã thấy/dùng), sau đó xoá các dòng
-    trùng lặp của những project khác. An toàn vì documents.category lưu
-    dạng text tự do, không tham chiếu khoá ngoại tới project_categories.id.
-    Idempotent — chạy lại mỗi lần khởi động không gây tác dụng phụ.
+    "Loại hồ sơ" dùng chung cho toàn hệ thống được lưu dưới project_id ảo
+    (xem get_canonical_category_project_id) — KHÔNG thuộc project thật nào,
+    nên các dòng project_categories seed riêng cho từng project thật ở trên
+    (phục vụ tạo thư mục lưu trữ vật lý của project đó, xem
+    create_project_storage_folders) được giữ nguyên, không đụng tới.
+
+    Lịch sử: bản trước dùng project có id nhỏ nhất làm canonical với giả
+    định "project không có tính năng xóa" — giả định đó sai, xóa đúng
+    project đó qua /projects/{id}/delete đã xóa sạch luôn toàn bộ danh sách
+    Loại hồ sơ dùng chung. Idempotent — chỉ seed lại nếu project_id ảo chưa
+    có dữ liệu, chạy lại mỗi lần khởi động không gây tác dụng phụ.
     """
     canonical_id = get_canonical_category_project_id(conn)
 
+    canonical_has_rows = conn.execute(
+        "SELECT COUNT(*) AS total FROM project_categories WHERE project_id = ?",
+        (canonical_id,),
+    ).fetchone()["total"] > 0
+
+    if canonical_has_rows:
+        return
+
+    # Gộp trạng thái bật/tắt hiện có ở các project thật (nếu có, từ dữ liệu
+    # cũ) trước khi seed mặc định, để không làm mất loại hồ sơ ai đó đã bật.
     active_keys = {
         row["category_key"]
         for row in conn.execute(
             "SELECT DISTINCT category_key FROM project_categories WHERE is_active = 1"
         ).fetchall()
     }
+
+    seed_project_default_categories(conn=conn, project_id=canonical_id)
 
     if active_keys:
         conn.executemany(
@@ -252,11 +267,6 @@ def consolidate_categories_to_canonical_project(conn):
             """,
             [(canonical_id, key) for key in active_keys],
         )
-
-    conn.execute(
-        "DELETE FROM project_categories WHERE project_id != ?",
-        (canonical_id,),
-    )
 
 
 def initialize_audit_logs():

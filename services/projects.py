@@ -266,12 +266,20 @@ def make_unique_category_folder(conn, project_id: int, category_label: str) -> s
 
 def get_canonical_category_project_id(conn) -> int:
     """
-    Trả về id của project được dùng làm nguồn danh sách "Loại hồ sơ" dùng
-    chung cho toàn bộ hệ thống (thay vì mỗi project có danh sách riêng).
-    Luôn là project có id nhỏ nhất — ổn định vì project không có tính năng xóa.
+    Trả về project_id "ảo" dùng làm nơi lưu danh sách "Loại hồ sơ" dùng
+    chung cho toàn bộ hệ thống. Cố định = 0 — project thật luôn có id >= 1
+    (AUTOINCREMENT) nên 0 không bao giờ trùng, và vì vậy không bao giờ bị
+    xóa kèm khi một project thật bị xóa.
+
+    Trước đây hàm này trả về id của project nhỏ nhất với giả định "project
+    không có tính năng xóa" — giả định đó SAI: /projects/{id}/delete xóa
+    hẳn project + toàn bộ project_categories của id đó
+    (services/documents.hard_delete_project_metadata), nên xóa đúng
+    project đang là canonical đã xóa sạch danh sách Loại hồ sơ dùng chung
+    của TOÀN hệ thống. `conn` không còn cần thiết nhưng giữ lại tham số để
+    không phải sửa lại các nơi đang gọi hàm này.
     """
-    row = conn.execute("SELECT MIN(id) AS id FROM projects").fetchone()
-    return row["id"]
+    return 0
 
 
 def seed_project_default_categories(conn, project_id: int, created_at: str | None = None):
@@ -735,6 +743,165 @@ def delete_project_category_for_manager(
     )
 
     return True, "Đã xóa file con khỏi project đang chọn.", str(project_id_from_form)
+
+
+def create_global_category(category_label: str, category_code: str, current_user):
+    """
+    Thêm 1 "Loại hồ sơ" mới vào danh sách dùng chung cho toàn hệ thống.
+
+    Không dùng create_project_category_for_manager vì hàm đó bắt buộc
+    project_id trỏ tới 1 project thật đang APPROVED (JOIN bảng projects) —
+    "Loại hồ sơ" dùng chung lại cố tình KHÔNG gắn với project thật nào
+    (project_id ảo, xem get_canonical_category_project_id), nên cần hàm
+    riêng không phụ thuộc bảng projects.
+    """
+    category_label = category_label.strip()
+    category_code = category_code.strip().upper()
+
+    if not category_label:
+        return False, "Tên loại hồ sơ không được để trống."
+
+    if len(category_label) > 50:
+        return False, "Tên loại hồ sơ không được vượt quá 50 ký tự."
+
+    if category_code:
+        category_code = re.sub(r"[^A-Z0-9]+", "", category_code)
+
+    if not category_code:
+        category_code = make_category_code_from_label(category_label)
+
+    if len(category_code) > 10:
+        return False, "Mã loại hồ sơ không được vượt quá 10 ký tự."
+
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    with get_connection() as conn:
+        project_id = get_canonical_category_project_id(conn)
+
+        existing_label = conn.execute(
+            """
+            SELECT id, is_active
+            FROM project_categories
+            WHERE project_id = ?
+              AND lower(label) = lower(?)
+            """,
+            (project_id, category_label),
+        ).fetchone()
+
+        if existing_label:
+            if existing_label["is_active"]:
+                return False, "Loại hồ sơ này đã tồn tại."
+
+            conn.execute(
+                """
+                UPDATE project_categories
+                SET is_active = 1,
+                    code = ?
+                WHERE id = ?
+                """,
+                (category_code, existing_label["id"]),
+            )
+
+            write_audit_log(
+                user=current_user,
+                action="CREATE_PROJECT_CATEGORY",
+                details=f"Bật lại loại hồ sơ '{category_label}'.",
+            )
+
+            return True, "Đã bật lại loại hồ sơ thành công."
+
+        existing_code = conn.execute(
+            """
+            SELECT id
+            FROM project_categories
+            WHERE project_id = ?
+              AND code = ?
+            """,
+            (project_id, category_code),
+        ).fetchone()
+
+        if existing_code:
+            return False, "Mã loại hồ sơ này đã tồn tại."
+
+        folder_name = make_unique_category_folder(
+            conn=conn,
+            project_id=project_id,
+            category_label=category_label,
+        )
+
+        category_key = f"CUSTOM_{uuid.uuid4().hex[:12]}"
+
+        conn.execute(
+            """
+            INSERT INTO project_categories (
+                project_id, category_key, label, folder, code, is_active, created_at
+            )
+            VALUES (?, ?, ?, ?, ?, 1, ?)
+            """,
+            (project_id, category_key, category_label, folder_name, category_code, now),
+        )
+
+    write_audit_log(
+        user=current_user,
+        action="CREATE_PROJECT_CATEGORY",
+        details=f"Thêm loại hồ sơ '{category_label}' mã '{category_code}'.",
+    )
+
+    return True, f"Đã thêm loại hồ sơ '{category_label}' thành công."
+
+
+def delete_global_category(category_id: int, current_user):
+    """
+    Ẩn (soft-delete) 1 "Loại hồ sơ" khỏi danh sách dùng chung. Xem
+    create_global_category để biết vì sao không dùng
+    delete_project_category_for_manager (hàm đó cũng bắt buộc JOIN với 1
+    project thật đang APPROVED).
+    """
+    with get_connection() as conn:
+        project_id = get_canonical_category_project_id(conn)
+
+        category = conn.execute(
+            """
+            SELECT id, label, is_active
+            FROM project_categories
+            WHERE id = ?
+              AND project_id = ?
+            """,
+            (category_id, project_id),
+        ).fetchone()
+
+        if not category:
+            return False, "Loại hồ sơ không tồn tại hoặc đã bị xóa."
+
+        active_count = conn.execute(
+            """
+            SELECT COUNT(*) AS total
+            FROM project_categories
+            WHERE project_id = ?
+              AND is_active = 1
+            """,
+            (project_id,),
+        ).fetchone()["total"]
+
+        if active_count <= 1:
+            return False, "Phải còn ít nhất 1 loại hồ sơ."
+
+        conn.execute(
+            """
+            UPDATE project_categories
+            SET is_active = 0
+            WHERE id = ?
+            """,
+            (category_id,),
+        )
+
+    write_audit_log(
+        user=current_user,
+        action="DELETE_PROJECT_CATEGORY",
+        details=f"Ẩn loại hồ sơ '{category['label']}'.",
+    )
+
+    return True, "Đã xóa loại hồ sơ thành công."
 
 
 def get_default_categories_for_new_project() -> dict:

@@ -62,8 +62,8 @@ from services.projects import (
     get_project_category_by_key,
     get_project_category_json_list,
     get_category_management_rows,
-    create_project_category_for_manager,
-    delete_project_category_for_manager,
+    create_global_category,
+    delete_global_category,
     get_default_categories_for_new_project,
     build_upload_context,
     build_manager_upload_context,
@@ -588,13 +588,10 @@ def manager_add_project_category(
     if current_user["role"] != ROLE_MANAGER:
         return RedirectResponse("/employee", status_code=303)
 
-    # "Loại hồ sơ" dùng chung cho mọi project — thêm mới luôn ghi vào project
-    # canonical bất kể đang mở catalog của project nào trên UI.
-    with get_connection() as conn:
-        canonical_project_key = str(get_canonical_category_project_id(conn))
-
-    success, message = create_project_category_for_manager(
-        project_key=canonical_project_key,
+    # "Loại hồ sơ" dùng chung cho toàn hệ thống, không gắn với project thật
+    # nào — dùng create_global_category thay vì create_project_category_for_manager
+    # (hàm đó bắt buộc project_id trỏ tới 1 project thật đang APPROVED).
+    success, message = create_global_category(
         category_label=category_label,
         category_code=category_code,
         current_user=current_user,
@@ -626,19 +623,13 @@ def manager_delete_project_category(
     if current_user["role"] != ROLE_MANAGER:
         return RedirectResponse("/employee", status_code=303)
 
-    # "Loại hồ sơ" dùng chung cho mọi project — file con luôn thực sự nằm ở
-    # project canonical, bất kể form gửi lên project_key nào.
-    with get_connection() as conn:
-        canonical_project_key = str(get_canonical_category_project_id(conn))
-
-    success, message, fallback_project_key = delete_project_category_for_manager(
+    # "Loại hồ sơ" dùng chung cho toàn hệ thống, không gắn với project thật
+    # nào — dùng delete_global_category thay vì delete_project_category_for_manager
+    # (hàm đó cũng bắt buộc JOIN với 1 project thật đang APPROVED).
+    success, message = delete_global_category(
         category_id=category_id,
-        project_key=canonical_project_key,
         current_user=current_user,
     )
-
-    if not project_key:
-        project_key = fallback_project_key
 
     query_name = "message" if success else "error"
 

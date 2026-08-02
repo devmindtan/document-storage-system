@@ -338,7 +338,7 @@
         </header>
 
         <div class="flex-1 overflow-auto p-4 sm:p-6 lg:p-8">
-            <div class="max-w-7xl mx-auto">
+            <div class="{% block content_max_width %}max-w-7xl{% endblock %} mx-auto">
                 {% if active_nav not in ['dashboard', 'admin_dashboard'] %}
                 <div class="flex justify-end mb-4">
                     <a href="{{ '/admin' if is_admin_section else ('/employee' if user.role == 'EMPLOYEE' else '/manager') }}"
