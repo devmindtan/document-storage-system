@@ -6,15 +6,15 @@
 
 {% block content %}
 <div class="space-y-6">
-    <p class="text-sm text-slate-500">
-        <span data-i18n-key="managerLabel">Quản lý:</span> <span class="font-semibold text-slate-700">{{ user['full_name'] }}</span>
+    <p class="text-sm text-slate-500 dark:text-slate-400">
+        <span data-i18n-key="managerLabel">Quản lý:</span> <span class="font-semibold text-slate-700 dark:text-slate-200">{{ user['full_name'] }}</span>
     </p>
 
-    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+    <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
         <form action="/manager/audit-logs" method="get" class="flex flex-col md:flex-row gap-4">
             <div class="flex-1">
-                <label for="action" class="block text-xs font-medium text-slate-500 mb-1" data-i18n-key="actionTypeLabel">Loại hoạt động</label>
-                <select id="action" name="action" class="w-full border border-slate-200 text-slate-700 py-2.5 px-4 rounded-lg text-sm outline-none focus:ring-2 focus:ring-brand-500 bg-white">
+                <label for="action" class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1" data-i18n-key="actionTypeLabel">Loại hoạt động</label>
+                <select id="action" name="action" class="w-full border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 py-2.5 px-4 rounded-lg text-sm outline-none focus:ring-2 focus:ring-brand-500 bg-white dark:bg-slate-800">
                     <option value="" data-i18n-key="allActionsOption">Tất cả hoạt động</option>
                     <option value="UPLOAD" data-i18n-key="uploadActionOption" {% if selected_action == 'UPLOAD' %}selected{% endif %}>Upload hồ sơ</option>
                     <option value="MANAGER_UPLOAD" data-i18n-key="managerUploadActionOption" {% if selected_action == 'MANAGER_UPLOAD' %}selected{% endif %}>Quản lý upload</option>
@@ -25,10 +25,10 @@
             </div>
 
             <div class="flex gap-2 md:items-end">
-                <button type="submit" class="bg-brand-900 hover:bg-brand-800 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
+                <button type="submit" class="bg-brand-900 hover:bg-brand-800 dark:bg-brand-600 dark:hover:bg-brand-500 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
                     <i class="ti ti-filter"></i> <span data-i18n-key="filterLogsButton">Lọc nhật ký</span>
                 </button>
-                <a href="/manager/audit-logs" class="border border-slate-200 text-slate-600 hover:bg-slate-50 px-5 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
+                <a href="/manager/audit-logs" class="border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 px-5 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
                     <span data-i18n-key="clearFilterLink">Xóa bộ lọc</span>
                 </a>
             </div>
@@ -36,10 +36,10 @@
     </div>
 
     {% if logs %}
-        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
             <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm text-slate-600 whitespace-nowrap">
-                    <thead class="bg-slate-50 border-b border-slate-200 text-slate-700 uppercase font-semibold text-xs">
+                <table class="w-full text-left text-sm text-slate-600 dark:text-slate-300 whitespace-nowrap">
+                    <thead class="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 uppercase font-semibold text-xs">
                         <tr>
                             <th class="px-6 py-4" data-i18n-key="idHeader">ID</th>
                             <th class="px-6 py-4" data-i18n-key="timeHeader">Thời gian</th>
@@ -51,9 +51,9 @@
                         </tr>
                     </thead>
 
-                    <tbody class="divide-y divide-slate-100">
+                    <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
                         {% for log in logs %}
-                            <tr class="hover:bg-slate-50 transition-colors">
+                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors">
                                 <td class="px-6 py-4">{{ log['id'] }}</td>
                                 <td class="px-6 py-4">{{ log['created_at'] }}</td>
                                 <td class="px-6 py-4">{{ log['full_name'] or '-' }}</td>
@@ -61,17 +61,17 @@
 
                                 <td class="px-6 py-4">
                                     {% if log['action'] == 'UPLOAD' %}
-                                        <span class="bg-brand-100 text-brand-800 px-2.5 py-1 rounded text-xs font-bold" data-i18n-key="uploadedPill">Đã upload</span>
+                                        <span class="bg-brand-100 dark:bg-brand-500/20 text-brand-800 dark:text-brand-400 px-2.5 py-1 rounded text-xs font-bold" data-i18n-key="uploadedPill">Đã upload</span>
                                     {% elif log['action'] == 'MANAGER_UPLOAD' %}
-                                        <span class="bg-brand-100 text-brand-800 px-2.5 py-1 rounded text-xs font-bold" data-i18n-key="managerUploadPill">Quản lý upload</span>
+                                        <span class="bg-brand-100 dark:bg-brand-500/20 text-brand-800 dark:text-brand-400 px-2.5 py-1 rounded text-xs font-bold" data-i18n-key="managerUploadPill">Quản lý upload</span>
                                     {% elif log['action'] == 'APPROVE' %}
-                                        <span class="bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded text-xs font-bold" data-i18n-key="approvedPill">Đã duyệt</span>
+                                        <span class="bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 px-2.5 py-1 rounded text-xs font-bold" data-i18n-key="approvedPill">Đã duyệt</span>
                                     {% elif log['action'] == 'REJECT' %}
-                                        <span class="bg-rose-100 text-rose-700 px-2.5 py-1 rounded text-xs font-bold" data-i18n-key="rejectedPill">Đã từ chối</span>
+                                        <span class="bg-rose-100 dark:bg-rose-500/20 text-rose-700 dark:text-rose-400 px-2.5 py-1 rounded text-xs font-bold" data-i18n-key="rejectedPill">Đã từ chối</span>
                                     {% elif log['action'] == 'DOWNLOAD' %}
-                                        <span class="bg-slate-100 text-slate-600 px-2.5 py-1 rounded text-xs font-bold" data-i18n-key="downloadedPill">Đã download</span>
+                                        <span class="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-2.5 py-1 rounded text-xs font-bold" data-i18n-key="downloadedPill">Đã download</span>
                                     {% else %}
-                                        <span class="bg-slate-100 text-slate-600 px-2.5 py-1 rounded text-xs font-bold">{{ log['action'] }}</span>
+                                        <span class="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-2.5 py-1 rounded text-xs font-bold">{{ log['action'] }}</span>
                                     {% endif %}
                                 </td>
 
@@ -85,7 +85,7 @@
         </div>
 
     {% else %}
-        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-10 text-center text-slate-500">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-10 text-center text-slate-500 dark:text-slate-400">
             <span data-i18n-key="noLogs">Chưa có hoạt động nào được ghi nhận.</span>
         </div>
     {% endif %}

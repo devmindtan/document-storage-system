@@ -10,21 +10,21 @@
     {{ macros.banner('error', error) }}
     {{ macros.banner('success', success) }}
 
-    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
 
-        <div class="p-6 sm:p-8 border-b border-slate-100 flex items-start gap-4">
+        <div class="p-6 sm:p-8 border-b border-slate-100 dark:border-slate-800 flex items-start gap-4">
             <div
-                class="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 shadow-sm border border-blue-100/50">
+                class="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 shadow-sm border border-blue-100/50 dark:border-blue-500/30">
                 <i class="ti ti-user-plus text-2xl"></i>
             </div>
             <div class="pt-1">
                 <div class="flex items-center gap-3">
-                    <h2 class="text-xl font-bold text-slate-800 tracking-tight" data-i18n-key="createEmployeeHeader">Tạo
+                    <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 tracking-tight" data-i18n-key="createEmployeeHeader">Tạo
                         tài khoản Nhân viên</h2>
                     <span
-                        class="px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-700 text-xs font-bold tracking-wide uppercase border border-blue-200">Employee</span>
+                        class="px-2.5 py-0.5 rounded-full bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 text-xs font-bold tracking-wide uppercase border border-blue-200 dark:border-blue-500/40">Employee</span>
                 </div>
-                <p class="text-sm text-slate-500 mt-2 leading-relaxed">
+                <p class="text-sm text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
                     <span data-i18n-key="createEmployeeDescBefore">Tài khoản được tạo sẽ tự động được gán quyền</span>
                     <span class="font-semibold text-brand-700">EMPLOYEE</span><span
                         data-i18n-key="createEmployeeDescAfter">, được duyệt sẵn và có thể đăng nhập ngay,
@@ -38,28 +38,28 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
                     <label for="username"
-                        class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2"><span
+                        class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2"><span
                             data-i18n-key="usernameLabel">Tên đăng nhập</span> <span
                             class="text-rose-500">*</span></label>
                     <div class="relative group">
                         <i
-                            class="ti ti-id absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-lg group-focus-within:text-brand-500 transition-colors"></i>
+                            class="ti ti-id absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 text-lg group-focus-within:text-brand-500 transition-colors"></i>
                         <input id="username" type="text" name="username" placeholder="VD: nguyen.van.a"
                             data-i18n-placeholder="usernamePlaceholder" required
-                            class="w-full pl-10 pr-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-sm outline-none focus:bg-white focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-all">
+                            class="w-full pl-10 pr-4 py-2.5 bg-slate-50/50 dark:bg-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:bg-white dark:focus:bg-slate-800 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-all">
                     </div>
                 </div>
 
                 <div>
                     <label for="full_name"
-                        class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2"><span
+                        class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2"><span
                             data-i18n-key="fullNameLabel">Họ và tên</span> <span class="text-rose-500">*</span></label>
                     <div class="relative group">
                         <i
-                            class="ti ti-user absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-lg group-focus-within:text-brand-500 transition-colors"></i>
+                            class="ti ti-user absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 text-lg group-focus-within:text-brand-500 transition-colors"></i>
                         <input id="full_name" type="text" name="full_name" placeholder="VD: Nguyễn Văn A"
                             data-i18n-placeholder="fullNamePlaceholder" required
-                            class="w-full pl-10 pr-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-sm outline-none focus:bg-white focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-all">
+                            class="w-full pl-10 pr-4 py-2.5 bg-slate-50/50 dark:bg-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:bg-white dark:focus:bg-slate-800 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-all">
                     </div>
                 </div>
             </div>
@@ -67,16 +67,16 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
                     <label for="password"
-                        class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2"><span
+                        class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2"><span
                             data-i18n-key="passwordLabel">Mật khẩu</span> <span class="text-rose-500">*</span></label>
                     <div class="relative group">
                         <i
-                            class="ti ti-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-lg group-focus-within:text-brand-500 transition-colors"></i>
+                            class="ti ti-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 text-lg group-focus-within:text-brand-500 transition-colors"></i>
                         <input id="password" type="password" name="password" placeholder="Tối thiểu 8 ký tự"
                             data-i18n-placeholder="passwordPlaceholder" required
-                            class="w-full pl-10 pr-10 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-sm outline-none focus:bg-white focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-all">
+                            class="w-full pl-10 pr-10 py-2.5 bg-slate-50/50 dark:bg-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:bg-white dark:focus:bg-slate-800 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-all">
                         <button type="button" onclick="togglePassword('password', this)"
-                            class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none">
+                            class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 focus:outline-none">
                             <i class="ti ti-eye text-lg"></i>
                         </button>
                     </div>
@@ -84,39 +84,39 @@
 
                 <div>
                     <label for="confirm_password"
-                        class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2"><span
+                        class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2"><span
                             data-i18n-key="confirmPasswordLabel">Xác nhận mật khẩu</span>
                         <span class="text-rose-500">*</span></label>
                     <div class="relative group">
                         <i
-                            class="ti ti-lock-check absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-lg group-focus-within:text-brand-500 transition-colors"></i>
+                            class="ti ti-lock-check absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 text-lg group-focus-within:text-brand-500 transition-colors"></i>
                         <input id="confirm_password" type="password" name="confirm_password"
                             placeholder="Nhập lại mật khẩu" data-i18n-placeholder="confirmPasswordPlaceholder" required
-                            class="w-full pl-10 pr-10 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-sm outline-none focus:bg-white focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-all">
+                            class="w-full pl-10 pr-10 py-2.5 bg-slate-50/50 dark:bg-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:bg-white dark:focus:bg-slate-800 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-all">
                         <button type="button" onclick="togglePassword('confirm_password', this)"
-                            class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none">
+                            class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 focus:outline-none">
                             <i class="ti ti-eye text-lg"></i>
                         </button>
                     </div>
                 </div>
             </div>
 
-            <div class="bg-blue-50/50 border border-blue-100 rounded-xl p-4 flex gap-3 mt-2">
-                <i class="ti ti-info-circle text-blue-500 text-xl shrink-0"></i>
-                <p class="text-sm text-blue-800 leading-relaxed" data-i18n-key="infoBoxText">
+            <div class="bg-blue-50/50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/30 rounded-xl p-4 flex gap-3 mt-2">
+                <i class="ti ti-info-circle text-blue-500 dark:text-blue-400 text-xl shrink-0"></i>
+                <p class="text-sm text-blue-800 dark:text-blue-300 leading-relaxed" data-i18n-key="infoBoxText">
                     Vui lòng cung cấp tài khoản này cho nhân viên nội bộ. Họ có thể thay đổi mật khẩu sau khi đăng
                     nhập lần đầu tiên.
                 </p>
             </div>
 
-            <div class="pt-6 mt-6 border-t border-slate-100 flex items-center justify-end gap-3">
+            <div class="pt-6 mt-6 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-3">
                 <a href="/manager/users"
-                    class="px-5 py-2.5 text-sm font-semibold text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition-colors"
+                    class="px-5 py-2.5 text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors"
                     data-i18n-key="cancelBtn">
                     Hủy bỏ
                 </a>
                 <button type="submit"
-                    class="bg-brand-900 hover:bg-brand-800 text-white px-6 py-2.5 rounded-xl text-sm font-semibold shadow-sm inline-flex items-center gap-2 transition-transform active:scale-95">
+                    class="bg-brand-900 hover:bg-brand-800 dark:bg-brand-600 dark:hover:bg-brand-500 text-white px-6 py-2.5 rounded-xl text-sm font-semibold shadow-sm inline-flex items-center gap-2 transition-transform active:scale-95">
                     <i class="ti ti-user-plus text-base"></i> <span data-i18n-key="submitBtn">Khởi tạo tài khoản</span>
                 </button>
             </div>
