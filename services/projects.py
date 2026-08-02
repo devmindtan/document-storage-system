@@ -860,6 +860,88 @@ def create_global_category(category_label: str, category_code: str, current_user
     }
 
 
+def rename_global_category(category_id: int, new_label: str, new_code: str, current_user):
+    """
+    Đổi tên/mã 1 "Loại hồ sơ" dùng chung. Hồ sơ đã nộp trước đó giữ nguyên
+    giá trị category cũ (chỉ là chữ tự do, không phải khóa ngoại) — coi như
+    ảnh chụp tại thời điểm nộp, giống cách delete_global_category chỉ ẩn
+    chứ không xóa các bản ghi cũ.
+    """
+    new_label = new_label.strip()
+    new_code = new_code.strip().upper()
+
+    if not new_label:
+        return False, "Tên loại hồ sơ không được để trống.", None
+
+    if len(new_label) > 50:
+        return False, "Tên loại hồ sơ không được vượt quá 50 ký tự.", None
+
+    if new_code:
+        new_code = re.sub(r"[^A-Z0-9]+", "", new_code)
+
+    if not new_code:
+        new_code = make_category_code_from_label(new_label)
+
+    if len(new_code) > 10:
+        return False, "Mã loại hồ sơ không được vượt quá 10 ký tự.", None
+
+    with get_connection() as conn:
+        project_id = get_canonical_category_project_id(conn)
+
+        category = conn.execute(
+            """
+            SELECT id, label
+            FROM project_categories
+            WHERE id = ? AND project_id = ? AND is_active = 1
+            """,
+            (category_id, project_id),
+        ).fetchone()
+
+        if not category:
+            return False, "Loại hồ sơ không tồn tại hoặc đã bị xóa.", None
+
+        old_label = category["label"]
+
+        duplicate_label = conn.execute(
+            """
+            SELECT id FROM project_categories
+            WHERE project_id = ? AND lower(label) = lower(?) AND id != ? AND is_active = 1
+            """,
+            (project_id, new_label, category_id),
+        ).fetchone()
+
+        if duplicate_label:
+            return False, "Loại hồ sơ này đã tồn tại.", None
+
+        duplicate_code = conn.execute(
+            """
+            SELECT id FROM project_categories
+            WHERE project_id = ? AND code = ? AND id != ? AND is_active = 1
+            """,
+            (project_id, new_code, category_id),
+        ).fetchone()
+
+        if duplicate_code:
+            return False, "Mã loại hồ sơ này đã tồn tại.", None
+
+        conn.execute(
+            "UPDATE project_categories SET label = ?, code = ? WHERE id = ?",
+            (new_label, new_code, category_id),
+        )
+
+    write_audit_log(
+        user=current_user,
+        action="RENAME_PROJECT_CATEGORY",
+        details=f"Đổi tên loại hồ sơ '{old_label}' thành '{new_label}'.",
+    )
+
+    return True, f"Đã đổi tên loại hồ sơ thành '{new_label}' thành công.", {
+        "id": category_id,
+        "label": new_label,
+        "code": new_code,
+    }
+
+
 def delete_global_category(category_id: int, current_user):
     """
     Ẩn (soft-delete) 1 "Loại hồ sơ" khỏi danh sách dùng chung. Xem
@@ -1259,6 +1341,59 @@ def create_project_immediately_by_manager(project_name, current_user):
     )
 
     return True, f"Đã tạo project '{project_name}' thành công."
+
+
+def rename_project(project_id: int, new_name: str, current_user):
+    """
+    Đổi tên 1 project đang APPROVED.
+
+    project_code/folder giữ nguyên (không phụ thuộc tên hiển thị) nên không
+    cần đổi mã hay di chuyển file. Nhưng documents.project là cột chữ tự do
+    khớp CHÍNH XÁC theo tên project (không phải khóa ngoại theo id) — mọi
+    nơi lọc/xóa hồ sơ theo project (vd. xóa project ở api/documents.py,
+    "Hồ sơ của tôi" lọc theo project) đều so khớp theo tên này, nên phải
+    cập nhật luôn các hồ sơ đã có để không bị "mất" khỏi project sau khi đổi tên.
+    """
+    new_name = new_name.strip().upper()
+
+    if not new_name:
+        return False, "Tên project không được để trống."
+
+    if len(new_name) > 50:
+        return False, "Tên project không được vượt quá 50 ký tự."
+
+    with get_connection() as conn:
+        project = conn.execute(
+            "SELECT id, label FROM projects WHERE id = ? AND status = 'APPROVED'",
+            (project_id,),
+        ).fetchone()
+
+        if not project:
+            return False, "Không tìm thấy project cần sửa."
+
+        old_label = project["label"]
+
+        if new_name.lower() == old_label.lower():
+            return True, f"Đã đổi tên project thành '{new_name}' thành công."
+
+        duplicate = conn.execute(
+            "SELECT id FROM projects WHERE lower(label) = lower(?) AND id != ?",
+            (new_name, project_id),
+        ).fetchone()
+
+        if duplicate:
+            return False, "Tên project này đã tồn tại."
+
+        conn.execute("UPDATE projects SET label = ? WHERE id = ?", (new_name, project_id))
+        conn.execute("UPDATE documents SET project = ? WHERE project = ?", (new_name, old_label))
+
+    write_audit_log(
+        user=current_user,
+        action="RENAME_PROJECT",
+        details=f"Đổi tên project '{old_label}' thành '{new_name}'.",
+    )
+
+    return True, f"Đã đổi tên project thành '{new_name}' thành công."
 
 
 def normalize_project_label_for_upload(project_name: str) -> str:

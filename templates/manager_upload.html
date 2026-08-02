@@ -75,21 +75,6 @@
         border-color: #93c5fd;
     }
 
-    /* ---- Catalog modal tabs (Project vs Loại hồ sơ) ---- */
-    .catalog-tab-btn {
-        border-color: transparent;
-        color: #64748b;
-    }
-
-    .catalog-tab-btn:hover {
-        color: #1e293b;
-    }
-
-    .catalog-tab-btn.is-active {
-        border-color: #1b4d78;
-        color: #1b4d78;
-    }
-
     .workspace-row:hover {
         background: #f8fafc;
     }
@@ -412,33 +397,28 @@
             </div>
         </div>
 
-        <!-- Tabs: Project vs Loại hồ sơ (2 khái niệm khác nhau — Project quản lý thư mục lưu trữ,
-             Loại hồ sơ chỉ là metadata phân loại gán vào hồ sơ khi upload, dùng chung cho mọi project) -->
-        <div class="px-6 pt-3 border-b border-slate-200 flex items-center gap-1 shrink-0 bg-white">
-            <button type="button" id="catalogTabBtnProjects" onclick="switchCatalogTab('projects')"
-                class="catalog-tab-btn px-4 py-2.5 text-sm font-semibold border-b-2 -mb-px transition-colors">
-                <i class="ti ti-briefcase text-base mr-1"></i> <span data-i18n-key="projectsHeading">Projects</span>
-            </button>
-            <button type="button" id="catalogTabBtnCategories" onclick="switchCatalogTab('categories')"
-                class="catalog-tab-btn px-4 py-2.5 text-sm font-semibold border-b-2 -mb-px transition-colors">
-                <i class="ti ti-tags text-base mr-1"></i> <span data-i18n-key="categoriesTabLabel">Loại hồ sơ</span>
-            </button>
-        </div>
+        <!-- Không dùng tab: Project và Loại hồ sơ là 2 khái niệm khác nhau
+             (Project = thư mục lưu trữ, Loại hồ sơ = metadata phân loại dùng
+             chung mọi project) nhưng hiển thị song song 2 cột luôn, không bắt
+             người dùng bấm qua lại giữa 2 tab mới xem được cả 2. -->
+        <div class="flex-1 grid grid-cols-2 divide-x divide-slate-200 min-h-0">
 
-        <div class="flex-1 flex min-h-0 flex-col">
-
-            <!-- Tab panel: Projects -->
-            <div id="catalogPanelProjects" class="flex-1 flex flex-col min-h-0">
+            <!-- Cột trái: Projects -->
+            <div class="flex flex-col min-h-0">
                 <div class="p-3 border-b border-slate-100 space-y-2 shrink-0">
                     <div class="flex items-center justify-between">
-                        <p class="text-xs text-slate-500" data-i18n-key="projectsTabDesc">Quản lý danh sách project —
-                            mỗi project có thư mục lưu trữ riêng.</p>
+                        <p class="text-xs font-bold text-slate-700 uppercase tracking-wide flex items-center gap-1.5">
+                            <i class="ti ti-briefcase text-sm text-slate-400"></i>
+                            <span data-i18n-key="projectsHeading">Projects</span>
+                        </p>
                         <button type="button" onclick="openProjectModal('add')"
                             class="btn-ghost text-brand-600 text-xs font-semibold px-2 py-1 inline-flex items-center gap-1 shrink-0">
                             <i class="ti ti-plus text-sm"></i> <span data-i18n-key="addBtn">Thêm</span>
                         </button>
                     </div>
-                    <div class="relative max-w-xs">
+                    <p class="text-xs text-slate-500" data-i18n-key="projectsTabDesc">Quản lý danh sách project —
+                        mỗi project có thư mục lưu trữ riêng.</p>
+                    <div class="relative">
                         <i class="ti ti-search absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
                         <input id="projectSearchInput" type="text" placeholder="Tìm project..."
                             oninput="renderCatalogProjects()"
@@ -448,19 +428,23 @@
                 <div id="catalogProjectList" class="flex-1 overflow-y-auto divide-y divide-slate-100"></div>
             </div>
 
-            <!-- Tab panel: Loại hồ sơ (Type) -->
-            <div id="catalogPanelCategories" class="hidden flex-1 flex flex-col min-h-0">
-                <div class="p-3 border-b border-slate-100 shrink-0">
+            <!-- Cột phải: Loại hồ sơ (Type) -->
+            <div class="flex flex-col min-h-0">
+                <div class="p-3 border-b border-slate-100 space-y-2 shrink-0">
                     <div class="flex items-center justify-between gap-2 flex-wrap">
-                        <p class="text-xs text-slate-500" data-i18n-key="categoriesTabDesc">Metadata phân loại gán vào
-                            hồ sơ khi upload — dùng chung cho mọi project.</p>
+                        <p class="text-xs font-bold text-slate-700 uppercase tracking-wide flex items-center gap-1.5">
+                            <i class="ti ti-tags text-sm text-slate-400"></i>
+                            <span data-i18n-key="categoriesTabLabel">Loại hồ sơ</span>
+                        </p>
                         <button type="button" onclick="openCategoryModal('add')"
                             class="btn-secondary text-xs font-semibold px-3 py-1.5 inline-flex items-center gap-1 shrink-0">
                             <i class="ti ti-plus text-sm"></i> <span data-i18n-key="addCategoryModalBtn">Thêm loại hồ
                                 sơ</span>
                         </button>
                     </div>
-                    <div class="relative max-w-xs mt-2">
+                    <p class="text-xs text-slate-500" data-i18n-key="categoriesTabDesc">Metadata phân loại gán vào
+                        hồ sơ khi upload — dùng chung cho mọi project.</p>
+                    <div class="relative">
                         <i class="ti ti-search absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
                         <input id="categorySearchInput" type="text" placeholder="Tìm loại hồ sơ..."
                             oninput="renderCatalogCategoriesFiltered()"
@@ -605,23 +589,11 @@
         document.getElementById("categorySearchInput").value = "";
         renderCatalogProjects();
         renderCatalogCategoriesFiltered();
-        switchCatalogTab("projects");
         document.getElementById("masterCatalogModal").classList.remove("hidden");
     }
 
     function closeMasterCatalogModal() {
         document.getElementById("masterCatalogModal").classList.add("hidden");
-    }
-
-    /* Project và Loại hồ sơ là 2 khái niệm khác nhau (Project = thư mục lưu
-       trữ, Loại hồ sơ = metadata phân loại dùng chung mọi project) nên tách
-       thành 2 tab riêng biệt thay vì hiện chung 1 màn hình như trước. */
-    function switchCatalogTab(tab) {
-        const isProjects = tab === "projects";
-        document.getElementById("catalogPanelProjects").classList.toggle("hidden", !isProjects);
-        document.getElementById("catalogPanelCategories").classList.toggle("hidden", isProjects);
-        document.getElementById("catalogTabBtnProjects").classList.toggle("is-active", isProjects);
-        document.getElementById("catalogTabBtnCategories").classList.toggle("is-active", !isProjects);
     }
 
     function renderCatalogProjects() {
@@ -646,11 +618,18 @@
                         <i class="ti ti-briefcase text-slate-400 text-sm shrink-0"></i>
                         <span class="truncate">${opt.text}</span>
                     </span>
-                    <button type="button" class="p-1.5 rounded-md text-slate-400 hover:text-rose-600 hover:bg-rose-50 shrink-0" title="Xóa">
-                        <i class="ti ti-trash text-sm"></i>
-                    </button>
+                    <span class="flex items-center gap-1 shrink-0">
+                        <button type="button" class="p-1.5 rounded-md text-slate-400 hover:text-brand-600 hover:bg-brand-50" title="Sửa">
+                            <i class="ti ti-pencil text-sm"></i>
+                        </button>
+                        <button type="button" class="p-1.5 rounded-md text-slate-400 hover:text-rose-600 hover:bg-rose-50" title="Xóa">
+                            <i class="ti ti-trash text-sm"></i>
+                        </button>
+                    </span>
                 `;
-                div.querySelector("button").addEventListener("click", () => deleteCatalogProject(opt.value));
+                const [editBtn, deleteBtn] = div.querySelectorAll("button");
+                editBtn.addEventListener("click", () => openProjectModal('edit', opt.value));
+                deleteBtn.addEventListener("click", () => deleteCatalogProject(opt.value));
                 container.appendChild(div);
             });
         }
@@ -687,28 +666,31 @@
             tr.innerHTML = `
                 <td class="px-4 py-2.5 text-slate-700 font-medium">${name}</td>
                 <td class="px-4 py-2.5 text-slate-500 font-mono text-xs">${code}</td>
-                <td class="px-4 py-2.5 text-right">
+                <td class="px-4 py-2.5 text-right space-x-1">
+                    <button type="button" class="btn-ghost p-1.5 text-brand-600" title="Sửa"><i class="ti ti-pencil text-sm"></i></button>
                     <button type="button" class="btn-ghost p-1.5 text-rose-600" title="Xóa"><i class="ti ti-trash text-sm"></i></button>
                 </td>
             `;
-            tr.querySelector("button").addEventListener("click", () => deleteCatalogCategory(opt.value));
+            const [editBtn, deleteBtn] = tr.querySelectorAll("button");
+            editBtn.addEventListener("click", () => openCategoryModal('edit', opt.value));
+            deleteBtn.addEventListener("click", () => deleteCatalogCategory(opt.value));
             container.appendChild(tr);
         });
     }
 
     /* ---------------- Project quick actions ---------------- */
-    function openProjectModal(mode) {
+    function openProjectModal(mode, key) {
         projectModalMode = mode;
         const title = document.getElementById("projectModalTitle");
         const input = document.getElementById("projectInputName");
-        const select = document.getElementById("project_key");
 
         if (mode === 'edit') {
-            const selectedOpt = select.options[select.selectedIndex];
+            const select = document.getElementById("project_key");
+            const selectedOpt = Array.from(select.options).find(o => o.value === key);
             if (!selectedOpt) return;
             title.textContent = "Sửa tên Project";
             input.value = selectedOpt.text;
-            currentEditingKey = selectedOpt.value;
+            currentEditingKey = key;
         } else {
             title.textContent = "Thêm Project mới";
             input.value = "";
@@ -755,12 +737,23 @@
         if (!val) return;
 
         if (projectModalMode === 'edit') {
-            // Chưa có endpoint sửa tên project ở backend — giữ hành vi cũ
-            // (chỉ đổi tại chỗ trên dropdown, không lưu thật).
-            const select = document.getElementById("project_key");
-            const opt = Array.from(select.options).find(o => o.value === currentEditingKey);
-            if (opt) opt.text = val;
-            showToast("Đã cập nhật project", "success");
+            const btn = document.getElementById("projectSaveBtn");
+            setButtonBusy(btn, true, "Đang lưu...");
+            const result = await postCatalogForm(`/manager/projects/${currentEditingKey}/rename`, { project_name: val });
+            setButtonBusy(btn, false);
+
+            if (!result.success) {
+                showToast(result.message || "Không thể đổi tên project.", "danger");
+                return;
+            }
+
+            if (result.project) {
+                const select = document.getElementById("project_key");
+                const opt = Array.from(select.options).find(o => o.value === currentEditingKey);
+                if (opt) opt.text = result.project.label;
+            }
+
+            showToast(result.message || "Đã cập nhật project", "success");
             closeProjectModal();
             renderCatalogProjects();
             return;
@@ -818,20 +811,20 @@
     }
 
     /* ---------------- Category quick actions ---------------- */
-    function openCategoryModal(mode) {
+    function openCategoryModal(mode, key) {
         categoryModalMode = mode;
         const title = document.getElementById("categoryModalTitle");
         const inputName = document.getElementById("categoryInputName");
         const inputCode = document.getElementById("categoryInputCode");
-        const select = document.getElementById("category_key");
 
         if (mode === 'edit') {
-            const selectedOpt = select.options[select.selectedIndex];
-            if (!selectedOpt || !selectedOpt.value) return;
-            title.textContent = "Sửa file con";
+            const select = document.getElementById("category_key");
+            const selectedOpt = Array.from(select.options).find(o => o.value === key);
+            if (!selectedOpt) return;
+            title.textContent = "Sửa loại hồ sơ";
             inputName.value = selectedOpt.textContent.split(" - Mã:")[0];
             inputCode.value = selectedOpt.dataset.code || "";
-            currentEditingKey = selectedOpt.value;
+            currentEditingKey = key;
         } else {
             title.textContent = "Thêm file con mới";
             inputName.value = "";
@@ -855,15 +848,31 @@
         const codeVal = inputCode.value.trim();
 
         if (categoryModalMode === 'edit') {
-            // Chưa có endpoint sửa loại hồ sơ ở backend — giữ hành vi cũ
-            // (chỉ đổi tại chỗ trên dropdown, không lưu thật).
-            const select = document.getElementById("category_key");
-            const opt = Array.from(select.options).find(o => o.value === currentEditingKey);
-            if (opt) {
-                opt.textContent = codeVal ? `${nameVal} - Mã: ${codeVal}` : nameVal;
-                opt.dataset.code = codeVal;
+            const btn = document.getElementById("categorySaveBtn");
+            setButtonBusy(btn, true, "Đang lưu...");
+            const result = await postCatalogForm(`/manager/project-categories/${currentEditingKey}/rename`, {
+                category_label: nameVal,
+                category_code: codeVal,
+            });
+            setButtonBusy(btn, false);
+
+            if (!result.success) {
+                showToast(result.message || "Không thể đổi tên loại hồ sơ.", "danger");
+                return;
             }
-            showToast("Đã cập nhật file con", "success");
+
+            if (result.category) {
+                const select = document.getElementById("category_key");
+                const opt = Array.from(select.options).find(o => o.value === currentEditingKey);
+                if (opt) {
+                    opt.textContent = result.category.code
+                        ? `${result.category.label} - Mã: ${result.category.code}`
+                        : result.category.label;
+                    opt.dataset.code = result.category.code || "";
+                }
+            }
+
+            showToast(result.message || "Đã cập nhật loại hồ sơ", "success");
             closeCategoryModal();
             renderCatalogCategoriesFiltered();
             return;

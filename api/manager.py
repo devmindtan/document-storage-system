@@ -64,6 +64,8 @@ from services.projects import (
     get_category_management_rows,
     create_global_category,
     delete_global_category,
+    rename_global_category,
+    rename_project,
     get_default_categories_for_new_project,
     build_upload_context,
     build_manager_upload_context,
@@ -482,6 +484,46 @@ def manager_create_project(
     })
 
 
+@router.post("/manager/projects/{project_id}/rename")
+def manager_rename_project(
+    request: Request,
+    project_id: int,
+    project_name: str = Form(...)
+):
+    """
+    Quản lý đổi tên project (AJAX — trả JSON, không render lại trang).
+    """
+
+    current_user = get_current_user(request)
+
+    if not current_user:
+        return RedirectResponse("/", status_code=303)
+
+    if current_user["role"] != ROLE_MANAGER:
+        return RedirectResponse("/employee", status_code=303)
+
+    success, message = rename_project(
+        project_id=project_id,
+        new_name=project_name,
+        current_user=current_user,
+    )
+
+    if not success:
+        return JSONResponse({"success": False, "message": message})
+
+    with get_connection() as conn:
+        project = conn.execute(
+            "SELECT id, label FROM projects WHERE id = ?",
+            (project_id,),
+        ).fetchone()
+
+    return JSONResponse({
+        "success": True,
+        "message": message,
+        "project": {"id": project["id"], "label": project["label"]} if project else None,
+    })
+
+
 @router.get("/project-categories/{project_id}")
 def project_categories_by_project(
     request: Request,
@@ -637,6 +679,35 @@ def manager_delete_project_category(
     )
 
     return JSONResponse({"success": success, "message": message})
+
+
+@router.post("/manager/project-categories/{category_id}/rename")
+def manager_rename_project_category(
+    request: Request,
+    category_id: int,
+    category_label: str = Form(...),
+    category_code: str = Form(""),
+):
+    """
+    Quản lý đổi tên/mã loại hồ sơ dùng chung.
+    """
+
+    current_user = get_current_user(request)
+
+    if not current_user:
+        return RedirectResponse("/", status_code=303)
+
+    if current_user["role"] != ROLE_MANAGER:
+        return RedirectResponse("/employee", status_code=303)
+
+    success, message, category = rename_global_category(
+        category_id=category_id,
+        new_label=category_label,
+        new_code=category_code,
+        current_user=current_user,
+    )
+
+    return JSONResponse({"success": success, "message": message, "category": category})
 
 
 @router.get("/manager/pending", response_class=HTMLResponse)

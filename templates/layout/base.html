@@ -333,15 +333,16 @@
         {% set inline_back_button %}{% block inline_back_button %}false{% endblock %}{% endset %}
         {% set show_back_button = active_nav not in ['dashboard', 'admin_dashboard'] and inline_back_button.strip() != 'true' %}
         <div class="flex-1 overflow-auto p-4 sm:p-6 lg:p-8">
-            <div
-                class="{% block content_max_width %}max-w-7xl{% endblock %} mx-auto relative{% if show_back_button %} pt-11{% endif %}">
+            <div class="{% block content_max_width %}max-w-7xl{% endblock %} mx-auto">
                 {% if show_back_button %}
-                <a href="{{ '/admin' if is_admin_section else ('/employee' if user.role == 'EMPLOYEE' else '/manager') }}"
-                    class="absolute top-0 right-0 z-10 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 text-white hover:bg-slate-700 active:scale-95 transition-all text-sm font-semibold shadow-sm shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
-                    aria-label="Quay lại" title="Quay lại">
-                    <i class="ti ti-arrow-left text-base"></i>
-                    <span data-i18n="backButton">Quay lại</span>
-                </a>
+                <div class="flex justify-end mb-4">
+                    <a href="{{ '/admin' if is_admin_section else ('/employee' if user.role == 'EMPLOYEE' else '/manager') }}"
+                        class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 text-white hover:bg-slate-700 active:scale-95 transition-all text-sm font-semibold shadow-sm shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+                        aria-label="Quay lại" title="Quay lại">
+                        <i class="ti ti-arrow-left text-base"></i>
+                        <span data-i18n="backButton">Quay lại</span>
+                    </a>
+                </div>
                 {% endif %}
                 {% block content %}{% endblock %}
             </div>
