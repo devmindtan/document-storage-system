@@ -16,17 +16,6 @@
         border-color: #3b82f6;
     }
 
-    :is(.dark .custom-file-upload.is-dragover) {
-        background-color: #1e293b;
-        border-color: #60a5fa;
-    }
-
-    :is(.dark .stepper-dot.is-done) {
-        background-color: #10b981;
-        border-color: #10b981;
-        color: #fff;
-    }
-
     .spinner {
         width: 1rem;
         height: 1rem;
@@ -73,12 +62,12 @@
 {% import "layout/_macros.html" as macros %}
 <div class="dashboard-box max-w-4xl mx-auto space-y-6">
     <div class="top-bar flex flex-wrap items-center justify-between gap-3">
-        <p class="text-sm text-slate-500 dark:text-slate-400">
-            <span data-i18n-key="employeeLabel">Nhân viên:</span> <strong class="text-slate-800 dark:text-slate-200 font-semibold">{{
+        <p class="text-sm text-slate-500">
+            <span data-i18n-key="employeeLabel">Nhân viên:</span> <strong class="text-slate-800 font-semibold">{{
                 user['full_name'] }}</strong>
         </p>
 
-        <a class="back-link inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
+        <a class="back-link inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600 transition-colors"
             href="/employee">
             <i class="ti ti-arrow-left"></i> <span data-i18n-key="backButton">Quay lại</span>
         </a>
@@ -89,7 +78,7 @@
 
     {% call macros.card(title="Gửi hồ sơ mới", subtitle="Điền thông tin, quản lý danh mục và đính kèm tệp cần trình quản lý duyệt.", icon="ti-cloud-upload", body_class="", title_i18n_key="cardTitle", subtitle_i18n_key="cardSubtitle") %}
         <div id="noAllowedCategoriesBanner"
-            class="hidden mx-6 mt-6 px-4 py-3 rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/40 text-sm text-amber-800 dark:text-amber-300 flex items-start gap-2.5">
+            class="hidden mx-6 mt-6 px-4 py-3 rounded-xl bg-amber-50 border border-amber-200 text-sm text-amber-800 flex items-start gap-2.5">
             <i class="ti ti-alert-triangle text-base shrink-0 mt-0.5"></i>
             <span data-i18n-key="noAllowedCategoriesText">Bạn chưa được cấp quyền upload loại hồ sơ nào. Vui lòng liên
                 hệ quản lý để được cấp quyền.</span>
@@ -98,26 +87,26 @@
         <div class="px-6 pt-6">
             <div class="flex items-center">
                 <div class="flex items-center gap-2 flex-1" data-stepper-item="1">
-                    <span class="stepper-dot w-7 h-7 rounded-full border-2 border-brand-900 dark:border-brand-500 bg-brand-900 dark:bg-brand-500 text-white text-xs font-bold flex items-center justify-center shrink-0 transition-colors">
+                    <span class="stepper-dot w-7 h-7 rounded-full border-2 border-brand-900 bg-brand-900 text-white text-xs font-bold flex items-center justify-center shrink-0 transition-colors">
                         <i class="ti ti-check hidden stepper-check text-sm"></i><span class="stepper-number">1</span>
                     </span>
-                    <span class="text-xs font-semibold text-slate-700 dark:text-slate-300 hidden sm:inline"
+                    <span class="text-xs font-semibold text-slate-700 hidden sm:inline"
                         data-i18n-key="stepperStep1">Project & Loại hồ sơ</span>
-                    <div class="flex-1 h-0.5 bg-slate-200 dark:bg-slate-700 mx-1"></div>
+                    <div class="flex-1 h-0.5 bg-slate-200 mx-1"></div>
                 </div>
                 <div class="flex items-center gap-2 flex-1" data-stepper-item="2">
-                    <span class="stepper-dot w-7 h-7 rounded-full border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-400 dark:text-slate-500 text-xs font-bold flex items-center justify-center shrink-0 transition-colors">
+                    <span class="stepper-dot w-7 h-7 rounded-full border-2 border-slate-300 bg-white text-slate-400 text-xs font-bold flex items-center justify-center shrink-0 transition-colors">
                         <i class="ti ti-check hidden stepper-check text-sm"></i><span class="stepper-number">2</span>
                     </span>
-                    <span class="text-xs font-semibold text-slate-400 dark:text-slate-500 hidden sm:inline"
+                    <span class="text-xs font-semibold text-slate-400 hidden sm:inline"
                         data-i18n-key="stepperStep2">Tệp đính kèm</span>
-                    <div class="flex-1 h-0.5 bg-slate-200 dark:bg-slate-700 mx-1"></div>
+                    <div class="flex-1 h-0.5 bg-slate-200 mx-1"></div>
                 </div>
                 <div class="flex items-center gap-2" data-stepper-item="3">
-                    <span class="stepper-dot w-7 h-7 rounded-full border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-400 dark:text-slate-500 text-xs font-bold flex items-center justify-center shrink-0 transition-colors">
+                    <span class="stepper-dot w-7 h-7 rounded-full border-2 border-slate-300 bg-white text-slate-400 text-xs font-bold flex items-center justify-center shrink-0 transition-colors">
                         <i class="ti ti-check hidden stepper-check text-sm"></i><span class="stepper-number">3</span>
                     </span>
-                    <span class="text-xs font-semibold text-slate-400 dark:text-slate-500 hidden sm:inline"
+                    <span class="text-xs font-semibold text-slate-400 hidden sm:inline"
                         data-i18n-key="stepperStep3">Mô tả</span>
                 </div>
             </div>
@@ -126,23 +115,23 @@
         <form id="uploadForm" action="/employee/upload" method="post" enctype="multipart/form-data"
             class="p-6 space-y-6">
             <!-- Step 1 -->
-            <div class="rounded-xl border border-slate-200 dark:border-slate-700 p-5 space-y-4">
+            <div class="rounded-xl border border-slate-200 p-5 space-y-4">
                 <div class="flex items-center gap-2">
                     <span
-                        class="w-6 h-6 rounded-full bg-brand-900 dark:bg-brand-500 text-white text-xs font-bold flex items-center justify-center shrink-0">1</span>
-                    <h3 class="form-step-heading text-sm font-semibold text-slate-800 dark:text-slate-100 uppercase tracking-wide"
+                        class="w-6 h-6 rounded-full bg-brand-900 text-white text-xs font-bold flex items-center justify-center shrink-0">1</span>
+                    <h3 class="form-step-heading text-sm font-semibold text-slate-800 uppercase tracking-wide"
                         data-i18n-key="step1Heading">Chọn vị trí
                         lưu & Quản lý danh mục</h3>
                 </div>
 
                 <div>
                     <div class="flex items-center justify-between mb-1.5">
-                        <label for="project_key" class="block text-sm font-medium text-slate-700 dark:text-slate-300"
+                        <label for="project_key" class="block text-sm font-medium text-slate-700"
                             data-i18n-key="projectLabel">Project</label>
                     </div>
 
                     <select id="project_key" name="project_key" required
-                        class="w-full border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 dark:text-slate-100 bg-white dark:bg-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
+                        class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 bg-white outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
                         {% for key, project in projects.items() %}
                         {% if selected_project_key == key %}
                         <option value="{{ key }}" selected>{{ project['label'] }}</option>
@@ -155,60 +144,60 @@
 
                 <div>
                     <div class="flex items-center justify-between mb-1.5">
-                        <label for="category_key" class="block text-sm font-medium text-slate-700 dark:text-slate-300"
+                        <label for="category_key" class="block text-sm font-medium text-slate-700"
                             data-i18n-key="categoryLabel">Loại hồ sơ</label>
                     </div>
 
                     <div class="flex items-center gap-2">
                         <select id="category_key" name="category_key" required
                             data-selected-category-key="{{ selected_category_key }}"
-                            class="w-full border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 dark:text-slate-100 bg-white dark:bg-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
+                            class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 bg-white outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
                             <option value="">Đang tải file con...</option>
                         </select>
                         <div id="categoryLoadingSpinner" class="spinner hidden shrink-0"></div>
                     </div>
 
-                    <p id="restrictedCategoriesNote" class="hidden note-text text-xs text-brand-600 dark:text-brand-400 mt-1.5"
+                    <p id="restrictedCategoriesNote" class="hidden note-text text-xs text-brand-600 mt-1.5"
                         data-i18n-key="restrictedCategoriesNote">Chỉ hiển thị các loại hồ sơ bạn được cấp quyền
                         upload.</p>
 
                     <div id="codePreviewBox"
-                        class="hidden mt-3 px-3.5 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-500 dark:text-slate-400">
+                        class="hidden mt-3 px-3.5 py-2.5 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-500">
                         <span data-i18n-key="codePreviewLabel">Mã hồ sơ dự kiến:</span> <span id="codePreviewText"
-                            class="font-mono font-semibold text-slate-700 dark:text-slate-300"></span>
-                        <span class="text-slate-400 dark:text-slate-500" data-i18n-key="codePreviewNote">(có thể thay đổi tại thời điểm tải
+                            class="font-mono font-semibold text-slate-700"></span>
+                        <span class="text-slate-400" data-i18n-key="codePreviewNote">(có thể thay đổi tại thời điểm tải
                             lên)</span>
                     </div>
                 </div>
             </div>
 
             <!-- Step 2 -->
-            <div class="rounded-xl border border-slate-200 dark:border-slate-700 p-5 space-y-4">
+            <div class="rounded-xl border border-slate-200 p-5 space-y-4">
                 <div class="flex items-center gap-2">
                     <span
-                        class="w-6 h-6 rounded-full bg-brand-900 dark:bg-brand-500 text-white text-xs font-bold flex items-center justify-center shrink-0">2</span>
-                    <h3 class="form-step-heading text-sm font-semibold text-slate-800 dark:text-slate-100 uppercase tracking-wide"
+                        class="w-6 h-6 rounded-full bg-brand-900 text-white text-xs font-bold flex items-center justify-center shrink-0">2</span>
+                    <h3 class="form-step-heading text-sm font-semibold text-slate-800 uppercase tracking-wide"
                         data-i18n-key="step2Heading">Chọn tệp</h3>
                 </div>
 
                 <div>
                     <label for="uploaded_files"
-                        class="custom-file-upload border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-brand-50 dark:hover:bg-slate-700 transition-colors flex flex-col items-center justify-center p-8 text-center cursor-pointer">
+                        class="custom-file-upload border-2 border-dashed border-slate-300 rounded-xl bg-slate-50 hover:bg-brand-50 transition-colors flex flex-col items-center justify-center p-8 text-center cursor-pointer">
                         <input id="uploaded_files" class="real-file-input hidden" type="file" name="uploaded_files"
                             multiple required>
                         <div
-                            class="w-14 h-14 bg-white dark:bg-slate-900 rounded-full flex items-center justify-center shadow-sm mb-3 pointer-events-none">
-                            <i class="ti ti-cloud-upload text-2xl text-brand-500 dark:text-brand-400"></i>
+                            class="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-sm mb-3 pointer-events-none">
+                            <i class="ti ti-cloud-upload text-2xl text-brand-500"></i>
                         </div>
-                        <p class="text-sm font-semibold text-slate-700 dark:text-slate-300 pointer-events-none" data-i18n-key="dragDropText">
+                        <p class="text-sm font-semibold text-slate-700 pointer-events-none" data-i18n-key="dragDropText">
                             Kéo thả tệp vào đây, hoặc bấm để chọn</p>
-                        <p class="text-xs text-slate-400 dark:text-slate-500 mt-1 pointer-events-none" data-i18n-key="supportedFormats">Hỗ
+                        <p class="text-xs text-slate-400 mt-1 pointer-events-none" data-i18n-key="supportedFormats">Hỗ
                             trợ nhiều tệp • PDF, DOCX, XLSX, JPG</p>
                         <span
-                            class="custom-file-button text-sm font-semibold text-brand-600 dark:text-brand-400 underline underline-offset-2 mt-3 pointer-events-none">
+                            class="custom-file-button text-sm font-semibold text-brand-600 underline underline-offset-2 mt-3 pointer-events-none">
                             <span data-i18n-key="chooseFileBtn">Chọn tệp</span>
                         </span>
-                        <span class="selected-file-text text-xs text-slate-500 dark:text-slate-400 mt-2 pointer-events-none"
+                        <span class="selected-file-text text-xs text-slate-500 mt-2 pointer-events-none"
                             id="selectedFileText" data-i18n-key="noFileSelected">Không có tệp nào
                             được chọn</span>
                     </label>
@@ -217,51 +206,51 @@
                 <div id="filePreviewList" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
 
                 <div id="uploadProgressBox" class="hidden">
-                    <div class="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-1">
+                    <div class="flex items-center justify-between text-xs text-slate-500 mb-1">
                         <span data-i18n-key="uploadingLabel">Đang tải lên...</span>
                         <span id="uploadProgressPercent">0%</span>
                     </div>
-                    <div class="w-full h-2 rounded-full bg-slate-100 dark:bg-slate-700 overflow-hidden">
+                    <div class="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
                         <div id="uploadProgressBar" class="h-full bg-brand-500 transition-all" style="width: 0%"></div>
                     </div>
                 </div>
             </div>
 
             <!-- Step 3 -->
-            <div class="rounded-xl border border-slate-200 dark:border-slate-700 p-5 space-y-4">
+            <div class="rounded-xl border border-slate-200 p-5 space-y-4">
                 <div class="flex items-center gap-2">
                     <span
-                        class="w-6 h-6 rounded-full bg-brand-900 dark:bg-brand-500 text-white text-xs font-bold flex items-center justify-center shrink-0">3</span>
-                    <h3 class="form-step-heading text-sm font-semibold text-slate-800 dark:text-slate-100 uppercase tracking-wide"
+                        class="w-6 h-6 rounded-full bg-brand-900 text-white text-xs font-bold flex items-center justify-center shrink-0">3</span>
+                    <h3 class="form-step-heading text-sm font-semibold text-slate-800 uppercase tracking-wide"
                         data-i18n-key="step3Heading">Thông tin mô
                         tả</h3>
                 </div>
 
                 <div>
-                    <label for="description" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+                    <label for="description" class="block text-sm font-medium text-slate-700 mb-1.5">
                         <span data-i18n-key="descriptionLabel">Mô tả</span> <span class="required-star">*</span>
                     </label>
                     <input id="description" type="text" name="description" maxlength="50" required
                         placeholder="Nhập mô tả hồ sơ, tối đa 50 ký tự" value="{{ description_value or '' }}"
-                        class="w-full border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 dark:text-slate-100 bg-white dark:bg-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
+                        class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
                     <div class="flex items-center justify-between mt-1">
                         <p class="field-error" id="descriptionError" data-i18n-key="requiredFieldError">Trường này là
                             bắt buộc.</p>
-                        <p class="text-xs text-slate-400 dark:text-slate-500 shrink-0" id="descriptionCounter">0/50</p>
+                        <p class="text-xs text-slate-400 shrink-0" id="descriptionCounter">0/50</p>
                     </div>
                 </div>
 
                 <div>
-                    <label for="location" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+                    <label for="location" class="block text-sm font-medium text-slate-700 mb-1.5">
                         <span data-i18n-key="locationLabel">Vị trí</span> <span class="required-star">*</span>
                     </label>
                     <input id="location" type="text" name="location" maxlength="50" required
                         placeholder="Nhập vị trí hồ sơ, tối đa 50 ký tự" value="{{ location_value }}"
-                        class="w-full border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 dark:text-slate-100 bg-white dark:bg-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
+                        class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
                     <div class="flex items-center justify-between mt-1">
                         <p class="field-error" id="locationError" data-i18n-key="requiredFieldError">Trường này là bắt
                             buộc.</p>
-                        <p class="text-xs text-slate-400 dark:text-slate-500 shrink-0" id="locationCounter">0/50</p>
+                        <p class="text-xs text-slate-400 shrink-0" id="locationCounter">0/50</p>
                     </div>
                 </div>
             </div>
@@ -415,10 +404,10 @@
             filePreviewList.innerHTML = "";
             files.forEach(function (file) {
                 const card = document.createElement("div");
-                card.className = "border border-slate-200 dark:border-slate-700 rounded-lg p-2 flex items-center gap-2 bg-slate-50 dark:bg-slate-800";
+                card.className = "border border-slate-200 rounded-lg p-2 flex items-center gap-2 bg-slate-50";
 
                 const thumb = document.createElement("div");
-                thumb.className = "w-9 h-9 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 flex items-center justify-center shrink-0 overflow-hidden";
+                thumb.className = "w-9 h-9 rounded bg-white border border-slate-200 flex items-center justify-center shrink-0 overflow-hidden";
 
                 if (file.type && file.type.startsWith("image/")) {
                     const reader = new FileReader();
@@ -431,12 +420,12 @@
                     reader.readAsDataURL(file);
                 } else {
                     const icon = document.createElement("i");
-                    icon.className = "ti ti-file-text text-slate-400 dark:text-slate-500 text-lg";
+                    icon.className = "ti ti-file-text text-slate-400 text-lg";
                     thumb.appendChild(icon);
                 }
 
                 const name = document.createElement("span");
-                name.className = "text-xs text-slate-600 dark:text-slate-300 truncate";
+                name.className = "text-xs text-slate-600 truncate";
                 name.textContent = file.name;
 
                 card.appendChild(thumb);

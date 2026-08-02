@@ -16,11 +16,6 @@
         border-color: #3b82f6;
     }
 
-    :is(.dark .custom-file-upload.is-dragover) {
-        background-color: #1e293b;
-        border-color: #60a5fa;
-    }
-
     /* ---- Button hierarchy ---- */
     .btn-primary {
         background: #0f172a;
@@ -33,14 +28,6 @@
 
     .btn-primary:hover {
         background: #1e293b;
-    }
-
-    :is(.dark .btn-primary) {
-        background: #3b82f6;
-    }
-
-    :is(.dark .btn-primary:hover) {
-        background: #60a5fa;
     }
 
     .btn-secondary {
@@ -56,16 +43,6 @@
         background: #f8fafc;
     }
 
-    :is(.dark .btn-secondary) {
-        background: #1e293b;
-        color: #cbd5e1;
-        border-color: #475569;
-    }
-
-    :is(.dark .btn-secondary:hover) {
-        background: #334155;
-    }
-
     .btn-ghost {
         background: transparent;
         color: #475569;
@@ -75,14 +52,6 @@
 
     .btn-ghost:hover {
         background: #f1f5f9;
-    }
-
-    :is(.dark .btn-ghost) {
-        color: #94a3b8;
-    }
-
-    :is(.dark .btn-ghost:hover) {
-        background: #334155;
     }
 
     .btn-danger {
@@ -98,33 +67,14 @@
         background: #fecaca;
     }
 
-    :is(.dark .btn-danger) {
-        background: rgba(244, 63, 94, 0.2);
-        color: #fb7185;
-        border-color: rgba(244, 63, 94, 0.4);
-    }
-
-    :is(.dark .btn-danger:hover) {
-        background: rgba(244, 63, 94, 0.3);
-    }
-
     /* ---- Workspace ---- */
     .workspace-sidebar-item.is-active {
         background: #eff6ff;
         border-color: #93c5fd;
     }
 
-    :is(.dark .workspace-sidebar-item.is-active) {
-        background: rgba(59, 130, 246, 0.15);
-        border-color: #3b82f6;
-    }
-
     .workspace-row:hover {
         background: #f8fafc;
-    }
-
-    :is(.dark .workspace-row:hover) {
-        background: #1e293b;
     }
 
     .badge-count {
@@ -136,11 +86,6 @@
         border-radius: 9999px;
     }
 
-    :is(.dark .badge-count) {
-        background: #334155;
-        color: #cbd5e1;
-    }
-
     .spinner {
         width: 1rem;
         height: 1rem;
@@ -148,11 +93,6 @@
         border-top-color: #0f172a;
         border-radius: 50%;
         animation: spin .6s linear infinite;
-    }
-
-    :is(.dark .spinner) {
-        border-color: #475569;
-        border-top-color: #60a5fa;
     }
 
     @keyframes spin {
@@ -222,11 +162,11 @@
 
 <div class="dashboard-box max-w-5xl mx-auto space-y-6">
     <div class="top-bar flex flex-wrap items-center justify-between gap-3">
-        <p class="text-sm text-slate-500 dark:text-slate-400">
-            <span data-i18n-key="managerLabel">Quản lý:</span> <strong class="text-slate-800 dark:text-slate-200 font-semibold">{{ user['full_name'] }}</strong>
+        <p class="text-sm text-slate-500">
+            <span data-i18n-key="managerLabel">Quản lý:</span> <strong class="text-slate-800 font-semibold">{{ user['full_name'] }}</strong>
         </p>
 
-        <a class="back-link inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
+        <a class="back-link inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600 transition-colors"
             href="/manager">
             <i class="ti ti-arrow-left"></i> <span data-i18n-key="backButton">Quay lại</span>
         </a>
@@ -236,15 +176,15 @@
     {{ macros.banner('success', success) }}
 
     <!-- ============ UPLOAD CARD (stepper style) ============ -->
-    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-        <div class="p-6 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 flex flex-wrap items-center justify-between gap-4">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="p-6 border-b border-slate-200 bg-slate-50/50 flex flex-wrap items-center justify-between gap-4">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-lg bg-brand-50 dark:bg-brand-500/20 text-brand-500 dark:text-brand-400 flex items-center justify-center shrink-0">
+                <div class="w-10 h-10 rounded-lg bg-brand-50 text-brand-500 flex items-center justify-center shrink-0">
                     <i class="ti ti-cloud-upload text-xl"></i>
                 </div>
                 <div>
-                    <h2 class="text-lg font-semibold text-slate-800 dark:text-slate-100" data-i18n-key="cardTitle">Upload hồ sơ</h2>
-                    <p class="text-sm text-slate-500 dark:text-slate-400" data-i18n-key="cardSubtitle">Hồ sơ do quản lý upload sẽ được đưa thẳng vào kho chính thức.</p>
+                    <h2 class="text-lg font-semibold text-slate-800" data-i18n-key="cardTitle">Upload hồ sơ</h2>
+                    <p class="text-sm text-slate-500" data-i18n-key="cardSubtitle">Hồ sơ do quản lý upload sẽ được đưa thẳng vào kho chính thức.</p>
                 </div>
             </div>
 
@@ -256,27 +196,27 @@
 
         <form action="/manager/upload" method="post" enctype="multipart/form-data" class="p-6 space-y-6">
             <!-- Step 1 -->
-            <div class="rounded-xl border border-slate-200 dark:border-slate-800 p-5 space-y-4">
+            <div class="rounded-xl border border-slate-200 p-5 space-y-4">
                 <div class="flex items-center gap-2">
                     <span
-                        class="w-6 h-6 rounded-full bg-brand-900 dark:bg-brand-500 text-white text-xs font-bold flex items-center justify-center shrink-0">1</span>
-                    <h3 class="form-step-heading text-sm font-semibold text-slate-800 dark:text-slate-100 uppercase tracking-wide"
+                        class="w-6 h-6 rounded-full bg-brand-900 text-white text-xs font-bold flex items-center justify-center shrink-0">1</span>
+                    <h3 class="form-step-heading text-sm font-semibold text-slate-800 uppercase tracking-wide"
                         data-i18n-key="step1Heading">Chọn vị
                         trí lưu trữ</h3>
                 </div>
 
                 <div>
                     <div class="flex items-center justify-between mb-1.5">
-                        <label for="project_key" class="block text-sm font-medium text-slate-700 dark:text-slate-300"
+                        <label for="project_key" class="block text-sm font-medium text-slate-700"
                             data-i18n-key="projectLabel">Project</label>
                         <button type="button" onclick="openProjectModal('add')"
-                            class="text-xs font-semibold text-brand-600 dark:text-brand-400 hover:text-brand-800 dark:hover:text-brand-300 inline-flex items-center gap-1">
+                            class="text-xs font-semibold text-brand-600 hover:text-brand-800 inline-flex items-center gap-1">
                             <i class="ti ti-plus"></i> <span data-i18n-key="addProjectBtn">Thêm project mới</span>
                         </button>
                     </div>
 
                     <select id="project_key" name="project_key" required
-                        class="w-full border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 dark:text-slate-100 bg-white dark:bg-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
+                        class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 bg-white outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
                         {% for key, project in projects.items() %}
                         <option value="{{ key }}" {% if selected_project_key==key %}selected{% endif %}>
                             {{ project['label'] }}
@@ -287,91 +227,91 @@
 
                 <div>
                     <div class="flex items-center justify-between mb-1.5">
-                        <label for="category_key" class="block text-sm font-medium text-slate-700 dark:text-slate-300"
+                        <label for="category_key" class="block text-sm font-medium text-slate-700"
                             data-i18n-key="categoryLabel">Loại hồ sơ (File
                             con)</label>
                         <button type="button" onclick="openCategoryModal('add')"
-                            class="text-xs font-semibold text-brand-600 dark:text-brand-400 hover:text-brand-800 dark:hover:text-brand-300 inline-flex items-center gap-1">
+                            class="text-xs font-semibold text-brand-600 hover:text-brand-800 inline-flex items-center gap-1">
                             <i class="ti ti-plus"></i> <span data-i18n-key="addCategoryBtn">Thêm loại hồ sơ mới</span>
                         </button>
                     </div>
 
                     <div class="flex items-center gap-2">
                         <select id="category_key" name="category_key" required
-                            class="w-full border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 dark:text-slate-100 bg-white dark:bg-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
+                            class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 bg-white outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
                             <option value="">Vui lòng chọn dự án trước...</option>
                         </select>
                         <div id="categoryLoadingSpinner" class="spinner hidden shrink-0"></div>
                     </div>
 
-                    <div id="codePreviewBox" class="hidden mt-3 px-3.5 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-500 dark:text-slate-400">
-                        <span data-i18n-key="codePreviewLabel">Mã hồ sơ dự kiến:</span> <span id="codePreviewText" class="font-mono font-semibold text-slate-700 dark:text-slate-200"></span>
-                        <span class="text-slate-400 dark:text-slate-500" data-i18n-key="codePreviewNote">(có thể thay đổi tại thời điểm tải lên)</span>
+                    <div id="codePreviewBox" class="hidden mt-3 px-3.5 py-2.5 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-500">
+                        <span data-i18n-key="codePreviewLabel">Mã hồ sơ dự kiến:</span> <span id="codePreviewText" class="font-mono font-semibold text-slate-700"></span>
+                        <span class="text-slate-400" data-i18n-key="codePreviewNote">(có thể thay đổi tại thời điểm tải lên)</span>
                     </div>
                 </div>
             </div>
 
             <!-- Step 2 -->
-            <div class="rounded-xl border border-slate-200 dark:border-slate-800 p-5 space-y-4">
+            <div class="rounded-xl border border-slate-200 p-5 space-y-4">
                 <div class="flex items-center gap-2">
                     <span
-                        class="w-6 h-6 rounded-full bg-brand-900 dark:bg-brand-500 text-white text-xs font-bold flex items-center justify-center shrink-0">2</span>
-                    <h3 class="form-step-heading text-sm font-semibold text-slate-800 dark:text-slate-100 uppercase tracking-wide"
+                        class="w-6 h-6 rounded-full bg-brand-900 text-white text-xs font-bold flex items-center justify-center shrink-0">2</span>
+                    <h3 class="form-step-heading text-sm font-semibold text-slate-800 uppercase tracking-wide"
                         data-i18n-key="step2Heading">Chọn tệp
                     </h3>
                 </div>
 
                 <div>
                     <label for="uploaded_files"
-                        class="custom-file-upload border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-brand-50 dark:hover:bg-slate-700 transition-colors flex flex-col items-center justify-center p-8 text-center cursor-pointer">
+                        class="custom-file-upload border-2 border-dashed border-slate-300 rounded-xl bg-slate-50 hover:bg-brand-50 transition-colors flex flex-col items-center justify-center p-8 text-center cursor-pointer">
                         <input id="uploaded_files" class="real-file-input hidden" type="file" name="uploaded_files"
                             multiple required>
                         <div
-                            class="w-14 h-14 bg-white dark:bg-slate-900 rounded-full flex items-center justify-center shadow-sm mb-3 pointer-events-none">
-                            <i class="ti ti-cloud-upload text-2xl text-brand-500 dark:text-brand-400"></i>
+                            class="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-sm mb-3 pointer-events-none">
+                            <i class="ti ti-cloud-upload text-2xl text-brand-500"></i>
                         </div>
-                        <p class="text-sm font-semibold text-slate-700 dark:text-slate-200 pointer-events-none" data-i18n-key="dragDropText">Kéo thả tệp vào đây, hoặc
+                        <p class="text-sm font-semibold text-slate-700 pointer-events-none" data-i18n-key="dragDropText">Kéo thả tệp vào đây, hoặc
                             bấm để chọn</p>
-                        <p class="text-xs text-slate-400 dark:text-slate-500 mt-1 pointer-events-none" data-i18n-key="supportedFormats">Hỗ trợ nhiều tệp • PDF, DOCX, XLSX,
+                        <p class="text-xs text-slate-400 mt-1 pointer-events-none" data-i18n-key="supportedFormats">Hỗ trợ nhiều tệp • PDF, DOCX, XLSX,
                             JPG</p>
                         <span
-                            class="custom-file-button text-sm font-semibold text-brand-600 dark:text-brand-400 underline underline-offset-2 mt-3 pointer-events-none">
+                            class="custom-file-button text-sm font-semibold text-brand-600 underline underline-offset-2 mt-3 pointer-events-none">
                             <span data-i18n-key="chooseFileBtn">Chọn tệp</span>
                         </span>
-                        <span class="selected-file-text text-xs text-slate-500 dark:text-slate-400 mt-2 pointer-events-none"
+                        <span class="selected-file-text text-xs text-slate-500 mt-2 pointer-events-none"
                             id="selectedFileText" data-i18n-key="noFileSelected">Không có tệp nào được chọn</span>
                     </label>
                 </div>
             </div>
 
             <!-- Step 3 -->
-            <div class="rounded-xl border border-slate-200 dark:border-slate-800 p-5 space-y-4">
+            <div class="rounded-xl border border-slate-200 p-5 space-y-4">
                 <div class="flex items-center gap-2">
                     <span
-                        class="w-6 h-6 rounded-full bg-brand-900 dark:bg-brand-500 text-white text-xs font-bold flex items-center justify-center shrink-0">3</span>
-                    <h3 class="form-step-heading text-sm font-semibold text-slate-800 dark:text-slate-100 uppercase tracking-wide"
+                        class="w-6 h-6 rounded-full bg-brand-900 text-white text-xs font-bold flex items-center justify-center shrink-0">3</span>
+                    <h3 class="form-step-heading text-sm font-semibold text-slate-800 uppercase tracking-wide"
                         data-i18n-key="step3Heading">Thông tin
                         mô tả</h3>
                 </div>
 
                 <div>
-                    <label for="description" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+                    <label for="description" class="block text-sm font-medium text-slate-700 mb-1.5">
                         <span data-i18n-key="descriptionLabel">Mô tả</span> <span class="required-star">*</span>
                     </label>
                     <input id="description" type="text" name="description" maxlength="50" required
                         placeholder="Nhập mô tả hồ sơ, tối đa 50 ký tự" value="{{ description_value or '' }}"
-                        class="w-full border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 dark:text-slate-100 bg-white dark:bg-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
-                    <p class="note-text text-xs text-slate-500 dark:text-slate-400 mt-1" data-i18n-key="requiredNote">Bắt buộc nhập. Tối đa 50 ký tự.</p>
+                        class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
+                    <p class="note-text text-xs text-slate-500 mt-1" data-i18n-key="requiredNote">Bắt buộc nhập. Tối đa 50 ký tự.</p>
                 </div>
 
                 <div>
-                    <label for="location" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+                    <label for="location" class="block text-sm font-medium text-slate-700 mb-1.5">
                         <span data-i18n-key="locationLabel">Vị trí</span> <span class="required-star">*</span>
                     </label>
                     <input id="location" type="text" name="location" maxlength="50" required
                         placeholder="Nhập vị trí hồ sơ, tối đa 50 ký tự" value="{{ location_value }}"
-                        class="w-full border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 dark:text-slate-100 bg-white dark:bg-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
-                    <p class="note-text text-xs text-slate-500 dark:text-slate-400 mt-1" data-i18n-key="requiredNote">Bắt buộc nhập. Tối đa 50 ký tự.</p>
+                        class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors">
+                    <p class="note-text text-xs text-slate-500 mt-1" data-i18n-key="requiredNote">Bắt buộc nhập. Tối đa 50 ký tự.</p>
                 </div>
             </div>
 
@@ -389,12 +329,12 @@
 <div id="masterCatalogModal"
     class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 hidden backdrop-blur-sm">
     <div
-        class="bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 w-full max-w-5xl overflow-hidden flex flex-col max-h-[88vh]">
+        class="bg-white rounded-2xl shadow-xl border border-slate-200 w-full max-w-5xl overflow-hidden flex flex-col max-h-[88vh]">
 
-        <div class="px-6 py-4 bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between shrink-0">
+        <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between shrink-0">
             <div>
-                <h3 class="font-bold text-slate-800 dark:text-slate-100 text-base" data-i18n-key="catalogModalTitle">Quản lý kho Project &amp; Danh mục</h3>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5" data-i18n-key="catalogModalSubtitle">Tìm kiếm, thêm, sửa, xóa project và loại hồ sơ.</p>
+                <h3 class="font-bold text-slate-800 text-base" data-i18n-key="catalogModalTitle">Quản lý kho Project &amp; Danh mục</h3>
+                <p class="text-xs text-slate-500 mt-0.5" data-i18n-key="catalogModalSubtitle">Tìm kiếm, thêm, sửa, xóa project và loại hồ sơ.</p>
             </div>
             <button onclick="closeMasterCatalogModal()" class="btn-ghost w-8 h-8 flex items-center justify-center">
                 <i class="ti ti-x text-lg"></i>
@@ -402,18 +342,18 @@
         </div>
 
         <!-- Quick stats -->
-        <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 grid grid-cols-2 sm:grid-cols-3 gap-3 shrink-0 bg-white dark:bg-slate-900">
-            <div class="rounded-xl border border-slate-200 dark:border-slate-700 p-3">
-                <p class="text-xs text-slate-500 dark:text-slate-400" data-i18n-key="totalProjectsLabel">Tổng project</p>
-                <p id="statTotalProjects" class="text-xl font-bold text-slate-800 dark:text-slate-100">--</p>
+        <div class="px-6 py-4 border-b border-slate-200 grid grid-cols-2 sm:grid-cols-3 gap-3 shrink-0 bg-white">
+            <div class="rounded-xl border border-slate-200 p-3">
+                <p class="text-xs text-slate-500" data-i18n-key="totalProjectsLabel">Tổng project</p>
+                <p id="statTotalProjects" class="text-xl font-bold text-slate-800">--</p>
             </div>
-            <div class="rounded-xl border border-slate-200 dark:border-slate-700 p-3">
-                <p class="text-xs text-slate-500 dark:text-slate-400" data-i18n-key="totalCategoriesLabel">Loại hồ sơ (project đang chọn)</p>
-                <p id="statTotalCategories" class="text-xl font-bold text-slate-800 dark:text-slate-100">--</p>
+            <div class="rounded-xl border border-slate-200 p-3">
+                <p class="text-xs text-slate-500" data-i18n-key="totalCategoriesLabel">Loại hồ sơ (project đang chọn)</p>
+                <p id="statTotalCategories" class="text-xl font-bold text-slate-800">--</p>
             </div>
-            <div class="rounded-xl border border-slate-200 dark:border-slate-700 p-3 hidden sm:block">
-                <p class="text-xs text-slate-500 dark:text-slate-400" data-i18n-key="activeProjectLabel">Project đang chọn</p>
-                <p id="statActiveProject" class="text-sm font-bold text-brand-600 dark:text-brand-400 truncate">--</p>
+            <div class="rounded-xl border border-slate-200 p-3 hidden sm:block">
+                <p class="text-xs text-slate-500" data-i18n-key="activeProjectLabel">Project đang chọn</p>
+                <p id="statActiveProject" class="text-sm font-bold text-brand-600 truncate">--</p>
             </div>
         </div>
 
@@ -422,31 +362,31 @@
 
             <!-- Sidebar: Projects -->
             <div
-                class="w-full md:w-64 border-b md:border-b-0 md:border-r border-slate-200 dark:border-slate-700 flex flex-col min-h-0 shrink-0">
-                <div class="p-3 border-b border-slate-100 dark:border-slate-800 space-y-2 shrink-0">
+                class="w-full md:w-64 border-b md:border-b-0 md:border-r border-slate-200 flex flex-col min-h-0 shrink-0">
+                <div class="p-3 border-b border-slate-100 space-y-2 shrink-0">
                     <div class="flex items-center justify-between">
-                        <h4 class="font-bold text-slate-700 dark:text-slate-300 text-xs uppercase tracking-wide" data-i18n-key="projectsHeading">Projects</h4>
+                        <h4 class="font-bold text-slate-700 text-xs uppercase tracking-wide" data-i18n-key="projectsHeading">Projects</h4>
                         <button type="button" onclick="openProjectModal('add')"
-                            class="btn-ghost text-brand-600 dark:text-brand-400 text-xs font-semibold px-2 py-1 inline-flex items-center gap-1">
+                            class="btn-ghost text-brand-600 text-xs font-semibold px-2 py-1 inline-flex items-center gap-1">
                             <i class="ti ti-plus text-sm"></i> <span data-i18n-key="addBtn">Thêm</span>
                         </button>
                     </div>
                     <div class="relative">
-                        <i class="ti ti-search absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 text-sm"></i>
+                        <i class="ti ti-search absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
                         <input id="projectSearchInput" type="text" placeholder="Tìm project..."
                             oninput="renderCatalogProjects()"
-                            class="w-full border border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg pl-8 pr-3 py-1.5 text-xs outline-none focus:ring-2 focus:ring-brand-500">
+                            class="w-full border border-slate-200 rounded-lg pl-8 pr-3 py-1.5 text-xs outline-none focus:ring-2 focus:ring-brand-500">
                     </div>
                 </div>
-                <div id="catalogProjectList" class="flex-1 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800"></div>
+                <div id="catalogProjectList" class="flex-1 overflow-y-auto divide-y divide-slate-100"></div>
             </div>
 
             <!-- Content Panel: Categories -->
             <div class="flex-1 flex flex-col min-h-0">
-                <div class="p-3 border-b border-slate-100 dark:border-slate-800 shrink-0">
+                <div class="p-3 border-b border-slate-100 shrink-0">
                     <div class="flex items-center justify-between gap-2 flex-wrap">
-                        <h4 class="font-bold text-slate-700 dark:text-slate-300 text-xs uppercase tracking-wide">
-                            <span data-i18n-key="categoriesOfLabel">Loại hồ sơ của:</span> <span id="catalogActiveProjectName" class="text-brand-600 dark:text-brand-400">--</span>
+                        <h4 class="font-bold text-slate-700 text-xs uppercase tracking-wide">
+                            <span data-i18n-key="categoriesOfLabel">Loại hồ sơ của:</span> <span id="catalogActiveProjectName" class="text-brand-600">--</span>
                         </h4>
                         <button type="button" onclick="openCategoryModal('add')"
                             class="btn-secondary text-xs font-semibold px-3 py-1.5 inline-flex items-center gap-1">
@@ -454,29 +394,29 @@
                         </button>
                     </div>
                     <div class="relative max-w-xs">
-                        <i class="ti ti-search absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 text-sm"></i>
+                        <i class="ti ti-search absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
                         <input id="categorySearchInput" type="text" placeholder="Tìm loại hồ sơ..."
                             oninput="renderCatalogCategoriesFiltered()"
-                            class="w-full border border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg pl-8 pr-3 py-1.5 text-xs outline-none focus:ring-2 focus:ring-brand-500">
+                            class="w-full border border-slate-200 rounded-lg pl-8 pr-3 py-1.5 text-xs outline-none focus:ring-2 focus:ring-brand-500">
                     </div>
                 </div>
 
                 <div class="flex-1 overflow-y-auto">
                     <table class="w-full text-sm">
-                        <thead class="bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wide sticky top-0">
+                        <thead class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wide sticky top-0">
                             <tr>
                                 <th class="text-left font-semibold px-4 py-2.5" data-i18n-key="categoryNameHeader">Tên loại hồ sơ</th>
                                 <th class="text-left font-semibold px-4 py-2.5" data-i18n-key="codeHeader">Mã</th>
                                 <th class="text-right font-semibold px-4 py-2.5" data-i18n-key="actionHeader">Thao tác</th>
                             </tr>
                         </thead>
-                        <tbody id="catalogCategoryList" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
+                        <tbody id="catalogCategoryList" class="divide-y divide-slate-100"></tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <div class="px-6 py-3.5 bg-slate-50 dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 flex justify-end shrink-0">
+        <div class="px-6 py-3.5 bg-slate-50 border-t border-slate-200 flex justify-end shrink-0">
             <button onclick="closeMasterCatalogModal()" class="btn-primary px-5 py-2 text-sm" data-i18n-key="closeBtn">Đóng</button>
         </div>
     </div>
@@ -485,13 +425,13 @@
 <!-- ============ Project add/edit modal ============ -->
 <div id="projectModal"
     class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 hidden backdrop-blur-sm">
-    <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 w-full max-w-md p-6 space-y-4">
-        <h3 id="projectModalTitle" class="text-lg font-bold text-slate-800 dark:text-slate-100">Thêm Project mới</h3>
+    <div class="bg-white rounded-2xl shadow-xl border border-slate-200 w-full max-w-md p-6 space-y-4">
+        <h3 id="projectModalTitle" class="text-lg font-bold text-slate-800">Thêm Project mới</h3>
         <div>
-            <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1" data-i18n-key="projectNameFieldLabel">Tên Project</label>
+            <label class="block text-xs font-semibold text-slate-500 uppercase mb-1" data-i18n-key="projectNameFieldLabel">Tên Project</label>
             <input id="projectInputName" type="text" maxlength="50"
                 oninput="toggleSaveDisabled('projectInputName','projectSaveBtn')"
-                class="w-full border border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-xl px-3.5 py-2 text-sm outline-none focus:ring-2 focus:ring-brand-500"
+                class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-sm outline-none focus:ring-2 focus:ring-brand-500"
                 placeholder="Nhập tên project...">
         </div>
         <div class="flex justify-end gap-2 pt-2">
@@ -505,20 +445,20 @@
 <!-- ============ Category add/edit modal ============ -->
 <div id="categoryModal"
     class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 hidden backdrop-blur-sm">
-    <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 w-full max-w-md p-6 space-y-4">
-        <h3 id="categoryModalTitle" class="text-lg font-bold text-slate-800 dark:text-slate-100">Thêm File con mới</h3>
+    <div class="bg-white rounded-2xl shadow-xl border border-slate-200 w-full max-w-md p-6 space-y-4">
+        <h3 id="categoryModalTitle" class="text-lg font-bold text-slate-800">Thêm File con mới</h3>
         <div class="space-y-3">
             <div>
-                <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1" data-i18n-key="categoryNameFieldLabel">Tên file con</label>
+                <label class="block text-xs font-semibold text-slate-500 uppercase mb-1" data-i18n-key="categoryNameFieldLabel">Tên file con</label>
                 <input id="categoryInputName" type="text" maxlength="50"
                     oninput="toggleSaveDisabled('categoryInputName','categorySaveBtn')"
-                    class="w-full border border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-xl px-3.5 py-2 text-sm outline-none focus:ring-2 focus:ring-brand-500"
+                    class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-sm outline-none focus:ring-2 focus:ring-brand-500"
                     placeholder="VD: Báo cáo tài chính...">
             </div>
             <div>
-                <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1" data-i18n-key="categoryCodeFieldLabel">Mã file con (Tùy chọn)</label>
+                <label class="block text-xs font-semibold text-slate-500 uppercase mb-1" data-i18n-key="categoryCodeFieldLabel">Mã file con (Tùy chọn)</label>
                 <input id="categoryInputCode" type="text" maxlength="10"
-                    class="w-full border border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-xl px-3.5 py-2 text-sm outline-none focus:ring-2 focus:ring-brand-500"
+                    class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-sm outline-none focus:ring-2 focus:ring-brand-500"
                     placeholder="VD: BCTC...">
             </div>
         </div>
@@ -533,13 +473,13 @@
 <!-- ============ Delete confirmation modal ============ -->
 <div id="confirmDeleteModal"
     class="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-slate-900/60 hidden backdrop-blur-sm">
-    <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 w-full max-w-sm p-6 space-y-4 text-center">
-        <div class="w-12 h-12 rounded-full bg-rose-50 dark:bg-rose-500/20 text-rose-600 dark:text-rose-400 flex items-center justify-center mx-auto">
+    <div class="bg-white rounded-2xl shadow-xl border border-slate-200 w-full max-w-sm p-6 space-y-4 text-center">
+        <div class="w-12 h-12 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center mx-auto">
             <i class="ti ti-alert-triangle text-2xl"></i>
         </div>
         <div>
-            <h3 class="text-base font-bold text-slate-800 dark:text-slate-100" data-i18n-key="confirmDeleteTitle">Xác nhận xóa</h3>
-            <p id="confirmDeleteMessage" class="text-sm text-slate-500 dark:text-slate-400 mt-1">Bạn có chắc muốn xóa mục này?</p>
+            <h3 class="text-base font-bold text-slate-800" data-i18n-key="confirmDeleteTitle">Xác nhận xóa</h3>
+            <p id="confirmDeleteMessage" class="text-sm text-slate-500 mt-1">Bạn có chắc muốn xóa mục này?</p>
         </div>
         <div class="flex justify-center gap-2 pt-1">
             <button type="button" onclick="closeConfirmDeleteModal()"
@@ -604,19 +544,19 @@
         const options = Array.from(select.options).filter(opt => opt.text.toLowerCase().includes(searchTerm));
 
         if (options.length === 0) {
-            container.innerHTML = '<div class="p-4 text-center text-slate-400 dark:text-slate-500 text-xs">Không tìm thấy project nào</div>';
+            container.innerHTML = '<div class="p-4 text-center text-slate-400 text-xs">Không tìm thấy project nào</div>';
         } else {
             options.forEach(opt => {
                 const isActive = opt.value === select.value;
                 const div = document.createElement("div");
-                div.className = `workspace-sidebar-item flex items-center justify-between px-3 py-2.5 cursor-pointer border-l-2 border-transparent hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors ${isActive ? 'is-active border-l-2' : ''}`;
+                div.className = `workspace-sidebar-item flex items-center justify-between px-3 py-2.5 cursor-pointer border-l-2 border-transparent hover:bg-slate-50 transition-colors ${isActive ? 'is-active border-l-2' : ''}`;
                 div.innerHTML = `
-                    <span class="text-sm font-semibold text-slate-700 dark:text-slate-200 truncate pr-2">${opt.text}</span>
+                    <span class="text-sm font-semibold text-slate-700 truncate pr-2">${opt.text}</span>
                     <div class="flex items-center gap-1 shrink-0">
-                        <button type="button" class="p-1 rounded-md text-slate-400 dark:text-slate-500 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-brand-50 dark:hover:bg-brand-500/10" title="Sửa tên">
+                        <button type="button" class="p-1 rounded-md text-slate-400 hover:text-brand-600 hover:bg-brand-50" title="Sửa tên">
                             <i class="ti ti-edit text-sm"></i>
                         </button>
-                        <button type="button" class="p-1 rounded-md text-slate-400 dark:text-slate-500 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10" title="Xóa">
+                        <button type="button" class="p-1 rounded-md text-slate-400 hover:text-rose-600 hover:bg-rose-50" title="Xóa">
                             <i class="ti ti-trash text-sm"></i>
                         </button>
                     </div>
@@ -657,12 +597,12 @@
         const filtered = validOptions.filter(opt => opt.textContent.toLowerCase().includes(searchTerm));
 
         if (!catSelect.options.length || !validOptions.length) {
-            container.innerHTML = '<tr><td colspan="3" class="p-6 text-center text-slate-400 dark:text-slate-500 text-xs">Chưa có file con hoặc chưa chọn project</td></tr>';
+            container.innerHTML = '<tr><td colspan="3" class="p-6 text-center text-slate-400 text-xs">Chưa có file con hoặc chưa chọn project</td></tr>';
             return;
         }
 
         if (filtered.length === 0) {
-            container.innerHTML = '<tr><td colspan="3" class="p-6 text-center text-slate-400 dark:text-slate-500 text-xs">Không tìm thấy loại hồ sơ nào</td></tr>';
+            container.innerHTML = '<tr><td colspan="3" class="p-6 text-center text-slate-400 text-xs">Không tìm thấy loại hồ sơ nào</td></tr>';
             return;
         }
 
@@ -672,12 +612,12 @@
             const tr = document.createElement("tr");
             tr.className = "workspace-row transition-colors";
             tr.innerHTML = `
-                <td class="px-4 py-2.5 text-slate-700 dark:text-slate-200 font-medium">${name}</td>
-                <td class="px-4 py-2.5 text-slate-500 dark:text-slate-400">${code}</td>
+                <td class="px-4 py-2.5 text-slate-700 font-medium">${name}</td>
+                <td class="px-4 py-2.5 text-slate-500">${code}</td>
                 <td class="px-4 py-2.5 text-right">
                     <div class="inline-flex items-center gap-1">
-                        <button type="button" class="btn-ghost p-1.5 text-emerald-600 dark:text-emerald-400" title="Sửa"><i class="ti ti-edit text-sm"></i></button>
-                        <button type="button" class="btn-ghost p-1.5 text-rose-600 dark:text-rose-400" title="Xóa"><i class="ti ti-trash text-sm"></i></button>
+                        <button type="button" class="btn-ghost p-1.5 text-emerald-600" title="Sửa"><i class="ti ti-edit text-sm"></i></button>
+                        <button type="button" class="btn-ghost p-1.5 text-rose-600" title="Xóa"><i class="ti ti-trash text-sm"></i></button>
                     </div>
                 </td>
             `;
