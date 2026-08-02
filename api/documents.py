@@ -656,10 +656,7 @@ def delete_project_web(
         ).fetchone()
 
     if not project:
-        return RedirectResponse(
-            "/documents/approved?error=Không+tìm+thấy+project+cần+xóa.",
-            status_code=303,
-        )
+        return JSONResponse({"success": False, "message": "Không tìm thấy project cần xóa."})
 
     project_label = project["label"]
     project_folder_name = project["folder"]
@@ -735,16 +732,16 @@ def delete_project_web(
             ),
         )
 
-        return RedirectResponse(
-            "/documents/approved",
-            status_code=303,
-        )
+        return JSONResponse({
+            "success": True,
+            "message": f"Đã xóa project '{project_label}'.",
+        })
 
     except Exception as error:
-        return RedirectResponse(
-            f"/documents/approved?error=Không+thể+xóa+project:+{quote(str(error))}",
-            status_code=303,
-        )
+        return JSONResponse({
+            "success": False,
+            "message": f"Không thể xóa project: {error}",
+        })
 # ============================================================
 # NHẬT KÝ HOẠT ĐỘNG
 # ============================================================

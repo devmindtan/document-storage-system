@@ -438,13 +438,13 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'APPROVED', ?, ?, ?, ?, ?, NULL)
     )
 
 
-@router.post("/manager/projects/create", response_class=HTMLResponse)
+@router.post("/manager/projects/create")
 def manager_create_project(
     request: Request,
     project_name: str = Form(...)
 ):
     """
-    Quản lý tạo project mới.
+    Quản lý tạo project mới (AJAX — trả JSON, không render lại trang).
     Project được duyệt ngay.
     """
 
@@ -461,15 +461,25 @@ def manager_create_project(
         current_user=current_user,
     )
 
-    return templates.TemplateResponse(
-        request=request,
-        name="manager_upload.html",
-        context=build_manager_upload_context(
-            current_user=current_user,
-            error=None if success else message,
-            success=message if success else None,
-        )
-    )
+    if not success:
+        return JSONResponse({"success": False, "message": message})
+
+    with get_connection() as conn:
+        project = conn.execute(
+            """
+            SELECT id, label
+            FROM projects
+            WHERE lower(label) = lower(?)
+              AND status = 'APPROVED'
+            """,
+            (project_name.strip(),),
+        ).fetchone()
+
+    return JSONResponse({
+        "success": True,
+        "message": message,
+        "project": {"id": project["id"], "label": project["label"]} if project else None,
+    })
 
 
 @router.get("/project-categories/{project_id}")
@@ -591,18 +601,13 @@ def manager_add_project_category(
     # "Loại hồ sơ" dùng chung cho toàn hệ thống, không gắn với project thật
     # nào — dùng create_global_category thay vì create_project_category_for_manager
     # (hàm đó bắt buộc project_id trỏ tới 1 project thật đang APPROVED).
-    success, message = create_global_category(
+    success, message, category = create_global_category(
         category_label=category_label,
         category_code=category_code,
         current_user=current_user,
     )
 
-    query_name = "message" if success else "error"
-
-    return RedirectResponse(
-        f"/manager/upload?manage_project_id={project_key}&{query_name}={quote(message)}",
-        status_code=303,
-    )
+    return JSONResponse({"success": success, "message": message, "category": category})
 
 
 @router.post("/manager/project-categories/{category_id}/delete")
@@ -631,12 +636,7 @@ def manager_delete_project_category(
         current_user=current_user,
     )
 
-    query_name = "message" if success else "error"
-
-    return RedirectResponse(
-        f"/manager/upload?manage_project_id={project_key}&{query_name}={quote(message)}",
-        status_code=303,
-    )
+    return JSONResponse({"success": success, "message": message})
 
 
 @router.get("/manager/pending", response_class=HTMLResponse)

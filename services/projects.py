@@ -759,10 +759,10 @@ def create_global_category(category_label: str, category_code: str, current_user
     category_code = category_code.strip().upper()
 
     if not category_label:
-        return False, "Tên loại hồ sơ không được để trống."
+        return False, "Tên loại hồ sơ không được để trống.", None
 
     if len(category_label) > 50:
-        return False, "Tên loại hồ sơ không được vượt quá 50 ký tự."
+        return False, "Tên loại hồ sơ không được vượt quá 50 ký tự.", None
 
     if category_code:
         category_code = re.sub(r"[^A-Z0-9]+", "", category_code)
@@ -771,7 +771,7 @@ def create_global_category(category_label: str, category_code: str, current_user
         category_code = make_category_code_from_label(category_label)
 
     if len(category_code) > 10:
-        return False, "Mã loại hồ sơ không được vượt quá 10 ký tự."
+        return False, "Mã loại hồ sơ không được vượt quá 10 ký tự.", None
 
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
@@ -790,7 +790,7 @@ def create_global_category(category_label: str, category_code: str, current_user
 
         if existing_label:
             if existing_label["is_active"]:
-                return False, "Loại hồ sơ này đã tồn tại."
+                return False, "Loại hồ sơ này đã tồn tại.", None
 
             conn.execute(
                 """
@@ -808,7 +808,11 @@ def create_global_category(category_label: str, category_code: str, current_user
                 details=f"Bật lại loại hồ sơ '{category_label}'.",
             )
 
-            return True, "Đã bật lại loại hồ sơ thành công."
+            return True, "Đã bật lại loại hồ sơ thành công.", {
+                "id": existing_label["id"],
+                "label": category_label,
+                "code": category_code,
+            }
 
         existing_code = conn.execute(
             """
@@ -821,7 +825,7 @@ def create_global_category(category_label: str, category_code: str, current_user
         ).fetchone()
 
         if existing_code:
-            return False, "Mã loại hồ sơ này đã tồn tại."
+            return False, "Mã loại hồ sơ này đã tồn tại.", None
 
         folder_name = make_unique_category_folder(
             conn=conn,
@@ -831,7 +835,7 @@ def create_global_category(category_label: str, category_code: str, current_user
 
         category_key = f"CUSTOM_{uuid.uuid4().hex[:12]}"
 
-        conn.execute(
+        cursor = conn.execute(
             """
             INSERT INTO project_categories (
                 project_id, category_key, label, folder, code, is_active, created_at
@@ -841,13 +845,19 @@ def create_global_category(category_label: str, category_code: str, current_user
             (project_id, category_key, category_label, folder_name, category_code, now),
         )
 
+        new_category_id = cursor.lastrowid
+
     write_audit_log(
         user=current_user,
         action="CREATE_PROJECT_CATEGORY",
         details=f"Thêm loại hồ sơ '{category_label}' mã '{category_code}'.",
     )
 
-    return True, f"Đã thêm loại hồ sơ '{category_label}' thành công."
+    return True, f"Đã thêm loại hồ sơ '{category_label}' thành công.", {
+        "id": new_category_id,
+        "label": category_label,
+        "code": category_code,
+    }
 
 
 def delete_global_category(category_id: int, current_user):

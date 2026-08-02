@@ -365,11 +365,16 @@
         class="bg-white rounded-2xl shadow-xl border border-slate-200 w-full max-w-5xl overflow-hidden flex flex-col max-h-[88vh]">
 
         <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between shrink-0">
-            <div>
-                <h3 class="font-bold text-slate-800 text-base" data-i18n-key="catalogModalTitle">Quản lý kho Project
-                    &amp; Danh mục</h3>
-                <p class="text-xs text-slate-500 mt-0.5" data-i18n-key="catalogModalSubtitle">Tìm kiếm, thêm, sửa, xóa
-                    project và loại hồ sơ.</p>
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-brand-50 text-brand-700 flex items-center justify-center shrink-0">
+                    <i class="ti ti-database-cog text-lg"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-slate-800 text-base" data-i18n-key="catalogModalTitle">Quản lý kho Project
+                        &amp; Danh mục</h3>
+                    <p class="text-xs text-slate-500 mt-0.5" data-i18n-key="catalogModalSubtitle">Tìm kiếm, thêm, sửa, xóa
+                        project và loại hồ sơ.</p>
+                </div>
             </div>
             <button onclick="closeMasterCatalogModal()" class="btn-ghost w-8 h-8 flex items-center justify-center">
                 <i class="ti ti-x text-lg"></i>
@@ -378,18 +383,32 @@
 
         <!-- Quick stats -->
         <div class="px-6 py-4 border-b border-slate-200 grid grid-cols-2 sm:grid-cols-3 gap-3 shrink-0 bg-white">
-            <div class="rounded-xl border border-slate-200 p-3">
-                <p class="text-xs text-slate-500" data-i18n-key="totalProjectsLabel">Tổng project</p>
-                <p id="statTotalProjects" class="text-xl font-bold text-slate-800">--</p>
+            <div class="rounded-xl border border-slate-200 p-3 flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                    <i class="ti ti-briefcase text-base"></i>
+                </div>
+                <div class="min-w-0">
+                    <p class="text-xs text-slate-500" data-i18n-key="totalProjectsLabel">Tổng project</p>
+                    <p id="statTotalProjects" class="text-xl font-bold text-slate-800">--</p>
+                </div>
             </div>
-            <div class="rounded-xl border border-slate-200 p-3">
-                <p class="text-xs text-slate-500" data-i18n-key="totalCategoriesLabel">Loại hồ sơ (project đang chọn)
-                </p>
-                <p id="statTotalCategories" class="text-xl font-bold text-slate-800">--</p>
+            <div class="rounded-xl border border-slate-200 p-3 flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                    <i class="ti ti-tags text-base"></i>
+                </div>
+                <div class="min-w-0">
+                    <p class="text-xs text-slate-500" data-i18n-key="totalCategoriesLabel">Tổng loại hồ sơ</p>
+                    <p id="statTotalCategories" class="text-xl font-bold text-slate-800">--</p>
+                </div>
             </div>
-            <div class="rounded-xl border border-slate-200 p-3 hidden sm:block">
-                <p class="text-xs text-slate-500" data-i18n-key="activeProjectLabel">Project đang chọn</p>
-                <p id="statActiveProject" class="text-sm font-bold text-brand-600 truncate">--</p>
+            <div class="rounded-xl border border-slate-200 p-3 hidden sm:flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+                    <i class="ti ti-focus-2 text-base"></i>
+                </div>
+                <div class="min-w-0">
+                    <p class="text-xs text-slate-500" data-i18n-key="activeProjectLabel">Project đang chọn</p>
+                    <p id="statActiveProject" class="text-sm font-bold text-brand-600 truncate">--</p>
+                </div>
             </div>
         </div>
 
@@ -730,7 +749,34 @@
         document.getElementById("projectModal").classList.add("hidden");
     }
 
-    function submitProjectModal() {
+    /* Gửi ngầm (fetch) thay vì form.submit() — tránh reload cả trang nên
+       modal Quản lý danh mục vẫn giữ nguyên trạng thái (tab đang mở, ô tìm
+       kiếm, v.v.) sau khi thêm/xóa, đúng yêu cầu "không thoát ra". */
+    async function postCatalogForm(url, fields) {
+        try {
+            const res = await fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: new URLSearchParams(fields).toString(),
+            });
+            return await res.json();
+        } catch (err) {
+            return { success: false, message: "Lỗi kết nối, vui lòng thử lại." };
+        }
+    }
+
+    function setButtonBusy(btn, busy, busyLabel) {
+        if (busy) {
+            btn.dataset.originalLabel = btn.textContent;
+            btn.textContent = busyLabel;
+            btn.disabled = true;
+        } else {
+            btn.textContent = btn.dataset.originalLabel || btn.textContent;
+            btn.disabled = false;
+        }
+    }
+
+    async function submitProjectModal() {
         const input = document.getElementById("projectInputName");
         const val = input.value.trim();
         if (!val) return;
@@ -743,25 +789,33 @@
             if (opt) opt.text = val;
             showToast("Đã cập nhật project", "success");
             closeProjectModal();
-            if (!document.getElementById("masterCatalogModal").classList.contains("hidden")) {
-                renderCatalogProjects();
-            }
+            renderCatalogProjects();
             return;
         }
 
-        // Trước đây chỉ thêm <option> tạm trên trình duyệt, không gửi lên
-        // server nên mất hết sau khi tải lại trang — gửi form POST thật
-        // tới /manager/projects/create (cùng pattern với deleteCatalogProject).
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '/manager/projects/create';
-        const nameInput = document.createElement('input');
-        nameInput.type = 'hidden';
-        nameInput.name = 'project_name';
-        nameInput.value = val;
-        form.appendChild(nameInput);
-        document.body.appendChild(form);
-        form.submit();
+        const btn = document.getElementById("projectSaveBtn");
+        setButtonBusy(btn, true, "Đang lưu...");
+        const result = await postCatalogForm('/manager/projects/create', { project_name: val });
+        setButtonBusy(btn, false);
+
+        if (!result.success) {
+            showToast(result.message || "Không thể thêm project.", "danger");
+            return;
+        }
+
+        if (result.project) {
+            const select = document.getElementById("project_key");
+            const opt = document.createElement("option");
+            opt.value = result.project.id;
+            opt.textContent = result.project.label;
+            opt.selected = true;
+            select.appendChild(opt);
+            select.dispatchEvent(new Event("change"));
+        }
+
+        showToast(result.message || "Đã thêm project mới", "success");
+        closeProjectModal();
+        renderCatalogProjects();
     }
 
     function deleteCatalogProject(valKey) {
@@ -769,15 +823,24 @@
         const opt = Array.from(select.options).find(o => o.value === valKey);
         if (!opt) return;
 
-        openConfirmDeleteModal(`⚠️ XÓA VĨNH VIỄN project "${opt.text}"? Hành động này sẽ xóa luôn TOÀN BỘ hồ sơ đã upload thuộc project này và KHÔNG THỂ khôi phục.`, () => {
-            // FIX #2 phụ: xóa cache của project bị xóa để không còn dữ liệu rác
+        openConfirmDeleteModal(`⚠️ XÓA VĨNH VIỄN project "${opt.text}"? Hành động này sẽ xóa luôn TOÀN BỘ hồ sơ đã upload thuộc project này và KHÔNG THỂ khôi phục.`, async () => {
             delete categoryCache[valKey];
 
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = `/projects/${valKey}/delete`;
-            document.body.appendChild(form);
-            form.submit();
+            const result = await postCatalogForm(`/projects/${valKey}/delete`, {});
+
+            if (!result.success) {
+                showToast(result.message || "Không thể xóa project.", "danger");
+                return;
+            }
+
+            opt.remove();
+            const select2 = document.getElementById("project_key");
+            if (select2.options.length && select2.selectedIndex === -1) {
+                select2.selectedIndex = 0;
+                select2.dispatchEvent(new Event("change"));
+            }
+            showToast(result.message || "Đã xóa project", "success");
+            renderCatalogProjects();
         });
     }
 
@@ -816,7 +879,7 @@
         document.getElementById("categoryModal").classList.add("hidden");
     }
 
-    function submitCategoryModal() {
+    async function submitCategoryModal() {
         const inputName = document.getElementById("categoryInputName");
         const inputCode = document.getElementById("categoryInputCode");
         const nameVal = inputName.value.trim();
@@ -835,34 +898,41 @@
             }
             showToast("Đã cập nhật file con", "success");
             closeCategoryModal();
-            if (!document.getElementById("masterCatalogModal").classList.contains("hidden")) {
-                renderCatalogCategoriesFiltered();
-            }
+            renderCatalogCategoriesFiltered();
             return;
         }
 
-        // Trước đây chỉ thêm <option> tạm trên trình duyệt, không gửi lên
-        // server nên mất hết sau khi tải lại trang — gửi form POST thật tới
-        // /manager/project-categories/add. project_key vẫn phải gửi kèm vì
-        // backend yêu cầu field này, nhưng nó bị bỏ qua khi tạo (loại hồ sơ
-        // dùng chung, không gắn với project cụ thể nào — xem create_global_category).
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '/manager/project-categories/add';
-        const fields = {
+        const btn = document.getElementById("categorySaveBtn");
+        setButtonBusy(btn, true, "Đang lưu...");
+        // project_key vẫn gửi kèm vì backend yêu cầu field này, nhưng bị bỏ
+        // qua khi tạo (loại hồ sơ dùng chung, không gắn với project cụ thể
+        // nào — xem create_global_category).
+        const result = await postCatalogForm('/manager/project-categories/add', {
             project_key: projectSelectEl().value,
             category_label: nameVal,
             category_code: codeVal,
-        };
-        Object.keys(fields).forEach(function (key) {
-            const field = document.createElement('input');
-            field.type = 'hidden';
-            field.name = key;
-            field.value = fields[key];
-            form.appendChild(field);
         });
-        document.body.appendChild(form);
-        form.submit();
+        setButtonBusy(btn, false);
+
+        if (!result.success) {
+            showToast(result.message || "Không thể thêm loại hồ sơ.", "danger");
+            return;
+        }
+
+        if (result.category) {
+            const select = document.getElementById("category_key");
+            const opt = document.createElement("option");
+            opt.value = result.category.id;
+            opt.textContent = result.category.code
+                ? `${result.category.label} - Mã: ${result.category.code}`
+                : result.category.label;
+            opt.dataset.code = result.category.code || "";
+            select.appendChild(opt);
+        }
+
+        showToast(result.message || "Đã thêm loại hồ sơ mới", "success");
+        closeCategoryModal();
+        renderCatalogCategoriesFiltered();
     }
 
     function deleteCatalogCategory(valKey) {
@@ -870,20 +940,21 @@
         const opt = Array.from(select.options).find(o => o.value === valKey);
         if (!opt) return;
 
-        openConfirmDeleteModal(`Bạn có chắc muốn xóa file con "${opt.textContent}"?`, () => {
-            // FIX #2 phụ: xóa cache của project hiện tại
+        openConfirmDeleteModal(`Bạn có chắc muốn xóa file con "${opt.textContent}"?`, async () => {
             delete categoryCache[projectSelectEl().value];
 
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = `/manager/project-categories/${valKey}/delete`;
-            const projectKeyInput = document.createElement('input');
-            projectKeyInput.type = 'hidden';
-            projectKeyInput.name = 'project_key';
-            projectKeyInput.value = projectSelectEl().value;
-            form.appendChild(projectKeyInput);
-            document.body.appendChild(form);
-            form.submit();
+            const result = await postCatalogForm(`/manager/project-categories/${valKey}/delete`, {
+                project_key: projectSelectEl().value,
+            });
+
+            if (!result.success) {
+                showToast(result.message || "Không thể xóa loại hồ sơ.", "danger");
+                return;
+            }
+
+            opt.remove();
+            showToast(result.message || "Đã xóa loại hồ sơ", "success");
+            renderCatalogCategoriesFiltered();
         });
     }
 
