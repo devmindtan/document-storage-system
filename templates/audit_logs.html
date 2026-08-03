@@ -9,7 +9,7 @@
 <div class="space-y-6">
     <div class="top-bar flex flex-wrap items-center justify-between gap-3">
         <p class="text-sm text-slate-500">
-            <span data-i18n-key="managerLabel">Quản lý:</span> <span class="font-semibold text-slate-700">{{ user['full_name'] }}</span>
+            <span data-i18n-key="adminLabel">Admin:</span> <span class="font-semibold text-slate-700">{{ user['full_name'] }}</span>
         </p>
         <a href="/admin"
             class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 text-white hover:bg-slate-700 active:scale-95 transition-all text-sm font-semibold shadow-sm shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
@@ -104,7 +104,7 @@
     (function () {
         const PAGE_TRANSLATIONS = {
             vi: {
-                managerLabel: "Quản lý:",
+                adminLabel: "Admin:",
                 actionTypeLabel: "Loại hoạt động",
                 allActionsOption: "Tất cả hoạt động",
                 uploadActionOption: "Upload hồ sơ",
@@ -128,7 +128,7 @@
                 noLogs: "Chưa có hoạt động nào được ghi nhận."
             },
             en: {
-                managerLabel: "Manager:",
+                adminLabel: "Admin:",
                 actionTypeLabel: "Action type",
                 allActionsOption: "All actions",
                 uploadActionOption: "Upload document",

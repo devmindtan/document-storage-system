@@ -177,8 +177,12 @@
 <div class="dashboard-box max-w-5xl mx-auto space-y-6">
     <div class="top-bar flex flex-wrap items-center justify-between gap-3">
         <p class="text-sm text-slate-500">
-            <span data-i18n-key="managerLabel">Quản lý:</span> <strong class="text-slate-800 font-semibold">{{
-                user['full_name'] }}</strong>
+            {% if user.is_admin %}
+            <span data-i18n-key="adminLabel">Admin:</span>
+            {% else %}
+            <span data-i18n-key="managerLabel">Quản lý:</span>
+            {% endif %}
+            <strong class="text-slate-800 font-semibold">{{ user['full_name'] }}</strong>
         </p>
         <a href="/manager"
             class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 text-white hover:bg-slate-700 active:scale-95 transition-all text-sm font-semibold shadow-sm shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
@@ -1150,6 +1154,7 @@
             vi: {
                 pageHeading: "QUẢN LÝ UPLOAD HỒ SƠ",
                 managerLabel: "Quản lý:",
+                adminLabel: "Admin:",
                 backButton: "Quay lại",
                 cardTitle: "Upload hồ sơ",
                 cardSubtitle: "Hồ sơ do quản lý upload sẽ được đưa thẳng vào kho chính thức.",
@@ -1196,6 +1201,7 @@
             en: {
                 pageHeading: "MANAGER DOCUMENT UPLOAD",
                 managerLabel: "Manager:",
+                adminLabel: "Admin:",
                 backButton: "Back",
                 cardTitle: "Upload document",
                 cardSubtitle: "Documents uploaded by a manager go straight into the official archive.",

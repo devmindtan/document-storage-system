@@ -10,7 +10,11 @@
 <div class="space-y-6">
     <div class="top-bar flex flex-wrap items-center justify-between gap-3">
         <p class="text-sm text-slate-500">
+            {% if user.is_admin %}
+            <span data-i18n-key="adminLabel">Admin:</span>
+            {% else %}
             <span data-i18n-key="managerLabel">Quản lý:</span>
+            {% endif %}
             <span class="font-semibold text-slate-700">{{ user['full_name'] }}</span>
         </p>
         <a href="/manager"
@@ -102,6 +106,7 @@
             myDocumentsTitle: "HỒ SƠ CỦA TÔI",
             managerLabel: "Quản lý:",
             employeeLabel: "Nhân viên:",
+            adminLabel: "Admin:",
             backButton: "Quay lại",
             noPendingProjects: "Hiện chưa có project nào đang chờ duyệt.",
             noEmployeeDocuments: "Bạn chưa gửi hồ sơ nào.",
@@ -130,6 +135,7 @@
             myDocumentsTitle: "MY DOCUMENTS",
             managerLabel: "Manager:",
             employeeLabel: "Employee:",
+            adminLabel: "Admin:",
             backButton: "Back",
             noPendingProjects: "There are no pending projects.",
             noEmployeeDocuments: "You have not submitted any documents yet.",

@@ -9,7 +9,11 @@
 <div class="space-y-6 animate-fade-in">
     <div class="top-bar flex flex-wrap items-center justify-between gap-3">
         <p class="text-sm text-slate-500">
+            {% if user.is_admin %}
+            <span data-i18n-key="adminLabel">Admin:</span>
+            {% else %}
             <span data-i18n-key="managerLabel">Quản lý:</span>
+            {% endif %}
             <span class="font-semibold text-slate-700">{{ user['full_name'] }}</span>
         </p>
         <a href="/manager"
@@ -254,6 +258,7 @@
             vi: {
                 myDocumentsTitle: "HỒ SƠ CỦA TÔI",
                 managerLabel: "Quản lý:",
+                adminLabel: "Admin:",
                 backButton: "Quay lại",
                 idHeader: "ID",
                 fileNameHeader: "Tên file",
@@ -276,6 +281,7 @@
             en: {
                 myDocumentsTitle: "MY DOCUMENTS",
                 managerLabel: "Manager:",
+                adminLabel: "Admin:",
                 backButton: "Back",
                 idHeader: "ID",
                 fileNameHeader: "File name",

@@ -12,33 +12,7 @@
 <div class="space-y-6 relative">
 
     <div id="mainView" class="space-y-6">
-        <div class="top-bar flex flex-wrap items-center justify-between gap-3">
-            <div>
-                {% if users %}
-                <div class="relative">
-                    <button type="button" id="columnToggleBtn"
-                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-colors">
-                        <i class="ti ti-columns text-sm"></i>
-                        <span data-i18n-key="columnsButton">Cột hiển thị</span>
-                    </button>
-                    <div id="columnToggleMenu"
-                        class="hidden absolute right-0 mt-1.5 w-48 bg-white border border-slate-200 rounded-xl shadow-lg z-20 p-2 space-y-0.5">
-                        <label class="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-slate-50 text-xs text-slate-600 cursor-pointer">
-                            <input type="checkbox" class="js-col-toggle" data-col="account" checked> <span data-i18n-key="accountHeader">Tài khoản</span>
-                        </label>
-                        <label class="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-slate-50 text-xs text-slate-600 cursor-pointer">
-                            <input type="checkbox" class="js-col-toggle" data-col="role" checked> <span data-i18n-key="roleHeader">Phân quyền</span>
-                        </label>
-                        <label class="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-slate-50 text-xs text-slate-600 cursor-pointer">
-                            <input type="checkbox" class="js-col-toggle" data-col="created" checked> <span data-i18n-key="createdAtHeader">Ngày tạo</span>
-                        </label>
-                        <label class="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-slate-50 text-xs text-slate-600 cursor-pointer">
-                            <input type="checkbox" class="js-col-toggle" data-col="status" checked> <span data-i18n-key="statusHeader">Trạng thái</span>
-                        </label>
-                    </div>
-                </div>
-                {% endif %}
-            </div>
+        <div class="top-bar flex items-center justify-end gap-3">
             <a href="/admin"
                 class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 text-white hover:bg-slate-700 active:scale-95 transition-all text-sm font-semibold shadow-sm shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
                 aria-label="Quay lại" title="Quay lại">
@@ -53,10 +27,10 @@
                     <thead class="sticky top-0 z-10 bg-slate-50 border-b border-slate-200 text-slate-700 uppercase font-semibold text-xs">
                         <tr>
                             <th class="px-6 py-4" data-sort-key="1" data-i18n-key="userNameHeader">Tên người dùng</th>
-                            <th class="px-6 py-4" data-sort-key="1" data-col="account" data-i18n-key="accountHeader">Tài khoản</th>
-                            <th class="px-6 py-4" data-sort-key="1" data-col="role" data-i18n-key="roleHeader">Phân quyền</th>
-                            <th class="px-6 py-4" data-sort-key="1" data-col="created" data-i18n-key="createdAtHeader">Ngày tạo</th>
-                            <th class="px-6 py-4" data-sort-key="1" data-col="status" data-i18n-key="statusHeader">Trạng thái</th>
+                            <th class="px-6 py-4" data-sort-key="1" data-i18n-key="accountHeader">Tài khoản</th>
+                            <th class="px-6 py-4" data-sort-key="1" data-i18n-key="roleHeader">Phân quyền</th>
+                            <th class="px-6 py-4" data-sort-key="1" data-i18n-key="createdAtHeader">Ngày tạo</th>
+                            <th class="px-6 py-4" data-sort-key="1" data-i18n-key="statusHeader">Trạng thái</th>
                             <th class="px-6 py-4 text-right" data-i18n-key="actionHeader">Thao tác</th>
                         </tr>
                     </thead>
@@ -64,8 +38,8 @@
                         {% for u in users %}
                         <tr class="hover:bg-slate-50 transition-colors">
                             <td class="px-6 py-4 font-medium text-slate-800">{{ u.full_name }}</td>
-                            <td class="px-6 py-4" data-col="account">{{ u.username }}</td>
-                            <td class="px-6 py-4" data-col="role">
+                            <td class="px-6 py-4">{{ u.username }}</td>
+                            <td class="px-6 py-4">
                                 {% if u.is_admin %}
                                 {{ macros.badge("ADMIN", variant="purple") }}
                                 {% elif u.role == 'MANAGER' %}
@@ -74,8 +48,8 @@
                                 {{ macros.badge("EMPLOYEE", variant="neutral") }}
                                 {% endif %}
                             </td>
-                            <td class="px-6 py-4" data-col="created">{{ u.created_at }}</td>
-                            <td class="px-6 py-4" data-col="status">
+                            <td class="px-6 py-4">{{ u.created_at }}</td>
+                            <td class="px-6 py-4">
                                 {% if u.approval_status == 'PENDING' %}
                                 {{ macros.status_dot("Chờ duyệt", variant="warning", i18n_key="pendingStatus") }}
                                 {% elif u.approval_status == 'REJECTED' %}
@@ -300,8 +274,7 @@
                 cancelButton: "Hủy bỏ",
                 savePermissionsButton: "Lưu cấu hình",
                 enableToggleLabel: "Bật giới hạn phân quyền cho tài khoản này",
-                permissionsSectionTitle: "Loại hồ sơ được phép upload",
-                columnsButton: "Cột hiển thị"
+                permissionsSectionTitle: "Loại hồ sơ được phép upload"
             },
             en: {
                 // ... (phần tiếng anh giữ nguyên)
@@ -334,8 +307,7 @@
                 cancelButton: "Cancel",
                 savePermissionsButton: "Save Changes",
                 enableToggleLabel: "Enable upload restriction for this account",
-                permissionsSectionTitle: "Document types allowed for upload",
-                columnsButton: "Columns"
+                permissionsSectionTitle: "Document types allowed for upload"
             }
         };
 
@@ -438,49 +410,6 @@
             mainView.classList.remove("hidden");
         };
 
-        // --- UI-3: sort, ẩn/hiện cột ---
-        const COLUMN_STORAGE_KEY = "usersTableHiddenColumns";
-
-        function applyColumnVisibility(hiddenCols) {
-            document.querySelectorAll("#usersTable [data-col]").forEach(function (cell) {
-                cell.classList.toggle("hidden", hiddenCols.includes(cell.dataset.col));
-            });
-        }
-
-        function initColumnToggle() {
-            const btn = document.getElementById("columnToggleBtn");
-            const menu = document.getElementById("columnToggleMenu");
-            if (!btn || !menu) return;
-
-            let hiddenCols = [];
-            try {
-                hiddenCols = JSON.parse(localStorage.getItem(COLUMN_STORAGE_KEY) || "[]");
-            } catch (e) { hiddenCols = []; }
-
-            document.querySelectorAll(".js-col-toggle").forEach(function (checkbox) {
-                checkbox.checked = !hiddenCols.includes(checkbox.dataset.col);
-                checkbox.addEventListener("change", function () {
-                    hiddenCols = Array.from(document.querySelectorAll(".js-col-toggle"))
-                        .filter(function (cb) { return !cb.checked; })
-                        .map(function (cb) { return cb.dataset.col; });
-                    localStorage.setItem(COLUMN_STORAGE_KEY, JSON.stringify(hiddenCols));
-                    applyColumnVisibility(hiddenCols);
-                });
-            });
-
-            applyColumnVisibility(hiddenCols);
-
-            btn.addEventListener("click", function (event) {
-                event.stopPropagation();
-                menu.classList.toggle("hidden");
-            });
-            document.addEventListener("click", function (event) {
-                if (!menu.contains(event.target) && event.target !== btn) {
-                    menu.classList.add("hidden");
-                }
-            });
-        }
-
         document.addEventListener("DOMContentLoaded", function () {
             applyPageTranslations();
             const languageButton = document.getElementById("languageToggle");
@@ -493,7 +422,6 @@
             if (window.initSortableTable) {
                 initSortableTable(document.getElementById("usersTable"));
             }
-            initColumnToggle();
 
             const permissionsForm = document.getElementById("permissionsForm");
             permissionsForm.addEventListener("submit", async function (event) {
